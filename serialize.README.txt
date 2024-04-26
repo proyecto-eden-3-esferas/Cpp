@@ -1,0 +1,92 @@
+NOTE: We will put off serializing pointers and c++ references for the time being.
+      At the moment, I find it very difficult to implement.
+
+NOTE: Serializing objects of mixed types to one file demands that some information specifying the type be written before the object:
+      outfile << Types::integer << i << ' ';
+      Of course you do not just store away objects, so for serialization to make sense you need to know exactly the type and the purpose or function of each. Heterogenous objects are found in "heterogenous collections" as found in Artificial Intelligence and generally in very flexible programming paradigms. They are also found in C++ structures and classes holding XML trees, XML subtrees or just XML elements.
+
+
+Thus, in order to serialize, then to deserialize...
+
+
+First, you work out how to serialize basic types. Non-characters you delimit with spaces. For instance, to serialize integers 'i' and 'j', you just:
+  outfile << ' ' << i << ' ' << j;
+and to deserialize them you open the same file as an ifstream and write:
+  infile >> i >> j;
+
+Second, you work out how to serialize arrays of basic types. Well, you write the size of the array then each element in the array.
+outfile << a.size() << ' ';
+for(auto& i: a) {
+  outfile << i << ' ';
+}
+
+
+
+Serializing C-strings and std::string's
+=======================================
+PROBLEM: A string may contain new line characters, therefore you cannot just use getline(istream& in, std::string& str).
+
+How do we serialize c-strings and std::strings? Should we serialize std::strings as produced by std::string::c_str()? Also, Should we avoid binary I/O? When we interrogate the length of a string, binary is assumed, so maybe we should stick to binary I/O.
+
+Binary using ostream::write an istream.read
+-------------------------------------------
+
+The core serialization functionality looks something like this:
+std::ofstream ostrm("out", std::ios::binary);
+void SaveToBinary(const void* addr, std::size_t size) {
+  ostrm.write(reinterpret_cast<const char*>(addr), size);
+}
+
+std::ifstream istrm("out", std::ios::binary);
+void LoadBinary(void* addr, std::size_t size) {
+  istrm.read(reinterpret_cast<char*>(addr), size);
+}
+int main() {
+  std::string::size_type length;
+  LoadBinary(&length, sizeof(length));
+
+  std::string str;
+  str.resize(length);
+  LoadBinary((void *) str.data(), length);
+  // str now holds "hello"
+  return 0;
+}
+
+One correct way to serialize strings is to write the length first, then write the characters in the string (see std::basic_string::data() or std::basic_string::c_str()). Let’s update main to correctly serialize strings:
+int main() {
+  std::string str("hello");
+  std::string::size_type length = str.length();
+  SaveToBinary(&length, sizeof(length));
+  SaveToBinary(str.data(), length);
+  return 0;
+}
+
+
+To (de-)serialize a string in text mode
+---------------------------------------
+
+char input[100];
+cin.getline(input,sizeof(input));
+
+or
+
+#include <iostream>
+#include <string>
+string str;
+getline(cin, str);
+//now 'str' contains line
+
+
+
+On "serialize_string"
+=====================
+
+"serialize_string" has been changed to implement two different schemes:
+(1) null ('\0') or some other char denotes end of string (sep_string's), and
+(2) string on file preceded by uint + ' ' (space) (sized_string's),
+    that is, you first write the size to file, then a space, then the string
+
+On "serialize_container.test.cpp"
+=================================
+
+[...]
