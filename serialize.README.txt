@@ -21,6 +21,14 @@ for(auto& i: a) {
 }
 
 
+Files
+=====
+serialize.h
+serialize.test.cpp
+serialize_string.h
+serialize.README.txt (this file)
+serialize_string.test.cpp
+
 
 Serializing C-strings and std::string's
 =======================================
