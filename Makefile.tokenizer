@@ -1,0 +1,70 @@
+CLANG = clang++ -std=c++2b
+Gplusplus   = c++    -std=c++23
+%: %.cpp
+	c++    -std=c++23 $<  -o $@
+
+format: format.cpp
+	$(CLANG) $<  -o $@
+information: information.cpp information.h
+	c++ -std=c++23 $<  -o $@
+temp: temp.cpp
+	c++ -std=c++23 $<  -o $@
+string_view: string_view.cpp
+	c++ -std=c++23 $<  -o $@
+ai_set : ai_set.cpp
+	c++ -std=c++23 $<  -o $@
+reference_wrapper: reference_wrapper.cpp
+	c++ -std=c++23 $<  -o $@
+ref_and_cref: ref_and_cref.cpp
+	c++ -std=c++23 $<  -o $@
+test_concepts: concepts.test.cpp
+	c++ -std=c++17 -fconcepts concepts.test.cpp
+test_XML: XML.h XML.cpp XML.test.cpp
+	g++ -std=c++2a            XML.test.cpp -o $@
+paragraph: paragraph.h paragraph.main.cpp
+	g++ -std=c++2a            paragraph.main.cpp -o $@
+escaper: escaper.cpp escaper.h
+	c++ -std=c++23 $<  -o $@
+zettelkasten: zettelkasten.cpp zettelkasten.h
+	c++ -std=c++23 $<  -o $@
+lazy_strings: lazy_strings.cpp lazy_strings.h
+	echo "19 dzogchen and tantra" > zettelkasten.ini
+	c++ -std=c++23 $<  -o $@
+zettelkasten.associative.test:  zettelkasten.test-associative.cpp zettelkasten.h
+	g++ -std=c++23 $<  -o $@
+zettelkasten.plain_record.test: zettelkasten.test-plain_record.cpp zettelkasten.h
+	g++ -std=c++23 $<  -o $@
+zettelkasten.lined_record.test: zettelkasten.test-lined_record.cpp zettelkasten.h
+	g++ -std=c++23 $<  -o $@
+zettelkasten.variant-reference.test: zettelkasten.variant-reference.test.cpp zettelkasten.h
+	g++ -std=c++23 $<  -o $@
+
+basic_tokenizer.test: basic_tokenizer.test.cpp basic_tokenizer.h basic_tokenizer.cpp
+	g++ -std=c++23 $<  -o $@
+
+tokenizer.test: tokenizer.test.cpp tokenizer.h tokenizer.cpp
+	g++ -std=c++23 $<  -o $@
+
+istream_variant_queue_tokenizer.debug: istream_variant_queue_tokenizer.test.cpp istream_variant_queue_tokenizer.h variant_queue_tokenizer.h
+	g++ -std=c++23 -DDEBUG $<  -o $@
+istream_variant_queue_tokenizer.test:  istream_variant_queue_tokenizer.test.cpp istream_variant_queue_tokenizer.h variant_queue_tokenizer.h
+	g++ -std=c++23         $<  -o $@
+string_view_variant_tokenizer.test: string_view_variant_tokenizer.test.cpp string_view_variant_tokenizer.h string_view_variant_tokenizer.cpp sense.h
+	g++ -std=c++23         $<  -o $@
+name.test: name.test.cpp name.cpp name.h
+	g++ -std=c++23         $<  -o $@
+json.test: json.cpp json.h
+	g++ -std=c++23         $<  -o $@
+
+load_string_with_file: load_string_with_file.test.cpp load_string_with_file.h
+	g++ -std=c++23         $<  -o $@
+
+%.test: %.test.cpp %.h
+	g++ -std=c++23 $<  -o $@
+%.o: %.cpp
+	g++  -std=c++23 -c -std=c++17 $<
+
+clean_former:
+	$(RM)  bitenum basic_tokenizer xml_tokenizer case-insensitive-string-cmp ai_set test_concepts test_XML
+clean:
+	$(RM)  a.out *.test temp  paragraph information escaper zettelkasten lazy_strings temp.txt
