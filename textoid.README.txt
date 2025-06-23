@@ -1,0 +1,51 @@
+Compilation /nits
+=================
+
+- fileless_textoid
+
+- textoid
+
+- fileless_textoid_handler
+
+fileless_textoid<> is a class that can hold either a string
+and/or a file offset to load a string from file or to store it.
+
+It is the parent of class textoid<>.
+
+
+Serialization of Strings
+========================
+
+A string is serialized to a text size by writing its size, a space and its contents.
+
+A string is deserialized by reading its size, skipping a space character, and reading as many characters
+
+
+Accomodating Long and Short Strings in a File
+=============================================
+
+Some long strings might overstep their initially alotted slot capacity.
+
+fileless_textoid_handler<> handles this situation.
+
+fileless_textoid_handler<> is a pretty sophisticated and involved piece of code.
+
+
+
+
+PROJECTS
+========
+
+
+A Distributed Graph Chat Library
+--------------------------------
+Next, I would like to carry out a project ("Distributed Graph Chat Library") joining the following:
+(1) A graph library for holding text-vertices and word-weighted edges (see "A Programmed Book")
+(2) A graph serializer
+(3) A chat client and server that can communicate part of a graph or whole graphs through serialization (see 2)
+(4) Joint graph building
+(5) Diagram generation and transmittable (SVG + XHTML)
+
+
+Serialization
+-------------
