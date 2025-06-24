@@ -72,6 +72,9 @@ fileless_textoid: fileless_textoid.test.cpp textoid.h
 fileless_textoid.test: fileless_textoid.test.cpp fileless_textoid.h fileless_textoid.cpp
 	touch io.text # we need for "io.text" to exist
 	g++ -std=c++23 $<  -o $@
+fileless_textoid.concept.test: fileless_textoid.concept.test.cpp fileless_textoid.concept.h fileless_textoid.h fileless_textoid.cpp
+	g++ -std=c++23 -fconcepts-diagnostics-depth=3 $<  -o $@
+
 textoid.test:                   textoid.test.cpp fileless_textoid.h fileless_textoid.cpp textoid.h textoid.cpp
 	touch io.text # we need for "io.text" to exist
 	g++ -std=c++23 $<  -o $@

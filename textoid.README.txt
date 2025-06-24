@@ -1,5 +1,7 @@
-Compilation /nits
+Compilation Units
 =================
+
+- floid
 
 - fileless_textoid
 
@@ -12,6 +14,35 @@ and/or a file offset to load a string from file or to store it.
 
 It is the parent of class textoid<>.
 
+
+Floid (Fileless Textoid)
+========================
+
+Possibly incomplete.
+
+Shortcomings:
+- payload_t (a string) has no member store(FILE&)
+- payload_t (a string) has no member load(FILE&)
+- floid has no member get_slot_capacity, yet oid<> makes a reference to it
+- etc.
+
+File floid.h declares and defines class floid<> and its derived class oid<>
+
+Classes floid<> and oid<> bear a remarkable resemblance to classes fileless_textoid<> and textoid<>
+
+I have been developing the textoid compilation units instead, and discontinued the floid/oid<> c.u.
+
+Fileless Textoid
+================
+
+Compilation Unit fileless_textoid defines:
+- class fileless_textoid<>, and
+- concept Fileless_Textoid_Cpt, in file "fileless_textoid.concept.h"
+
+Concept Fileless_Textoid_Cpt  is tested by file "fileless_textoid.concept.test.cpp"
+
+Textoid
+=======
 
 Serialization of Strings
 ========================
@@ -33,8 +64,8 @@ fileless_textoid_handler<> is a pretty sophisticated and involved piece of code.
 
 
 
-PROJECTS
-========
+PROJECTS BASED ON TEXTOIDS
+==========================
 
 
 A Distributed Graph Chat Library
