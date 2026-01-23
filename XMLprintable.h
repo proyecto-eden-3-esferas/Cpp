@@ -19,6 +19,7 @@
 
 
 //template <typename F = double>
+template <template <typename,typename> typename  MAP = std::map>    // containers for attributes and namespaces
 struct XMLprintable {
   /* A typedef for a map from attribute keys to values.
    * These attributes are "non-essential" or intrinsic to the shape.
@@ -30,24 +31,32 @@ struct XMLprintable {
    * (That is, unclosed means no > character, in case say some more attrs need appending)
    */
   typedef          std::string string_t;
-  typedef std::map<string_t,string_t> attr_map_type;
+  typedef MAP<string_t,string_t> attr_map_type;
   static void print_attrs(const attr_map_type& m, std::ostream& o = std::cout, char sep = '\"');
   //
-  virtual void print_opening_tag_unclosed(   std::ostream& o = std::cout, const string_t& attrs = "") const = 0;
+  virtual void print_opening_tag_unclosed(std::ostream& o = std::cout)                        const = 0;
+  virtual void print_opening_tag_unclosed(std::ostream& o,             const string_t& attrs) const;
   virtual void print_opening_tag(std::ostream& o = std::cout, const string_t& attrs = "") const;
   virtual void print_element(            std::ostream& o = std::cout, const string_t& attrs = "") const;
   void         close_standalone_tag(std::ostream& o = std::cout, const string_t& attrs = "") const;
   /* As yet unimplemented:
    */
-  virtual void print_opening_tag_unclosed(   const attr_map_type& m, std::ostream& o = std::cout, char sep='\"') const;
-  virtual void print_opening_tag(const attr_map_type& m, std::ostream& o = std::cout, char sep='\"') const;
-  virtual void print_element(            const attr_map_type& m, std::ostream& o = std::cout, char sep='\"') const;
+  virtual void print_opening_tag_unclosed(const attr_map_type& m, std::ostream& o = std::cout, char sep='\"') const;
+  virtual void print_opening_tag(   const attr_map_type& m, std::ostream& o = std::cout, char sep='\"') const;
+  virtual void print_element(             const attr_map_type& m, std::ostream& o = std::cout, char sep='\"') const;
   void         close_standalone_tag(const attr_map_type& m, std::ostream& o = std::cout, char sep='\"') const;
 };
 
 // Implementation of SVG Members taking a String 'attrs' Attribute:
 
-void XMLprintable::print_attrs(const XMLprintable::attr_map_type& m,
+template <template <typename,typename> typename  MAP>
+void XMLprintable<MAP>::print_opening_tag_unclosed(std::ostream& o, const string_t& attrs) const {
+  print_opening_tag_unclosed(o);
+  o << attrs;
+};
+
+template <template <typename,typename> typename  MAP>
+void XMLprintable<MAP>::print_attrs(const XMLprintable::attr_map_type& m,
                              std::ostream& o,
                              char sep)
 {
@@ -55,20 +64,23 @@ void XMLprintable::print_attrs(const XMLprintable::attr_map_type& m,
     o << ' ' << p.first << '=' << sep << p.second << sep;
 };
 
-void XMLprintable::print_opening_tag(std::ostream& o, const std::string& attrs) const
+template <template <typename,typename> typename  MAP>
+void XMLprintable<MAP>::print_opening_tag(std::ostream& o, const std::string& attrs) const
 {
   print_opening_tag_unclosed(o,attrs);
   o << ">\n";
 };
 
-void XMLprintable::print_element(std::ostream& o, const std::string& attrs) const
+template <template <typename,typename> typename  MAP>
+void XMLprintable<MAP>::print_element(std::ostream& o, const std::string& attrs) const
 {
   print_opening_tag_unclosed(o);
   close_standalone_tag(o,attrs);
 };
 
 
-void XMLprintable::close_standalone_tag(std::ostream& o, const std::string& attrs) const
+template <template <typename,typename> typename  MAP>
+void XMLprintable<MAP>::close_standalone_tag(std::ostream& o, const std::string& attrs) const
 {
   if(attrs.length() > 0)
     o << ' ' << attrs << ' ';
@@ -77,28 +89,32 @@ void XMLprintable::close_standalone_tag(std::ostream& o, const std::string& attr
 
 // Implementation of Attribute-Map SVG Members:
 
-void XMLprintable::print_opening_tag_unclosed(const XMLprintable::attr_map_type& m,
+template <template <typename,typename> typename  MAP>
+void XMLprintable<MAP>::print_opening_tag_unclosed(const XMLprintable::attr_map_type& m,
                                     std::ostream& o,
                                     char sep) const {
   print_opening_tag_unclosed(o);
   print_attrs(m,o,sep);
 };
 
-void XMLprintable::print_opening_tag(const XMLprintable::attr_map_type& m,
+template <template <typename,typename> typename  MAP>
+void XMLprintable<MAP>::print_opening_tag(const XMLprintable::attr_map_type& m,
                                        std::ostream& o ,
                                        char sep) const {
   print_opening_tag_unclosed(m,o,sep);
   o << ">\n";
 };
 
-void XMLprintable::print_element(const XMLprintable::attr_map_type& m,
+template <template <typename,typename> typename  MAP>
+void XMLprintable<MAP>::print_element(const XMLprintable::attr_map_type& m,
                            std::ostream& o ,
                            char sep) const {
   print_opening_tag_unclosed(m,o,sep);
   close_standalone_tag(o);
 };
 
-void XMLprintable::close_standalone_tag(const XMLprintable::attr_map_type& m,
+template <template <typename,typename> typename  MAP>
+void XMLprintable<MAP>::close_standalone_tag(const XMLprintable::attr_map_type& m,
                                         std::ostream& o ,
                                         char sep) const {
   print_attrs(m,o,sep);

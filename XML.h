@@ -50,10 +50,10 @@ struct XMLprocessing_instruction {
 };
 
 
-/* Class XMLdoc<> holds entities and the 'doctype' string.
+/* Class XMLdoc<> holds entities (&mdash; &nbsp; etc.) and the 'doctype' string.
  * It offers suitable getters (for doctype and entities) and setters (for entities).
- * It is neither a child nor a parent,
-   still, XMLroot<> and XMLelement<> hold references to an instance of XMLdoc<>
+ * It is neither a child nor a parent.
+ * XMLroot<> and each XMLelement<> hold references to an instance of XMLdoc<>
  */
 template <template <typename,typename> typename  MAP  = std::map> // container for entities
 class XMLdoc {
@@ -61,7 +61,7 @@ public:
   typedef std::string string_t;
   typedef             string_t key_t;
   typedef             string_t value_t;
-  typedef         MAP<string_t, string_t>    entities_t;
+  typedef MAP<key_t, value_t>    entities_t;
   //
   const string_t&   get_doctype()  const {return doctype;};
   //
@@ -84,7 +84,8 @@ private:
 /* The key, big class: XMLelement
  * WARNING an XMLelement class is also defined in "XMLelement.h"
  * TODO
- * [ ] Write a function object for std::visit
+ * [ ] Write a function object for std::visit to print contained nodes...
+ * [ ] Should children be held by value or by reference?
  */
 
 template <template <typename>          typename CONT, // container for elements: array, list, forward_list...
@@ -93,7 +94,7 @@ class XMLelement; // Forward declaration
 
 template <template <typename>          typename CONT = std::vector, // container for elements: array, list, forward_list...
           template <typename,typename> typename  MAP = std::map>    // containers for attributes and namespaces
-class XMLelement : public XMLprintable {
+class XMLelement : public XMLprintable<MAP> {
 public:
   typedef std::string string_t;
   typedef             string_t name_t;
@@ -111,10 +112,9 @@ public:
                                       XMLprocessing_instruction>;
   typedef CONT<XML_variant_t> children_t;
   //
-  void print_opening_tag_unclosed(std::ostream& o = std::cout, const string_t& attrs = "") const override {
+  void print_opening_tag_unclosed(std::ostream& o = std::cout) const override {
     o << '<' << get_name() << ' ';
-    XMLprintable::print_attrs(attributes,o,'\"');
-    o << attrs;
+    XMLprintable<MAP>::print_attrs(attributes,o,'\"');
   };
   //
   const   string_t& get_doctype()  const {return doc.get_doctype();};
@@ -158,6 +158,8 @@ public:
 protected:
   XMLelement(const XMLdoc_t& d) : doc(d), parent(nullptr), name(d.get_doctype()) {};
 };
+
+
 
 
 template <template <typename>          typename CONT = std::vector, // container for elements: array, list, forward_list...
