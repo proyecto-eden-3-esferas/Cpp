@@ -5,7 +5,15 @@
 #include "XMLprintable.h"
 #endif
 
-/* Classes XML*<> state some typedef's and hold variables:
+/* Some tiny (XMLText, XMLComment, XMLCDATA etc.) and large XML*<> classes.
+ * Perhaps each class should live in its own header file (however short)
+   and get tested individually.
+ * TODO
+   [ ] Each class should implement XMLprintable<MAP>, shouldn't it?
+ *
+ */
+ /*
+ * [...] they state some typedef's and hold variables:
  * - doctype
  * - attributes
  * - entities
@@ -86,15 +94,84 @@ private:
  * TODO
  * [ ] Write a function object for std::visit to print contained nodes...
  * [ ] Should children be held by value or by reference?
+ *     By reference a mean a pointer, not a C++ reference,
+ *     as "[a] variant must have no reference alternative" (according to g++)
  */
+
 
 template <template <typename>          typename CONT, // container for elements: array, list, forward_list...
           template <typename,typename> typename  MAP>    // containers for attributes and namespaces
-class XMLelement; // Forward declaration
+class XMLelement; // Forward declaration for both XMLelement_variant<> and and XMLelement<> itself
+
+
+template <template <typename>          typename CONT,
+          template <typename,typename> typename  MAP>
+class XMLelement_variant {
+public:
+  typedef std::string string_t;
+  using XMLelement_t = XMLelement<CONT,MAP>;
+  // A no-member-variables class centered around 'XML_variant_t':
+  using XML_variant_t = std::variant<
+    XMLText,
+    XMLCDATA,
+    XMLComment,
+    XMLelement_t,
+    XMLprocessing_instruction,
+    string_t,
+    // pointer versions:
+    XMLText*,
+    XMLCDATA*,
+    XMLComment*,
+    XMLelement_t*,
+    XMLprocessing_instruction*,
+    string_t*,
+    // const pointer versions:
+    const XMLText*,
+    const XMLCDATA*,
+    const XMLComment*,
+    const XMLelement_t*,
+    const XMLprocessing_instruction*,
+    const string_t*
+    >;
+  /* Then we define several helper members
+   * (1) an enum to simplify using std::get<INDEX>(VARIANT)
+   * (2) two static functions to get the index of pointers:
+   *     get_pointer_index(      IDX), and
+   *     get_const_pointer_index(IDX)
+   * (3)
+   * (4) a visitor class XMLprint_variant
+   *     This is likely to be huge as XML_variant_t has 18 types
+   * NOTE The member variables and functions
+   *      as well as the variant definition
+   *      and the visitor classes
+   *      might be moved up to a base, non-template class
+   *      named 'XMLelement_base' or 'XMLelement_variant'
+   *      (Remember to forward declare XMLelement before defining such a class)
+   */
+  enum variants_enum {
+    XMLText_enum,
+    XMLCDATA_enum,
+    XMLComment_enum,
+    XMLelement_t_enum,
+    XMLprocessing_instruction_enum,
+    string_t_enum,
+    N // N == number of value types
+  };
+  //
+  static bool is_value(            variants_enum i) {return i <  variants_enum::N;};
+  static bool is_pointer(          variants_enum i) {return i >= variants_enum::N;};
+  static bool is_const_pointer(    variants_enum i) {return i >= 2*variants_enum::N;};
+  static bool is_non_const_pointer(variants_enum i) {return i <  2*variants_enum::N && is_pointer(i);};
+  //
+  static size_t get_pointer_index(      variants_enum i) {return i +   variants_enum::N;};
+  static size_t get_const_pointer_index(variants_enum i) {return i + 2*variants_enum::N;};
+};
+
+
 
 template <template <typename>          typename CONT = std::vector, // container for elements: array, list, forward_list...
           template <typename,typename> typename  MAP = std::map>    // containers for attributes and namespaces
-class XMLelement : public XMLprintable<MAP> {
+class XMLelement : public XMLelement_variant<CONT,MAP>, public XMLprintable<MAP> {
 public:
   typedef std::string string_t;
   typedef             string_t name_t;
@@ -103,18 +180,22 @@ public:
   typedef         MAP<string_t, string_t>  namespaces_t;
   typedef         MAP<string_t, string_t>    entities_t;
   using XMLelement_t = XMLelement<CONT,MAP>;
-  using XML_variant_t = std::variant<
-                                      XMLText,
-                                      XMLCDATA,
-                                      XMLComment,
-                                      string_t,
-                                      XMLelement_t,
-                                      XMLprocessing_instruction>;
+  //
+  using XMLelement_variant_t = XMLelement_variant<CONT,MAP>;
+  using XMLelement_variant_t::variants_enum;
+  using XMLelement_variant_t::get_pointer_index;
+  using XMLelement_variant_t::get_const_pointer_index;
+  using typename XMLelement_variant_t::XML_variant_t;
+  //
   typedef CONT<XML_variant_t> children_t;
   //
   void print_opening_tag_unclosed(std::ostream& o = std::cout) const override {
     o << '<' << get_name() << ' ';
     XMLprintable<MAP>::print_attrs(attributes,o,'\"');
+    /* Print each item in 'children'
+     * pressumably through std::visit() and a suitable function object.
+     * Remember to indent properly.
+     */
   };
   //
   const   string_t& get_doctype()  const {return doc.get_doctype();};
@@ -144,6 +225,12 @@ public:
   //std::map<string_t, string_t> attributes;
   // Member functions to handle member variables:
   XMLelement_t& add_element(const string_t& nm) {children.emplace_back(XMLelement_t{doc, nm, *this}); return *this;};
+  template <typename T>
+  XMLelement_t& add_by_value(const T& t) {children.push_back(t);  return *this;};
+  template <typename T>
+  XMLelement_t& add_as_pointer(            T& t) {children.push_back(                       &t) ; return *this;};
+  template <typename T>
+  XMLelement_t& add_as_const_pointer(const T& t) {children.push_back(const_cast<const int*>(&t)); return *this;};
   /*
   XMLelement_t& operator+=(const XMLelement_t&              e) {children.push_back(e); return *this;};
   string_t& operator[](const string_t& s) {return attributes[s];};

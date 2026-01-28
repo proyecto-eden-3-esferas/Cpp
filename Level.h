@@ -24,23 +24,24 @@
 template <typename SINT = signed int>
 class Level {
 public:
-  typedef SINT int_t;
+  typedef SINT sint_t;
   typedef std::size_t  size_t;
   //
   Level& operator++()    {++level; return *this;};
   Level  operator++(int) {++level; return Level(level - 1);};
   Level& operator--()    {--level; return *this;};
   Level  operator--(int) {--level; return Level(level + 1);};
-  int_t       get() const {return level;};
+  sint_t       get()       const {return level;};
+  sint_t       get_level() const {return get();};
   // avoid conversion operator?
-  operator int_t () const {return level;};
+  operator sint_t () const {return level;};
   /* Member function std::ostream& print(std::ostream& o)
    * seems rather redundant,
    * as it should be implemented in a child class,
    * and relies on static member variable static_width.
-   * Overriders should append overriden to its declaration.
+   * Overriders should append override to its declaration.
    * On the other hand, why add another member variable 'width'?
-   * You usually want:
+   * After all, you usually want:
    * (1) levels to be shown as indentation of num * level, and
    * (2) just one 'num' (number of spaces per indentation level) per project.
    */
@@ -50,10 +51,11 @@ public:
       o << ' ';
     return o;
   };
+  // virtual std::ostream& operator() (std::ostream& o) const { return print(o); };
   //
-  Level& operator=(const Level& l) {level = l.level; return *this;};
-  Level& operator=(      int_t  l) {level = l;       return *this;};
-  Level(int_t  l = 0)   : level(l) {};
+  Level& operator=(const Level&  l) {level = l.level; return *this;};
+  Level& operator=(      sint_t  l) {level = l;       return *this;};
+  Level(sint_t  l = 0)   : level(l) {};
   Level(const Level& l) : level(l.level) {};
 protected:
   std::size_t level;

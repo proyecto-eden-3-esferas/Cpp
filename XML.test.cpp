@@ -54,8 +54,13 @@ int main() {
   xmlel1.print_element(cout);
 
   cout << "\nPrint last child as XML:\n";
-  if(xmlel1.children[0].index() == 4)
-    get<4>(xmlel1.children[0]).print_element(cout);
+  if(xmlel1.children[0].index() == 3)
+    get<3>(xmlel1.children[0]).print_element(cout);
+
+  /* Now test adding nodes to 'xmlel1'
+   */
+  XMLText txt0{"This is a short text."};
+  xmlel1.add_as_pointer(txt0);
 
   return 0;
 }

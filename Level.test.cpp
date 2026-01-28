@@ -23,7 +23,7 @@ int main() {
   cout << "\'l3\' holds " << l3.get() << '\n';
 
 
-  cout << "\nNext, print contents of Level objects by calling conversion operator \"operator int_t ()\" on each:\n";
+  cout << "\nNext, print contents of Level objects by calling conversion operator \"operator sint_t ()\" on each:\n";
   cout << "\'l0\' holds " << l0 << '\n';
   cout << "\'l1\' holds " << l1 << '\n';
   cout << "\'l2\' holds " << l2 << '\n';
