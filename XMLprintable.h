@@ -3,9 +3,12 @@
 
 /* XML Interface Struct XMLprintable<>
  * TODO
-   [ ]  Handle indentation through passing level information in and out of the printable objects/calls
-   [ ] write and import a light html headers-only file for HTML/XML (light-html.h)
-   [ ] then close_standalone_tag(OSTREAM, ATTRS) should be moved to "light-html.h"
+ * [?] An opening tag and preceding stuff should be printed upon creation of an XML document, element...
+       The thus opened element should be closed upon destruction of its matching C++ object.
+   [ ] Handle indentation through passing level information in and out of the printable objects/calls
+   [x] write and import a light html headers-only file for HTML/XML (light-html.h)
+       File "SVG2.0/simple_html.h" holds class simple_html, which is tested through "SVG2.0/simple_html.test.cpp".
+   [x] then close_standalone_tag(OSTREAM, ATTRS) should be moved to "light-html.h"
    [x] Implement adding attributes (class, id, stroke-width) to elements.
        This might be realized as the last input argument
        to global functions and constructors, as in:

@@ -1,0 +1,52 @@
+CLANG = clang++ -std=c++2b
+Gplusplus   = c++    -std=c++23
+RAPIDXML = rapidxml*.zip
+
+%: %.cpp
+	c++    -std=c++23 $<  -o $@
+
+Level.test:  Level.test.cpp           Level.h
+	g++ -std=c++23 $<  -o $@
+
+Indent.test: Indent.test.cpp Indent.h Level.h
+	g++ -std=c++23 $<  -o $@
+
+CascadeMap.test: CascadeMap.test.cpp CascadeMap.h
+	g++ -std=c++23 $<  -o $@
+
+Attributes.test: Attributes.test.cpp Attributes.h
+	g++ -std=c++23 $<  -o $@
+
+Entities.test: Entities.test.cpp Entities.h
+	g++ -std=c++23 $<  -o $@
+
+XML.old.test: XML.old.test.cpp  XML.old.h XMLprintable.h
+	g++ -std=c++23 $<  -o $@
+
+XML.test: XML.test.cpp  XML.h Level.h XMLnode.h CascadeMap.h
+	g++ -std=c++23 $<  -o $@
+XMLdocdecl.test: XMLdocdecl.test.cpp XMLdocdecl.h Entities.h XMLnode.h Level.h
+	g++ -std=c++23 $<  -o $@
+XMLroot.test: XMLroot.test.cpp XMLroot.h XML.h Level.h
+	g++ -std=c++23 $<  -o $@
+
+XMLdoc.test: XMLdoc.test.cpp XMLdoc.h XMLnode.h XML.h Level.h
+	g++ -std=c++23 $<  -o $@
+
+# XMLelement.old.h defines macro: XML_COMPONENTS_H
+XMLelement.old.test: XMLelement.old.test.cpp XMLelement.old.h XML.globals.h
+	g++ -std=c++23 $<  -o $@
+
+
+%.test: %.test.cpp %.h
+	g++ -std=c++23 $<  -o $@
+%.o: %.cpp
+	g++ -std=c++23 -c -std=c++17 $<
+
+
+clean:
+	$(RM)  a.out *.test *.o
+
+
+save_to_Dropbox:
+	cp --update *.h *.cpp *.md *.txt *.bak $(RAPIDXML) ~/Dropbox/cpp_code/XML/

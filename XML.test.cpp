@@ -1,17 +1,7 @@
-/*
-#ifndef XML_H
-#include "XML.h"
-#endif
-*/
-
-
 #ifndef XML_H
 #include "XML.h"
 #endif
 
-#ifndef XML_PRINTABLE_H
-#include "XMLprintable.h"
-#endif
 
 #include <string>
 #include <iostream>
@@ -24,43 +14,20 @@ int main() {
   const string doctype1{"HTML"};
   const string    name1{"html"};
 
-  XMLdoc doc1{doctype1};
-  cout << "\'doc1\'    has DOCTYPE: " << doc1.get_doctype() << '\n';
-  // Test entities:
+  XMLelement xmle0(name1);
+  XMLelement xmleh("head", true,false);
+  XMLelement xmleb("body", true,false);
+  xmle0.add(&xmleh);
+  xmle0.add(&xmleb);
 
-  cout << "Does \'doc1\' define entity \"&apos;\"? " << boolalpha << doc1.has_entity("apos") << '\n';
-  if( doc1.has_entity("apos") )
-    cout << "\'doc1\' defines entity \"&apos;\" as " << doc1.get_entity("apos") << "\n";
+  XMLelement xmles("section", true,false);
+  xmleb.add(&xmles);
 
-  doc1.set_entity("mdash", "#8212");
-  cout << "Does \'doc1\' define entity \"&mdash;\"? " << boolalpha << doc1.has_entity("mdash") << '\n';
-  if( doc1.has_entity("mdash") )
-    cout << "\'doc1\' defines entity \"&mdash;\" as " << doc1.get_entity("mdash") << "\n\n";
+  XMLelement xmleh2("h2", true,true);
+  xmles.add(&xmleh2);
 
-  cout << "Define an XMLroot object.\n";
-  XMLroot xmlroot{doc1};
-  cout << "Define an XMLelement object taking the XMLdoc object and a name (\"" << name1 << "\").\n";
-  XMLelement xmlel1{doc1, name1};
-  cout << "\'xmlel1\'  has (inherited) DOCTYPE: " << xmlel1.get_doctype() << " and name: \"" << xmlel1.get_name() << "\"\n";
-  cout << "\'xmlroot\' has (inherited) DOCTYPE: " << xmlroot.get_doctype() << " and name: \"" << xmlroot.get_name() << "\"\n";
+  xmleb.attributes["lang"] = "es";
 
-  cout << "sizeof(xmlel1) is as many as " << sizeof(xmlel1) << " bytes\n";
+  xmle0.print(cout, Level(0));
 
-  xmlel1.add_element("body");
-  cout << "sizeof(xmlel1.children[0]) is as many as " << sizeof(xmlel1.children[0]) << " bytes\n";
-
-  cout << "\nPrint \'xmlel1\' as XML:\n";
-  xmlel1.attributes["class"] = "general";
-  xmlel1.print_element(cout);
-
-  cout << "\nPrint last child as XML:\n";
-  if(xmlel1.children[0].index() == 3)
-    get<3>(xmlel1.children[0]).print_element(cout);
-
-  /* Now test adding nodes to 'xmlel1'
-   */
-  XMLText txt0{"This is a short text."};
-  xmlel1.add_as_pointer(txt0);
-
-  return 0;
-}
+  return 0; }
