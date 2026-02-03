@@ -23,6 +23,10 @@
        for XMLelement to contain attributes and namespaces as CascadeMap<>
    (2)
  * TODO s:
+   [ ] XMLText::print(OSTREAM&,LEVEL) should process both default and defined entities
+   [ ] write XMLCommentBlock
+   [ ] write XMLCDATABlock
+   [ ] write XMLprocessing_instructionBlock
    [x] simplify XMLelement<>
        - no references to XMLdoc<>
        - start small (no namespaces nor attributes)
@@ -46,12 +50,27 @@
  */
 
 template <typename LEVEL = Level<signed int> >
-class XMLText : public XMLnode<Level<signed int> > {
+class XMLText : public XMLnode<LEVEL> {
+protected:
   std::string text;
 public:
-  void print(std::ostream& o, LEVEL l) const override { o << text;};
+  void print(std::ostream& o, LEVEL l) const override;
   //
   XMLText(const std::string& s) : text(s) {};
+};
+template <typename LEVEL>
+void XMLText<LEVEL>::print(std::ostream& o, LEVEL l) const {
+  for(auto c : text)
+    {
+      switch (c) {
+        case '<' : o << "&lt;";   break;
+        case '>' : o << "&gt;";   break;
+        case '\'': o << "&apos;"; break;
+        case '\"': o << "&quot;"; break;
+        case '&':  o << "&amp;";  break;
+        default:   o << c;
+      }
+    }
 };
 
 template <typename LEVEL = Level<signed int> >
@@ -59,14 +78,14 @@ struct XMLComment : XMLText<Level<signed int> > {
   using XMLText<Level<signed int> >::text;
   void print(std::ostream& o, LEVEL l) const override { o << "<!-- " << text << " -->";};
   //
-  XMLComment(const std::string& com) : XMLnode<Level<signed int> >(com) {};
+  XMLComment(const std::string& com) : XMLText<LEVEL>(com) {};
 };
 template <typename LEVEL = Level<signed int> >
 struct XMLCDATA : XMLText<Level<signed int> > {
   using XMLText<Level<signed int> >::text;
-  void print(std::ostream& o, LEVEL l) const override { o << "<[CDATA[" << text << "]]>";};
+  void print(std::ostream& o, LEVEL l) const override { o << "<![CDATA[" << text << "]]>";};
   //
-  XMLCDATA(const std::string& s) : XMLnode<Level<signed int> >(s) {};
+  XMLCDATA(const std::string& s) : XMLText<LEVEL>(s) {};
 };
 template <typename LEVEL = Level<signed int> >
 struct XMLprocessing_instruction {

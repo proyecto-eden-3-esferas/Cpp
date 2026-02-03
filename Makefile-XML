@@ -23,19 +23,29 @@ Entities.test: Entities.test.cpp Entities.h
 XML.old.test: XML.old.test.cpp  XML.old.h XMLprintable.h
 	g++ -std=c++23 $<  -o $@
 
-XML.test: XML.test.cpp  XML.h Level.h XMLnode.h CascadeMap.h
-	g++ -std=c++23 $<  -o $@
-XMLdocdecl.test: XMLdocdecl.test.cpp XMLdocdecl.h Entities.h XMLnode.h Level.h
-	g++ -std=c++23 $<  -o $@
-XMLroot.test: XMLroot.test.cpp XMLroot.h XML.h Level.h
+XML_HEADERS = XML.h Level.h XMLnode.h CascadeMap.h
+
+XMLText.test: XMLText.test.cpp $(XML_HEADERS)
 	g++ -std=c++23 $<  -o $@
 
-XMLdoc.test: XMLdoc.test.cpp XMLdoc.h XMLnode.h XML.h Level.h
+XML.test:     XML.test.cpp     $(XML_HEADERS)
 	g++ -std=c++23 $<  -o $@
+
+XML_DOCDECL_HEADERS = $(XML_HEADERS) XMLdocdecl.h Entities.h
+XMLdocdecl.test: XMLdocdecl.test.cpp $(XML_DOCDECL_HEADERS)
+	g++ -std=c++23 $<  -o $@
+XMLroot.test: XMLroot.test.cpp XMLroot.h $(XML_HEADERS)
+	g++ -std=c++23 $<  -o $@
+
+XMLdoc.test:  XMLdoc.test.cpp  XMLdoc.h  $(XML_HEADERS)
+	g++ -std=c++23 $<  -o $@
+
+
 
 # XMLelement.old.h defines macro: XML_COMPONENTS_H
 XMLelement.old.test: XMLelement.old.test.cpp XMLelement.old.h XML.globals.h
 	g++ -std=c++23 $<  -o $@
+
 
 
 %.test: %.test.cpp %.h
