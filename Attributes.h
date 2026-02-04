@@ -1,6 +1,18 @@
 #ifndef ATTRIBUTES_H
 #define ATTRIBUTES_H
 
+#ifndef CASCADE_MAP_H
+#include "CascadeMap.h"
+#endif
+
+#ifndef LEVEL_H
+#include "Level.h"
+#endif
+
+#ifndef XMLNODE_H
+#include "XMLnode.h"
+#endif
+
 #include <iostream>
 #include <map>
 #include <string>
@@ -9,7 +21,7 @@
  * It keeps a container that maps keys (string's) to values (string's)
  * It holds a pointer to the next Attribute above, its only parent,
    as this mirrors inheritance of attributes the way XML works
-   (a cascade, as in CSS: the most immediate version overrides those above)
+   (a cascade, as in CSS: the most immediate version of an attribute overrides those above)
  * It can print the contents of such a map.
  * It can add new (key,value) pairs: set(KEY,VALUE).
  * It can query the map: contains(KEY) and at(KEY)
@@ -24,109 +36,86 @@
  */
 
 /*
-// Forward declaration of class Attributes<CONT>
+// Forward declaration of class Attributes<KEY,MAPPED,CONT,LEVEL>
 template <template<typename,typename> typename CONT>
 class Attributes;
  */
 
-template <template<typename,typename> typename CONT = std::map>
-class Attributes {
+template <typename KEY=std::string,
+          typename MAPPED=std::string,
+          template<typename,typename> typename CONT = std::map,
+          typename LEVEL = Level<signed int> >
+class Attributes : public CascadeMap<KEY,MAPPED,CONT>, public XMLnode<LEVEL> {
 public:
-  typedef Attributes<CONT> Attributes_t;
-  typedef std::string string_t;
-  typedef CONT<string_t,string_t> AttributesMap_t;
+  typedef Attributes<KEY,MAPPED,CONT,LEVEL> Attributes_t;
+  typedef CONT<KEY,MAPPED>   container_t; // actually, its parent, typically std::map<K,V>
+  typedef CascadeMap<KEY,MAPPED,CONT> CascadeMap_t;
+  typedef KEY key_type;
+  typedef MAPPED mapped_type;
+  typedef std::pair<key_type,mapped_type> value_type;
+  typedef CONT<key_type,mapped_type> map_t;
+  //
+  using container_t::contains;
+  using container_t::at, container_t::operator[];
+  using container_t::insert, container_t::erase;
+  using container_t::begin,  container_t::end;
+  using container_t::cbegin, container_t::cend;
+  using CascadeMap_t::has, CascadeMap_t::get; // getters for (*this + *ptr_to_above)
+  using CascadeMap_t::ptr_to_above;
+  using CascadeMap_t::operator=, CascadeMap_t::CascadeMap;
 //protected:
-  AttributesMap_t     AttributesMap;
-  const Attributes_t* ptr_to_above;
   char sep;
-  std::string         attrs_string;
 public:
-  virtual void set(     const string_t& key, const string_t& value);
-  virtual bool contains(const string_t& key) const;
-//      string_t& at(const string_t& key);
-  virtual const string_t& at(const string_t& key) const;
-  // Print only this->AttributesMap:
   virtual std::ostream& print_map(std::ostream& o)         const {return print_map(o,sep);};
   virtual std::ostream& print_map(std::ostream& o, char s) const;
-  virtual void    set_attrs_string(string_t& res)         const {set_attrs_string(res,sep);};
-  virtual void    set_attrs_string(string_t& res, char s) const;
-  virtual void    set_attrs_string()       {set_attrs_string(attrs_string,sep);};
-  virtual void    set_attrs_string(char s) {set_attrs_string(attrs_string,s  );};
-  virtual void add_to_attrs_string(string_t& str, const string_t& k, const string_t v) const;
-  virtual void add_to_attrs_string(               const string_t& k, const string_t v);
-  virtual const string_t& get_attributes_string() const {return attrs_string;};
+  void print(std::ostream& o, LEVEL l=LEVEL(0)) const override;
   // Constructor(s) and destructor:
   Attributes_t& operator=(const Attributes_t&  ats) = default; // unnecessary
-  Attributes_t& operator=(      Attributes_t&& ats) = default; // unnecessary
-               Attributes(      Attributes_t&& ats) = default; // unnecessary
-  Attributes(const Attributes_t& ats, char s)      : ptr_to_above(&ats),    sep(s)       {};
-  Attributes(const Attributes_t& ats)              : ptr_to_above(&ats),    sep(ats.sep) {};
-  Attributes(                         char s='\"') : ptr_to_above(nullptr), sep(s)       {};
+  Attributes(const Attributes_t& ats, char s)      : CascadeMap_t(ats),    sep(s)       {};
+  Attributes(const Attributes_t& ats)              : CascadeMap_t(ats),    sep(ats.sep) {};
+  Attributes(                         char s='\"') :                       sep(s)       {};
+  Attributes(std::initializer_list<value_type> il)         : CascadeMap_t(il), sep('\"') {};
+  Attributes(std::initializer_list<value_type> il, char s) : CascadeMap_t(il), sep(s)    {};
   template <typename ITER>
-  Attributes(const Attributes_t& ats, ITER be, ITER en)
-  : AttributesMap(be,en), ptr_to_above(&ats),    sep(ats.sep)
-  {};
-  template <typename ITER>
-  Attributes(const Attributes_t& ats, ITER be, ITER en, char s)
-  : AttributesMap(be,en), ptr_to_above(&ats),    sep(s)
-  {};
-  template <typename ITER>
-  Attributes(                         ITER be, ITER en, char s='\"')
-  : AttributesMap(be,en), ptr_to_above(nullptr), sep(s) {}
+  Attributes(ITER be, ITER en, char s='\"') : CascadeMap_t(be,en), sep(s) {}
+  // Define move ctor and move assignment in terms of parent CascadeMap_t:
+  Attributes_t& operator=(Attributes_t&& ats);
+  Attributes(Attributes_t&& ats);
 };
 
 // Implementations:
 
-template <template<typename,typename> typename CONT>
-void Attributes<CONT>::set(const string_t& key, const string_t& value) {
-  AttributesMap[key] = value;
-  add_to_attrs_string(key,value);
-};
-
-template <template<typename,typename> typename CONT>
-bool Attributes<CONT>::contains(const string_t& key) const {
-  if(ptr_to_above==nullptr)
-    return AttributesMap.contains(key);
-  else {
-    return AttributesMap.contains(key) || ptr_to_above->contains(key);
-  }
-};
-
-template <template<typename,typename> typename CONT>
-const std::string& Attributes<CONT>::at(const string_t& key) const {
-  if(AttributesMap.contains(key))
-    return AttributesMap.at(key);
-  else {
-    return ptr_to_above->at(key);
-  }
-};
-
-template <template<typename,typename> typename CONT>
-std::ostream& Attributes<CONT>::print_map(std::ostream& o, char s) const {
-  for(const auto & p : AttributesMap) {
+template <typename KEY, typename MAPPED,
+          template<typename,typename> typename CONT,
+          typename LEVEL>
+std::ostream& Attributes<KEY,MAPPED,CONT,LEVEL>::print_map(std::ostream& o, char s) const {
+  for(const auto & p : *this) {
     o << ' ' << p.first << '=' << sep << p.second << sep;
   }
   return o;
 };
 
-template <template<typename,typename> typename CONT>
-void Attributes<CONT>::set_attrs_string(string_t& str, char s) const {
-  str.clear();
-  for(const auto& p: AttributesMap)
-    add_to_attrs_string(str, p.first, p.second);
+template <typename KEY, typename MAPPED,
+          template<typename,typename> typename CONT,
+          typename LEVEL>
+void Attributes<KEY,MAPPED,CONT,LEVEL>::print(std::ostream& o, LEVEL l) const {
+  print_map(o,sep);
 };
-template <template<typename,typename> typename CONT>
-void Attributes<CONT>::add_to_attrs_string(string_t& str, const string_t& k, const string_t v) const {
-  str += ' ';
-  str += k;
-  str += '=';
-  str += sep;
-  str += v;
-  str += sep;
+
+template <typename KEY, typename MAPPED,
+          template<typename,typename> typename CONT,
+          typename LEVEL>
+Attributes<KEY,MAPPED,CONT,LEVEL>&
+Attributes<KEY,MAPPED,CONT,LEVEL>::operator=(Attributes_t&& ats) {
+  CascadeMap_t::operator=(std::move(ats));
+  return *this;
 };
-template <template<typename,typename> typename CONT>
-void Attributes<CONT>::add_to_attrs_string(const string_t& k, const string_t v) {
-  add_to_attrs_string(attrs_string,k,v);
-};
+
+template <typename KEY, typename MAPPED,
+          template<typename,typename> typename CONT,
+          typename LEVEL>
+Attributes<KEY,MAPPED,CONT,LEVEL>::Attributes(Attributes_t&& ats)
+: CascadeMap_t(std::move(ats))
+{};
 
 #endif

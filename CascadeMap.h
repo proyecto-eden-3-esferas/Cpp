@@ -16,7 +16,6 @@
  * It can query the map: contains(KEY) and at(KEY)
  * Many of its member functions are virtual because I don't think the implementation is definitive.
  * TODO s
- [ ] Write a copy constructor
  [ ] Write a copy assignment operator
  [ ] Write an interface parent class (so as to avoid std::string 'attrs_string').
  [ ] Write a parent Entities which will lack:
@@ -36,60 +35,103 @@ public:
   typedef std::pair<key_type,mapped_type> value_type;
   typedef CONT<key_type,mapped_type> map_t;
   //
-  //using container_t::contains;
-  //using container_t::at;
+  using container_t::contains;
+  using container_t::at, container_t::operator[];
+  using container_t::insert, container_t::erase;
+  using container_t::begin,  container_t::end;
+  using container_t::cbegin, container_t::cend;
 //protected:
   const CascadeMap_t* ptr_to_above;
 public:
-  virtual bool contains(const key_type& key) const;
-//      string_t& at(const string_t& key);
-                mapped_type& at (const key_type& k) = delete;
-  virtual const mapped_type& at(const key_type& key) const;
-  /* Constructors and virtual destructor:
-   * Always two versions are provided:
-     (1) one taken a parent const CascadeMap<> reference, and
-     (2) another one taken no const CascadeMap<> reference
-   * The constructor pairs are:
-   (1) those taking either a parent CascadeMap<> to be pointed to or none
-   (2) those taking a pair of iterators to initiaze the parent map
-   (3) those taking an initializer list
-   * NOTE : No copy constructor, but constructor initializing a pointer to CascadeMap above
+  // Members for handling 'ptr_to_above':
+  void set_parent(const CascadeMap_t &  cm) {ptr_to_above = &cm;};
+  void set_parent(const CascadeMap_t * pcm) {ptr_to_above = pcm;};
+  const CascadeMap_t& get_parent() const {return ptr_to_above;};
+  /* has(KEY) and get(KEY) are const members that query the current object and its pointee:
+   * If the local map does not contain the key,
+   * ptr_to_above->has(key) or ptr_to_above->get(key) is called
+   * which amount up to recursive behaviour up the inheritance tree.
    */
-  CascadeMap& operator=(const CascadeMap_t& ats) {ptr_to_above = &ats; return *this;};
-  CascadeMap(const CascadeMap_t& ats) : ptr_to_above(&ats)    {};
-  CascadeMap()                        : ptr_to_above(nullptr) {};
-  template <typename ITER>
-  CascadeMap(const CascadeMap_t& ats, ITER be, ITER en)
-  : container_t(be,en), ptr_to_above(&ats)
-  {};
+  virtual bool               has(const key_type& key) const;
+  virtual const mapped_type& get(const key_type& key) const;
+  /* (Non-moving) copy assignment, constructors and virtual destructor:
+   * Member 'ptr_to_above' is not initialized upon construction (in my implementation)
+     It is to be handled through set_parent(REF) and REF get_parent()
+   * Otherwise the full set of constructors and virtual destructor is provided
+   */
+  CascadeMap& operator=(const CascadeMap_t& ats);
+  CascadeMap(const CascadeMap_t& ats);
+  CascadeMap(); // empty constructor: 'ptr_to_above' set to nullptr
   template <typename ITER>
   CascadeMap(                         ITER be, ITER en)
   : container_t(be,en), ptr_to_above(nullptr) {};
-  CascadeMap(const CascadeMap_t& ats, std::initializer_list<value_type> il)
-  : container_t(il.begin(),il.end()), ptr_to_above(&ats) {};
-  CascadeMap(                         std::initializer_list<value_type> il)
-  : container_t(il.begin(),il.end()), ptr_to_above(nullptr) {};
+  CascadeMap(std::initializer_list<value_type> il);
+  CascadeMap_t& operator=(CascadeMap_t&& cm); // move assignment
+  CascadeMap(CascadeMap_t&& cm);              // move constructor
   virtual ~CascadeMap() = default;
 };
 
 // Implementations:
 
 template <typename KEY, typename MAPPED, template<typename,typename> typename CONT>
-bool CascadeMap<KEY,MAPPED,CONT>::contains(const key_type& key) const {
+bool CascadeMap<KEY,MAPPED,CONT>::has(const key_type& key) const {
   if(ptr_to_above==nullptr)
-    return container_t::contains(key);
+    return contains(key);
   else {
-    return container_t::contains(key) || ptr_to_above->contains(key);
+    return contains(key) || ptr_to_above->has(key);
   }
 };
 
 template <typename KEY, typename MAPPED, template<typename,typename> typename CONT>
-const MAPPED& CascadeMap<KEY,MAPPED,CONT>::at(const key_type& key) const {
+const MAPPED& CascadeMap<KEY,MAPPED,CONT>::get(const key_type& key) const {
   if(container_t::contains(key))
     return container_t::at(key);
   else {
     return ptr_to_above->at(key);
   }
 };
+
+// Implementations of Move Constructors:
+
+template <typename KEY, typename MAPPED, template<typename,typename> typename CONT>
+CascadeMap<KEY,MAPPED,CONT>& CascadeMap<KEY,MAPPED,CONT>::operator=(CascadeMap_t&& cm)
+{
+  container_t::operator=( std::move(cm) );
+  ptr_to_above = cm.ptr_to_above;
+  cm.ptr_to_above = nullptr;
+  return *this;
+};
+template <typename KEY, typename MAPPED, template<typename,typename> typename CONT>
+CascadeMap<KEY,MAPPED,CONT>::CascadeMap(CascadeMap_t&& cm) {
+  container_t::operator=( std::move(cm) );
+  ptr_to_above = cm.ptr_to_above;
+  cm.ptr_to_above = nullptr;
+};
+
+// Implementations of Other Constructors:
+
+template <typename KEY, typename MAPPED, template<typename,typename> typename CONT>
+CascadeMap<KEY,MAPPED,CONT>&
+CascadeMap<KEY,MAPPED,CONT>::operator=(const CascadeMap_t& ats) {
+  container_t::operator=(ats);
+  ptr_to_above = ats.ptr_to_above;
+  return *this;
+};
+
+template <typename KEY, typename MAPPED, template<typename,typename> typename CONT>
+CascadeMap<KEY,MAPPED,CONT>::CascadeMap(const CascadeMap_t& ats)
+: container_t(ats), ptr_to_above(ats.ptr_to_above)
+{};
+
+template <typename KEY, typename MAPPED, template<typename,typename> typename CONT>
+CascadeMap<KEY,MAPPED,CONT>::CascadeMap()
+: ptr_to_above(nullptr)
+{};
+
+
+template <typename KEY, typename MAPPED, template<typename,typename> typename CONT>
+CascadeMap<KEY,MAPPED,CONT>::CascadeMap(std::initializer_list<value_type> il)
+: container_t(il.begin(),il.end()), ptr_to_above(nullptr)
+{};
 
 #endif

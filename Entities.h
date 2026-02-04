@@ -7,14 +7,17 @@
 #include <string>
 
 /* Class Entities<STRING,MAP> contains:
-   - a map for entities
-   - a map for system entities
- * It also defines a member function (declare_doctype_and_entities(OSTREAM&))
-   for printing a DOCTYPE declarations with all entities stored so far.
+   - a map for internal (macro)  entities ('internal_entities')
+   - a map for external (SYSTEM) entities ('external_entities')
+ * It also defines overloaded member function:
+   - declare_doctype_and_entities(OSTREAM&,NAME)
+   - declare_doctype_and_entities(OSTREAM&,NAME,DTD)
+   for printing a DOCTYPE declarations with all entities stored so far (plus, possibly, a DTD declaration).
  * TODO s
- * [ ] add more kinds of entities
- * [ ] check the kinds of entities
- * [ ] member functions for querying either map
+ * [x] check the kinds of entities: internal and external, not ordinary and SYSTEM
+ *     member functions for querying either map:
+ * [ ] has_internal_entity(STR), which should check for existance
+ * [ ] has_external_entity(STR), which should check for existance of both value and referenced file
  */
 
 
@@ -24,14 +27,16 @@ public:
   typedef STRING string_t;
   typedef MAP<string_t,string_t> map_t;
   //
-  map_t system_entities;
-  map_t entities;
+  map_t external_entities;
+  map_t internal_entities;
   const static map_t inline default_entities{ {"lt","<"}, {"gt",">"}, {"apos","\'"}, {"quot","\""}, {"amp","&"} };
   //
-  void add_entity(       const string_t& key,  const string_t& value) {       entities[key] = value;};
-  void add_system_entity(const string_t& key,  const string_t& value) {system_entities[key] = value;};
+  bool has_internal_entity(const string_t& key) const {return internal_entities.contains(key);};
+  bool has_external_entity(const string_t& key) const {return internal_entities.contains(key);};
+  void add_internal_entity(const string_t& key,  const string_t& value) {internal_entities[key] = value;};
+  void add_external_entity(const string_t& key,  const string_t& value) {external_entities[key] = value;};
   //
-  void print_all_entities(          std::ostream& o) const; // print both internal and external entities
+  void print_all_entities(std::ostream& o) const; // print both internal and external entities
   void declare_doctype_and_entities(std::ostream& o, const string_t& name)                      const;
   void declare_doctype_and_entities(std::ostream& o, const string_t& name, const string_t& dtd) const;
   void print_system_entity(std::ostream& o, const string_t& key,  const string_t& value) const;
@@ -43,7 +48,7 @@ public:
   //
   Entities() = default;
   template <typename ITER>
-  Entities(ITER be, ITER en) : entities(be,en) {};
+  Entities(ITER be, ITER en) : internal_entities(be,en) {};
 };
 
 // Implementation of members
@@ -51,12 +56,12 @@ public:
 template <typename STRING, template <typename,typename> typename MAP>
 void Entities<STRING,MAP>::print_all_entities(std::ostream& o) const {
   o << " [\n";
-  for(const auto& pa : system_entities) {
+  for(const auto& pa : external_entities) {
     o << "  ";
     print_system_entity(o, pa.first, pa.second);
     o << '\n';
   }
-  for(const auto& pa : entities) {
+  for(const auto& pa : internal_entities) {
     o << "  ";
     print_entity(o, pa.first, pa.second);
     o << '\n';
@@ -66,14 +71,14 @@ void Entities<STRING,MAP>::print_all_entities(std::ostream& o) const {
 template <typename STRING, template <typename,typename> typename MAP>
 void Entities<STRING,MAP>::declare_doctype_and_entities(    std::ostream& o, const string_t& name) const {
   o << "<!DOCTYPE " << name ;
-  if(system_entities.size() || entities.size())
+  if(external_entities.size() || internal_entities.size())
     print_all_entities(o);
   o << ">\n";
 };
 template <typename STRING, template <typename,typename> typename MAP>
 void Entities<STRING,MAP>::declare_doctype_and_entities(    std::ostream& o, const string_t& name, const string_t& dtd) const {
   o << "<!DOCTYPE " << name << " SYSTEM \"" << dtd << '\"';
-  if(system_entities.size() || entities.size())
+  if(external_entities.size() || internal_entities.size())
     print_all_entities(o);
   o << ">\n";
 };
@@ -92,14 +97,14 @@ void Entities<STRING,MAP>::print_entity(std::ostream& o, const string_t& key, co
 template <typename STRING, template <typename,typename> typename MAP>
 void Entities<STRING,MAP>::print_mapped_entity(std::ostream& o, const string_t enti) const {
   std::cout << "[PROCESSING ENTITY \"" << enti << "\", ";
-  if(entities.contains(       enti))
+  if(internal_entities.contains(       enti))
   {
     std::cout << "WHICH IS AN INTERNAL ENTITY.]";
-    o << entities.at(enti);
+    o << internal_entities.at(enti);
   }
-  if(system_entities.contains(enti)) {
+  if(external_entities.contains(enti)) {
     std::cout << "WHICH IS AN EXTERNAL ENTITY.]";
-    std::ifstream ifs(system_entities.at(enti));
+    std::ifstream ifs(external_entities.at(enti));
     if (ifs) {
     copy(ifs, o);
     ifs.close();

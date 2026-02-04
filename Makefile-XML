@@ -17,6 +17,9 @@ CascadeMap.test: CascadeMap.test.cpp CascadeMap.h
 Attributes.test: Attributes.test.cpp Attributes.h
 	g++ -std=c++23 $<  -o $@
 
+Namespaces.test: Namespaces.test.cpp Namespaces.h
+	g++ -std=c++23 $<  -o $@
+
 Entities.test: Entities.test.cpp Entities.h
 	g++ -std=c++23 $<  -o $@
 
