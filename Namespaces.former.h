@@ -14,23 +14,19 @@
 #endif
 
 /* Class Namespaces<> may hold both a default namespace and several named namespaces
- * TODO
- * [ ] bring the code in../qname.h into this unit
- *     in order to extract the prefix and the local part of a qualified name
  *
  */
 
-template <typename CHAR = char,
+template <typename STRING=std::string,
           template<typename,typename> typename MAP = std::map,
-          PrintTransformer PT = DefaultPrintTransformer<CHAR>,
-          typename STRING=std::basic_string<CHAR>,
+          PrintTransformer PT = DefaultPrintTransformer,
           typename LEVEL = Level<signed int>
         >
-class Namespaces : public CascadeMap<STRING,STRING,MAP>, public XMLnode<CHAR,PT,LEVEL> {
+class Namespaces : public CascadeMap<STRING,STRING,MAP>, public XMLnode<PT,LEVEL> {
 public:
   typedef CascadeMap<STRING,STRING,MAP> CascadeMap_t;
-  typedef STRING string_t;
-  typedef Namespaces<CHAR,MAP,PT,STRING,LEVEL> Namespaces_t;
+  typedef std::string string_t;
+  typedef Namespaces<STRING,MAP,PT,LEVEL> Namespaces_t;
   //using CascadeMap_t::ptr_to_above;
   using typename CascadeMap_t::value_type;
   using CascadeMap_t::contains;
@@ -69,59 +65,53 @@ public:
 
 // Implementation of member functions:
 
-template <typename CHAR,
+template <typename STRING,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
-          typename STRING,
           typename LEVEL>
-bool Namespaces<CHAR,MAP,PT,STRING,LEVEL>::has_default_namespace() const {
+bool Namespaces<STRING,MAP,PT,LEVEL>::has_default_namespace() const {
   return default_namespace.length();
 };
 
-template <typename CHAR,
+template <typename STRING,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
-          typename STRING,
           typename LEVEL>
-void Namespaces<CHAR,MAP,PT,STRING,LEVEL>::set_default_namespace(const string_t& ns) {
+void Namespaces<STRING,MAP,PT,LEVEL>::set_default_namespace(const string_t& ns) {
   default_namespace = ns;
 };
 
-template <typename CHAR,
+template <typename STRING,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
-          typename STRING,
           typename LEVEL>
-bool Namespaces<CHAR,MAP,PT,STRING,LEVEL>::has_namespace(const string_t& ns) const {
+bool Namespaces<STRING,MAP,PT,LEVEL>::has_namespace(const string_t& ns) const {
   return at(ns);
 };
 
-template <typename CHAR,
+template <typename STRING,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
-          typename STRING,
           typename LEVEL>
-const Namespaces<CHAR,MAP,PT,STRING,LEVEL>::string_t& Namespaces<CHAR,MAP,PT,STRING,LEVEL>::get_namespace(const string_t& key) const {
+const std::string& Namespaces<STRING,MAP,PT,LEVEL>::get_namespace(const string_t& key) const {
   return at(key);
 };
 
-template <typename CHAR,
+template <typename STRING,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
-          typename STRING,
           typename LEVEL>
-void Namespaces<CHAR,MAP,PT,STRING,LEVEL>::print_namespace(std::ostream& o,
+void Namespaces<STRING,MAP,PT,LEVEL>::print_namespace(std::ostream& o,
                                                         const string_t& key,
                                                         const string_t& value) const {
   o << " xmlns:" << key << "=\"" << value << '\"';
 };
 
-template <typename CHAR,
+template <typename STRING,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
-          typename STRING,
           typename LEVEL>
-void Namespaces<CHAR,MAP,PT,STRING,LEVEL>::print(std::ostream& o, LEVEL l) const {
+void Namespaces<STRING,MAP,PT,LEVEL>::print(std::ostream& o, LEVEL l) const {
   if(has_default_namespace())
     o << " xmlns=\"" << default_namespace;
   for (auto  be = map_t::cbegin(); be != map_t::end(); ++be) {

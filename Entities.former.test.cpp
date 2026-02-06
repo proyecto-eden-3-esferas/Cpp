@@ -1,14 +1,12 @@
 #ifndef ENTITIES_H
-#include "Entities.h"
+#include "Entities.former.h"
 #endif
-
-typedef Entities<char> Entities_t;
 
 using namespace std;
 
 int main() {
 
-  Entities_t es;
+  Entities es;
   cout << "First, declare doctype and entities given a doctype and a DTD:\n";
   es.declare_doctype_and_entities(cout,
                                   "book",
@@ -27,7 +25,7 @@ int main() {
   cout << "Let us now test print_transformed(OSTREAM&, TEXT):\n";
   string str0("Do not break&nbsp;this space!.\n");
   string str1("Made in &date;.\n");
-  string str2("Computations have produced:\n &result_file;\nmuch to our satisfaction.\n");
+  string str2("Computations have produced:\n &result_file;\nmuch to our full satisfaction.\n");
   es.print_transformed(cout, str0);
   es.print_transformed(cout, str1);
   es.print_transformed(cout, str2);

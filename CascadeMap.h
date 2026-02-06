@@ -7,19 +7,12 @@
 #include <string>
 
 /* Class CascadeMap holds a map and a pointer to its parent
- * It keeps a container that maps keys (string's) to values
+ * It keeps a container that maps keys (often enough string's) to values
  * It holds a pointer to the next Attribute above, its only parent,
    as this mirrors inheritance of attributes the way XML works
    (a cascade, as in CSS: the most immediate version overrides those above)
- * It can print the contents of such a map (low-priority goal, though).
- * It can add new (key,value) pairs: set(KEY,MAPPED).
  * It can query the map: contains(KEY) and at(KEY)
  * Many of its member functions are virtual because I don't think the implementation is definitive.
- * TODO s
- [ ] Write a copy assignment operator
- [ ] Write an interface parent class (so as to avoid std::string 'attrs_string').
- [ ] Write a parent Entities which will lack:
-     - a pointer to a parent Entity and associated cascading code
  */
 
 

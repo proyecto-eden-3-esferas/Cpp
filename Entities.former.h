@@ -7,7 +7,7 @@
 #include <map>
 #include <string>
 
-/* Class Entities<CHAR,STRING,MAP> contains:
+/* Class Entities<STRING,MAP> contains:
    - a map for internal (macro)  entities ('internal_entities')
    - a map for external (SYSTEM) entities ('external_entities')
  * It also defines overloaded member function:
@@ -22,16 +22,14 @@
  */
 
 
-template <typename CHAR=char,
-          typename STRING=std::basic_string<CHAR>,
-          template <typename,typename> typename MAP = std::map>
+template <typename STRING=std::string, template <typename,typename> typename MAP = std::map>
 class Entities {
 public:
   typedef STRING string_t;
   typedef MAP<string_t,string_t> map_t;
   typedef typename map_t::iterator iterator;
   typedef std::pair<string_t,string_t> value_t;
-  typedef Entities<CHAR,STRING,MAP> Entity_t;
+  typedef Entities<STRING,MAP> Entity_t;
   //
   map_t external_entities;
   map_t internal_entities;
@@ -42,15 +40,15 @@ public:
         map_t& get_external_entities()       {return external_entities;}
   const map_t& get_external_entities() const {return external_entities;}
   //
-  void print_all_entities(std::basic_ostream<CHAR>& o) const; // print both internal and external entities
-  void declare_doctype_and_entities(std::basic_ostream<CHAR>& o, const string_t& name)                      const;
-  void declare_doctype_and_entities(std::basic_ostream<CHAR>& o, const string_t& name, const string_t& dtd) const;
-  void print_system_entity(std::basic_ostream<CHAR>& o, const string_t& key,  const string_t& value) const;
-  void print_entity(       std::basic_ostream<CHAR>& o, const string_t& key,  const string_t& value) const;
+  void print_all_entities(std::ostream& o) const; // print both internal and external entities
+  void declare_doctype_and_entities(std::ostream& o, const string_t& name)                      const;
+  void declare_doctype_and_entities(std::ostream& o, const string_t& name, const string_t& dtd) const;
+  void print_system_entity(std::ostream& o, const string_t& key,  const string_t& value) const;
+  void print_entity(       std::ostream& o, const string_t& key,  const string_t& value) const;
   //
-  void print_mapped_entity(std::basic_ostream<CHAR>& o, const string_t text) const;
-  void print_transformed(  std::basic_ostream<CHAR>& o, const string_t text) const;
-  static void copy(std::basic_istream<CHAR>& is, std::basic_ostream<CHAR>& os);
+  void print_mapped_entity(std::ostream& o, const string_t text) const;
+  void print_transformed(  std::ostream& o, const string_t text) const;
+  static void copy(std::istream& is, std::ostream& os);
   // Constructors and virtual destructor:
   Entities() = default;
   Entities(std::initializer_list<value_t> il) : internal_entities(il) {};
@@ -72,8 +70,8 @@ public:
 
 // Implementation of Entities<> members
 
-template <typename CHAR, typename STRING, template <typename,typename> typename MAP>
-void Entities<CHAR,STRING,MAP>::print_all_entities(std::basic_ostream<CHAR>& o) const {
+template <typename STRING, template <typename,typename> typename MAP>
+void Entities<STRING,MAP>::print_all_entities(std::ostream& o) const {
   o << " [\n";
   for(const auto& pa : get_external_entities()) {
     o << "  ";
@@ -87,34 +85,34 @@ void Entities<CHAR,STRING,MAP>::print_all_entities(std::basic_ostream<CHAR>& o) 
   }
   o << "]";
 };
-template <typename CHAR, typename STRING, template <typename,typename> typename MAP>
-void Entities<CHAR,STRING,MAP>::declare_doctype_and_entities(    std::basic_ostream<CHAR>& o, const string_t& name) const {
+template <typename STRING, template <typename,typename> typename MAP>
+void Entities<STRING,MAP>::declare_doctype_and_entities(    std::ostream& o, const string_t& name) const {
   o << "<!DOCTYPE " << name ;
   if(get_external_entities().size() || get_internal_entities().size())
     print_all_entities(o);
   o << ">\n";
 };
-template <typename CHAR, typename STRING, template <typename,typename> typename MAP>
-void Entities<CHAR,STRING,MAP>::declare_doctype_and_entities(    std::basic_ostream<CHAR>& o, const string_t& name, const string_t& dtd) const {
+template <typename STRING, template <typename,typename> typename MAP>
+void Entities<STRING,MAP>::declare_doctype_and_entities(    std::ostream& o, const string_t& name, const string_t& dtd) const {
   o << "<!DOCTYPE " << name << " SYSTEM \"" << dtd << '\"';
   if(get_external_entities().size() || get_internal_entities().size())
     print_all_entities(o);
   o << ">\n";
 };
 
-template <typename CHAR, typename STRING, template <typename,typename> typename MAP>
-void Entities<CHAR,STRING,MAP>::print_system_entity(std::basic_ostream<CHAR>& o, const string_t& key, const string_t& value) const {
+template <typename STRING, template <typename,typename> typename MAP>
+void Entities<STRING,MAP>::print_system_entity(std::ostream& o, const string_t& key, const string_t& value) const {
   o << "<!ENTITY " << key << " SYSTEM \"" << value << "\">";
 };
 
-template <typename CHAR, typename STRING, template <typename,typename> typename MAP>
-void Entities<CHAR,STRING,MAP>::print_entity(std::basic_ostream<CHAR>& o, const string_t& key, const string_t& value) const {
+template <typename STRING, template <typename,typename> typename MAP>
+void Entities<STRING,MAP>::print_entity(std::ostream& o, const string_t& key, const string_t& value) const {
   //o << "<!ENTITY " << key << " \"&" << value << ";\">";
   o << "<!ENTITY " << key << " \"" << value << "\">";
 };
 
-template <typename CHAR, typename STRING, template <typename,typename> typename MAP>
-void Entities<CHAR,STRING,MAP>::print_mapped_entity(std::basic_ostream<CHAR>& o, const string_t enti) const {
+template <typename STRING, template <typename,typename> typename MAP>
+void Entities<STRING,MAP>::print_mapped_entity(std::ostream& o, const string_t enti) const {
 #ifdef DEBUG
   std::cout << "[PROCESSING ENTITY \"" << enti << "\", ";
 #endif
@@ -140,8 +138,8 @@ void Entities<CHAR,STRING,MAP>::print_mapped_entity(std::basic_ostream<CHAR>& o,
 
 };
 
-template <typename CHAR, typename STRING, template <typename,typename> typename MAP>
-void Entities<CHAR,STRING,MAP>::print_transformed(std::basic_ostream<CHAR>& o, const string_t text) const {
+template <typename STRING, template <typename,typename> typename MAP>
+void Entities<STRING,MAP>::print_transformed(std::ostream& o, const string_t text) const {
   for(int i = 0; i < text.length(); ++i) {
     std::string ent;
     switch (text[i]) {
@@ -159,8 +157,8 @@ void Entities<CHAR,STRING,MAP>::print_transformed(std::basic_ostream<CHAR>& o, c
   }
 };
 
-template <typename CHAR, typename STRING, template <typename,typename> typename MAP>
-void Entities<CHAR,STRING,MAP>::copy(std::basic_istream<CHAR>& is, std::basic_ostream<CHAR>& os) {
+template <typename STRING, template <typename,typename> typename MAP>
+void Entities<STRING,MAP>::copy(std::istream& is, std::ostream& os) {
   char c;
   while(true) {
     c = is.get();

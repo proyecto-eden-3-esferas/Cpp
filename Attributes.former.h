@@ -31,25 +31,24 @@
  * TODO s
  [ ] Write a copy constructor
  [ ] Write a copy assignment operator
- [ ] Write an interface parent class (so as to avoid std::basic_string<CHAR> 'attrs_string').
+ [ ] Write an interface parent class (so as to avoid std::string 'attrs_string').
  [ ] Write a parent Entities which will lack:
      - a pointer to a parent Entity and associated cascading code
  */
 
 /*
-// Forward declaration of class Attributes<CHAR,PT,STRING,CONT,LEVEL>
+// Forward declaration of class Attributes<PT,STRING,CONT,LEVEL>
 template <template<typename,typename> typename CONT>
 class Attributes;
  */
 
-template <typename CHAR = char,
-          PrintTransformer PT = DefaultPrintTransformer<CHAR>,
-          typename STRING=std::basic_string<CHAR>,
+template <PrintTransformer PT = DefaultPrintTransformer,
+          typename STRING=std::string,
           template<typename,typename> typename CONT = std::map,
           typename LEVEL = Level<signed int> >
-class Attributes : public CascadeMap<STRING,STRING,CONT>, public XMLnode<CHAR,PT,LEVEL> {
+class Attributes : public CascadeMap<STRING,STRING,CONT>, public XMLnode<PT,LEVEL> {
 public:
-  typedef Attributes<CHAR,PT,STRING,CONT,LEVEL> Attributes_t;
+  typedef Attributes<PT,STRING,CONT,LEVEL> Attributes_t;
   typedef CONT<STRING,STRING>   container_t; // actually, its parent, typically std::map<K,V>
   typedef CascadeMap<STRING,STRING,CONT> CascadeMap_t;
   typedef STRING key_type;
@@ -63,15 +62,15 @@ public:
   using container_t::begin,  container_t::end;
   using container_t::cbegin, container_t::cend;
   using CascadeMap_t::has, CascadeMap_t::get; // getters for (*this + *ptr_to_above)
-  using CascadeMap_t::ptr_to_above, CascadeMap_t::set_parent;
+  using CascadeMap_t::ptr_to_above;
   using CascadeMap_t::operator=, CascadeMap_t::CascadeMap;
 //protected:
   char sep;
 public:
-  virtual std::basic_ostream<CHAR>& print_map(std::basic_ostream<CHAR>& o)         const {return print_map(o,sep);};
-  virtual std::basic_ostream<CHAR>& print_map(std::basic_ostream<CHAR>& o, char s) const;
-  void load( std::basic_stringstream<CHAR>& ss) const {print_map(ss, Level(0));}
-  void print(std::basic_ostream<CHAR>& o, LEVEL l=LEVEL(0)) const override;
+  virtual std::ostream& print_map(std::ostream& o)         const {return print_map(o,sep);};
+  virtual std::ostream& print_map(std::ostream& o, char s) const;
+  void load( std::stringstream& ss) const {print_map(ss, Level(0));}
+  void print(std::ostream& o, LEVEL l=LEVEL(0)) const override;
   // Constructor(s) and destructor:
   Attributes_t& operator=(const Attributes_t&  ats) = default; // unnecessary
   Attributes(const Attributes_t& ats, char s)      : CascadeMap_t(ats),    sep(s)       {};
@@ -88,44 +87,40 @@ public:
 
 // Implementations:
 
-template <typename CHAR,
-          PrintTransformer PT,
+template <PrintTransformer PT,
           typename STRING,
           template<typename,typename> typename CONT,
           typename LEVEL>
-std::basic_ostream<CHAR>& Attributes<CHAR,PT,STRING,CONT,LEVEL>::print_map(std::basic_ostream<CHAR>& o, char s) const {
+std::ostream& Attributes<PT,STRING,CONT,LEVEL>::print_map(std::ostream& o, char s) const {
   for(const auto & p : *this) {
     o << ' ' << p.first << '=' << sep << p.second << sep;
   }
   return o;
 };
 
-template <typename CHAR,
-          PrintTransformer PT,
+template <PrintTransformer PT,
           typename STRING,
           template<typename,typename> typename CONT,
           typename LEVEL>
-void Attributes<CHAR,PT,STRING,CONT,LEVEL>::print(std::basic_ostream<CHAR>& o, LEVEL l) const {
+void Attributes<PT,STRING,CONT,LEVEL>::print(std::ostream& o, LEVEL l) const {
   print_map(o,sep);
 };
 
-template <typename CHAR,
-          PrintTransformer PT,
+template <PrintTransformer PT,
           typename STRING,
           template<typename,typename> typename CONT,
           typename LEVEL>
-Attributes<CHAR,PT,STRING,CONT,LEVEL>&
-Attributes<CHAR,PT,STRING,CONT,LEVEL>::operator=(Attributes_t&& ats) {
+Attributes<PT,STRING,CONT,LEVEL>&
+Attributes<PT,STRING,CONT,LEVEL>::operator=(Attributes_t&& ats) {
   CascadeMap_t::operator=(std::move(ats));
   return *this;
 };
 
-template <typename CHAR,
-          PrintTransformer PT,
+template <PrintTransformer PT,
           typename STRING,
           template<typename,typename> typename CONT,
           typename LEVEL>
-Attributes<CHAR,PT,STRING,CONT,LEVEL>::Attributes(Attributes_t&& ats)
+Attributes<PT,STRING,CONT,LEVEL>::Attributes(Attributes_t&& ats)
 : CascadeMap_t(std::move(ats))
 {};
 

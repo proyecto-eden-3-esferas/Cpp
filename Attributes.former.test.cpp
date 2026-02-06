@@ -1,8 +1,8 @@
 #ifndef ATTRIBUTES_H
-#include "Attributes.h"
+#include "Attributes.former.h"
 #endif
 
-typedef Attributes<char> Attributes_t;
+typedef Attributes<> Attributes_t;
 
 #include <iostream>
 #include <sstream>
@@ -12,8 +12,7 @@ using namespace std;
 int main() {
 
   Attributes_t attrs0('\'');
-  Attributes_t attrs1('\'');
-  attrs1.set_parent(attrs0);
+  Attributes_t attrs1(attrs0, '\'');
 
   cout << boolalpha;
   cout << "Is attrs0.ptr_to_above nullptr? "  <<  (attrs0.ptr_to_above == nullptr) << '\n';

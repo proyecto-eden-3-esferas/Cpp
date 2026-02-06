@@ -41,7 +41,7 @@
 #include <vector>
 
 #ifndef XMLNODE_H
-#include "XMLnode.h"
+#include "XMLnode.former.h"
 #endif
 
 /* Definition of structs/classes: XMLText, XMLprocessing_instruction, XMLCDATA and XMLdoc
@@ -49,21 +49,19 @@
  *                   or inherit    from other classes
  */
 
-template <typename CHAR = char,
-          PrintTransformer PT = DefaultPrintTransformer<CHAR>,
+template <PrintTransformer PT = DefaultPrintTransformer,
           typename LEVEL = Level<signed int> >
-class XMLText : public XMLnode<CHAR,PT,LEVEL> {
+class XMLText : public XMLnode<PT,LEVEL> {
 protected:
-  std::basic_string<CHAR> text;
+  std::string text;
 public:
-  void print(std::basic_ostream<CHAR>& o, LEVEL l) const override;
+  void print(std::ostream& o, LEVEL l) const override;
   //
-  XMLText(const std::basic_string<CHAR>& s) : text(s) {};
+  XMLText(const std::string& s) : text(s) {};
 };
-template <typename CHAR,
-          PrintTransformer PT,
+template <PrintTransformer PT,
           typename LEVEL>
-void XMLText<CHAR,PT,LEVEL>::print(std::basic_ostream<CHAR>& o, LEVEL l) const {
+void XMLText<PT,LEVEL>::print(std::ostream& o, LEVEL l) const {
   for(auto c : text)
     {
       switch (c) {
@@ -77,33 +75,28 @@ void XMLText<CHAR,PT,LEVEL>::print(std::basic_ostream<CHAR>& o, LEVEL l) const {
     }
 };
 
-template <typename CHAR = char,
-          PrintTransformer PT = DefaultPrintTransformer<CHAR>,
-          typename LEVEL = Level<signed int> >
-struct XMLComment : XMLText<CHAR,PT,LEVEL> {
-  using XMLText<CHAR,PT,LEVEL>::text;
-  void print(std::basic_ostream<CHAR>& o, LEVEL l) const override { o << "<!-- " << text << " -->";};
+template <PrintTransformer PT = DefaultPrintTransformer,typename LEVEL = Level<signed int> >
+struct XMLComment : XMLText<PT,Level<signed int> > {
+  using XMLText<PT, Level<signed int> >::text;
+  void print(std::ostream& o, LEVEL l) const override { o << "<!-- " << text << " -->";};
   //
-  XMLComment(const std::basic_string<CHAR>& com) : XMLText<CHAR,PT,LEVEL>(com) {};
+  XMLComment(const std::string& com) : XMLText<PT,LEVEL>(com) {};
 };
-template <typename CHAR = char,
-          PrintTransformer PT = DefaultPrintTransformer<CHAR>,
+template <PrintTransformer PT = DefaultPrintTransformer,
           typename LEVEL = Level<signed int> >
-struct XMLCDATA : XMLText<CHAR,PT,LEVEL> {
-  using XMLText<CHAR,PT,LEVEL>::text;
-  void print(std::basic_ostream<CHAR>& o, LEVEL l) const override { o << "<![CDATA[" << text << "]]>";};
+struct XMLCDATA : XMLText<PT,Level<signed int> > {
+  using XMLText<PT, Level<signed int> >::text;
+  void print(std::ostream& o, LEVEL l) const override { o << "<![CDATA[" << text << "]]>";};
   //
-  XMLCDATA(const std::basic_string<CHAR>& s) : XMLText<CHAR,PT,LEVEL>(s) {};
+  XMLCDATA(const std::string& s) : XMLText<PT,LEVEL>(s) {};
 };
-template <typename CHAR = char,
-          PrintTransformer PT = DefaultPrintTransformer<CHAR>,
-          typename LEVEL = Level<signed int> >
+template <typename LEVEL = Level<signed int> >
 struct XMLprocessing_instruction {
-  std::basic_string<CHAR> name;
-  std::basic_string<CHAR> instruction;
-  void print(std::basic_ostream<CHAR>& o, LEVEL l) const override { o << "<?" << name << ' ' << instruction  << " ?>";}
+  std::string name;
+  std::string instruction;
+  void print(std::ostream& o, LEVEL l) const override { o << "<?" << name << ' ' << instruction  << " ?>";}
   //
-  XMLprocessing_instruction(const std::basic_string<CHAR>& n, const std::basic_string<CHAR>& i) : name(n), instruction(i) {};
+  XMLprocessing_instruction(const std::string& n, const std::string& i) : name(n), instruction(i) {};
 };
 
 
@@ -116,23 +109,22 @@ struct XMLprocessing_instruction {
        Perhaps only small nodes should be held by value
    [ ] a pointer to parent node commits the implementation to a tree
  */
-template <typename CHAR = char,
-          PrintTransformer PT = DefaultPrintTransformer<CHAR>,
+template <PrintTransformer PT = DefaultPrintTransformer,
           typename LEVEL = Level<signed int>,
           template <typename>          typename CONT = std::vector, // sequential container for elements
           template <typename,typename> typename  MAP = std::map     // containers for attributes and namespaces
          >
-class XMLelement : public XMLnode<CHAR,PT,LEVEL>  {
+class XMLelement : public XMLnode<PT,LEVEL>  {
 public:
-  typedef std::basic_string<CHAR> string_t;
+  typedef std::string string_t;
   typedef             string_t name_t;
   typedef CascadeMap<string_t, string_t, std::map> CascadeMap_t;
   typedef CascadeMap_t attributes_t;
   typedef CascadeMap_t namespaces_t;
-  typedef XMLnode<CHAR,PT,LEVEL> XMLnode_t;
+  typedef XMLnode<PT,LEVEL> XMLnode_t;
   typedef const XMLnode_t * const_pointer;
   typedef       XMLnode_t *       pointer;
-  typedef XMLelement<CHAR,PT,LEVEL,CONT,MAP> XMLelement_t;
+  typedef XMLelement<PT,LEVEL,CONT,MAP> XMLelement_t;
   typedef CONT<pointer> children_t;
   //
 //protected:
@@ -163,9 +155,9 @@ public:
   virtual bool holds_inlines() const {return  hold_inlines;};
   virtual bool holds_blocks()  const {return !hold_inlines;};
   //
-  void print_opening_tag_unclosed(std::basic_ostream<CHAR>& o , LEVEL l) const;
-  void print_opening_tag(std::basic_ostream<CHAR>& o , LEVEL l) const;
-  void print(std::basic_ostream<CHAR>& o, LEVEL l) const override;
+  void print_opening_tag_unclosed(std::ostream& o , LEVEL l) const;
+  void print_opening_tag(std::ostream& o , LEVEL l) const;
+  void print(std::ostream& o, LEVEL l) const override;
 public:
 //private:
   // Member functions to add children as const pointers to XMLnode<>:
@@ -173,7 +165,6 @@ public:
   virtual void add(XMLnode_t * pNode) {children.emplace_back(pNode);};
   // Constructor(s) and destructor:
   XMLelement(const string_t& nm, bool blk=true, bool hi=false);
-  XMLelement(const CHAR * pChar, bool blk=true, bool hi=false);
   template <typename ITER>
   XMLelement(const string_t& nm, ITER be, ITER en, bool blk=true, bool hi=false)
   : name(nm), children(be,en), block(blk), hold_inlines(hi) {};
@@ -183,12 +174,11 @@ public:
 
 // Implementation of XMLelement<> member functions:
 
-template <typename CHAR,
-          PrintTransformer PT,
+template <PrintTransformer PT,
           typename LEVEL,
           template <typename>          typename CONT,
           template <typename,typename> typename  MAP>
-void XMLelement<CHAR,PT,LEVEL,CONT,MAP>::print_opening_tag_unclosed(std::basic_ostream<CHAR>& o , LEVEL l) const {
+void XMLelement<PT,LEVEL,CONT,MAP>::print_opening_tag_unclosed(std::ostream& o , LEVEL l) const {
   if(is_block())
     o << '\n' << l;
   o << '<' << get_name();
@@ -196,12 +186,11 @@ void XMLelement<CHAR,PT,LEVEL,CONT,MAP>::print_opening_tag_unclosed(std::basic_o
   for(const auto & p : attributes)
     o << ' ' << p.first << '=' << '\"' << p.second << '\"';
 };
-template <typename CHAR,
-          PrintTransformer PT,
+template <PrintTransformer PT,
           typename LEVEL,
           template <typename>          typename CONT,
           template <typename,typename> typename  MAP>
-void XMLelement<CHAR,PT,LEVEL,CONT,MAP>::print_opening_tag(std::basic_ostream<CHAR>& o , LEVEL l) const {
+void XMLelement<PT,LEVEL,CONT,MAP>::print_opening_tag(std::ostream& o , LEVEL l) const {
   print_opening_tag_unclosed(o,l);
   o << '>';
   /*
@@ -209,12 +198,11 @@ void XMLelement<CHAR,PT,LEVEL,CONT,MAP>::print_opening_tag(std::basic_ostream<CH
     o << '\n';
   */
 };
-template <typename CHAR,
-          PrintTransformer PT,
+template <PrintTransformer PT,
           typename LEVEL,
           template <typename>          typename CONT,
           template <typename,typename> typename  MAP>
-void XMLelement<CHAR,PT,LEVEL,CONT,MAP>::print(std::basic_ostream<CHAR>& o, LEVEL l) const {
+void XMLelement<PT,LEVEL,CONT,MAP>::print(std::ostream& o, LEVEL l) const {
   print_opening_tag(o,l);
   /* Print each item in 'children'
    * Remember to indent properly. */
@@ -227,22 +215,11 @@ void XMLelement<CHAR,PT,LEVEL,CONT,MAP>::print(std::basic_ostream<CHAR>& o, LEVE
     o << '\n';
 };
 
-template <typename CHAR,
-          PrintTransformer PT,
+template <PrintTransformer PT,
           typename LEVEL,
           template <typename>          typename CONT,
           template <typename,typename> typename  MAP>
-XMLelement<CHAR,PT,LEVEL,CONT,MAP>::XMLelement(const string_t& nm, bool blk, bool hi)
+XMLelement<PT,LEVEL,CONT,MAP>::XMLelement(const string_t& nm, bool blk, bool hi)
   : name(nm), block(blk), hold_inlines(hi)
   {};
-
-template <typename CHAR,
-          PrintTransformer PT,
-          typename LEVEL,
-          template <typename>          typename CONT,
-          template <typename,typename> typename  MAP>
-XMLelement<CHAR,PT,LEVEL,CONT,MAP>::XMLelement(const CHAR* pChar, bool blk, bool hi)
-  : name(pChar), block(blk), hold_inlines(hi)
-  {};
-
 #endif
