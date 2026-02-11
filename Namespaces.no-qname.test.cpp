@@ -1,5 +1,5 @@
 #ifndef NAMESPACES_H
-#include "Namespaces.h"
+#include "Namespaces.no-qname.h"
 #endif
 
 #include <string>
@@ -21,7 +21,6 @@ pair_t namespace_array[] = {
 };
 
 Namespaces_type nss0, nss1("http://docbook.org/ns/docbook");
-Namespaces_type       nss2("http://docbook.org/ns/docbook", std::begin(namespace_array), std::end(namespace_array));
 
 
 using namespace std;
@@ -36,15 +35,7 @@ int main() {
   nss0.insert(std::begin(namespace_array),
               std::end(  namespace_array));
   nss0.set_default_namespace("http://www.w3.org/1999/HTML");
-  cout << "\nAfter loading nss0 with a default namespace and a map of namespaces, it prints:\n";
   nss0.print(cout);
-
-  cout << "\n\nnss2 has been fully initialized, we delete the \"db\" entry";
-  cout << " (by calling member \'erase_if_same_as_default()\'), and then it prints:\n";
-  //nss2.erase("db");
-  nss2.erase_if_same_as_default();
-  nss2.print(cout);
-  cout << '\n';
 
   return 0;
 }

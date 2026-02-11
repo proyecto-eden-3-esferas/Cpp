@@ -12,7 +12,7 @@ typedef DefaultPrintTransformer<char_type> DPrintTransformer_t;
 
 typedef XMLnode<char_type> XMLnode_t;
 typedef XMLnode<char_type,
-                Entities<std::basic_string<char_type>>
+                Entities<char_type>
                > XMLnodeEnt_t;
 
 using namespace std;

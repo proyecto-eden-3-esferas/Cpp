@@ -37,9 +37,11 @@ public:
   const CascadeMap_t* ptr_to_above;
 public:
   // Members for handling 'ptr_to_above':
+  bool has_parent() const {return ptr_to_above != nullptr;};
   void set_parent(const CascadeMap_t &  cm) {ptr_to_above = &cm;};
   void set_parent(const CascadeMap_t * pcm) {ptr_to_above = pcm;};
-  const CascadeMap_t& get_parent() const {return ptr_to_above;};
+  const CascadeMap_t * get_parent() const {return ptr_to_above;};
+  void unset_parent() {ptr_to_above = nullptr;};
   /* has(KEY) and get(KEY) are const members that query the current object and its pointee:
    * If the local map does not contain the key,
    * ptr_to_above->has(key) or ptr_to_above->get(key) is called

@@ -1,68 +1,53 @@
-#ifndef XML_COMPONENTS_H
+#ifndef XMLELEMENT_H
 #include "XMLelement.h"
 #endif
 
-#ifndef XML_GLOBALS_H
-#include "XML.globals.h"
-#endif
 
+#include <string>
+#include <iostream>
+
+typedef XMLelement<> XMLelement_t;
+typedef typename XMLelement_t::display display;
+typedef typename XMLelement_t::Namespaces_t Namespaces_t;
+typedef typename XMLelement_t::Attributes_t Attributes_t;
 
 using namespace std;
 
-typedef XMLelement<std::list> XMLelem_t;
 
 int main() {
-  
-  // Declare an XMLText object ('t') and serialize it / deserialize it into/out of a stringstream (ss):
-  cout << "Declare an XMLText object (\'t\'),\n";
-  cout << "CONTENTS: A text section,\nnot an <element kind=\"whatever\"/> ...\n";
-  XMLText t("A text section,\nnot an <element kind=\"whatever\"/> ...");
-  cout << "serialize \'t\' to screen: " << '\"'; serialize_string(cout, t.text); cout << '\"' << endl;
-  cout << "last serialize it / deserialize it into/out of a stringstream (\'ss\'):\n";
-  stringstream ss;
-  serialize_string(ss,t.text);
-  cout << "contents of \'ss\': \"" << ss.str() << '\"' << endl << endl;
-  
-  cout << "Then deserialize_string(ss) into pChar, of type char*\n";
-  char* pChar = deserialize_string(ss);
-  cout << "pChar: \"" << pChar << '\"' << endl << endl;
-  
-  cout << "A CData section (<manifold \\ / ?... \"&) should be output as it is, with no entity conversions.\n";
-  XMLCDATA cdata("<manifold \\ / ?... \"&");
-  cout << cdata;
-  cout << endl << endl;
-  
-  cout << "Declare an XMLelement variable \'h\' with name \'holder\' and make it hold text, subelements etc.\n";
-  XMLelem_t h("holder");
-  cout << "The name of XMLelement \'h\' is \'" << h.name << '\'' << endl << endl;
-  
-  cout << "Now add attributes to \'h\'\n";
-  h["colour"] = "thisle";
-  h("xml:id", "1243")("href", "www.google.com");
 
-  cout << "Then add some a text node to \'h\' as well as a \'subholder\' element holding some more text and a \'subelement\' element:\n";
-  //
-  h.children.push_back("some text.");
-  // Add subelement 's' after initializing it:
-  XMLelem_t s("subholder");
-    s.children.push_back("subtext");
-    s.children.push_back("Some more subtext");
-    // s += XMLText("Still some more"); // Fails to compile!!!
-    s.children.push_back(XMLelem_t("subelement"));
-  h.children.push_back(s);
+  const string doctype1{"HTML"};
+  const string    name1{"html"};
 
-  h.children.push_back(cdata);
+  Attributes_t attrs0;
+  Namespaces_t ns0("http://docbook.org/ns/docbook");
 
-  XMLprocessing_instruction pi("ps2pdf", "file1.ps");
-  h.children.push_back(pi);
-  
-  // Now check the inserter:
-  cout << "Now use inserter recursively: " << endl;
-  cout << h << endl << endl << "serialize \'h\': " << endl;
-  serialize(cout, h);
-  
-  cout << "\n\ntest unicode character € (\\u20AC):\n";
-  cout << endl << "\u20AC1.00" << endl;
-  
-  return 0;
-}
+  XMLelement_t xmle0(ns0, name1);
+  cout << "\'xmle0\' has been initialized with default namespace: " << xmle0.get_default_namespace() << '\n';
+
+
+  XMLelement_t xmleh(ns0, "head", display::block_of_blocks);
+  XMLelement_t xmleb(ns0, "body", display::block_of_blocks);
+  xmle0.add(&xmleh);
+  xmle0.add(&xmleb);
+
+  XMLelement_t xmles(ns0, "section", display::block_of_blocks);
+  xmleb.add(&xmles);
+
+  XMLelement_t xmleh2(ns0, "h2", display::inline_of_inlines);
+  xmles.add(&xmleh2);
+
+  xmleb.attributes["lang"] = "es";
+
+  xmle0.print(cout, Level(0));
+
+  cout << "By the way, the size of a pretty empty XMLelement                 is " << sizeof(xmleh2) << " bytes,\n";
+  cout << "The size of XMLelement for html (holding two children references) is " << sizeof(xmle0)  << " bytes,\n";
+  int * pInt;
+  cout << "whereas the size of a pointer is just " << sizeof(pInt) << " bytes.\n";
+  cout << "We shouldn\'t worry over adding a couple of pointers to class XMLelement!\n";
+  cout << "The size of an Attributes<> instance is " << sizeof(Attributes_t) << " bytes\n";
+  cout << "The size of an Namespaces<> instance is " << sizeof(Namespaces_t) << " bytes\n";
+  cout << "The size of an XMLnode<> instance is " << sizeof(typename XMLelement_t::XMLnode_t) << " bytes\n";
+
+  return 0; }

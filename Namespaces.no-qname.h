@@ -9,10 +9,6 @@
 #include "XMLnode.h"
 #endif
 
-#ifndef QNAME_H
-#include "qname.h"
-#endif
-
 
 /* Class Namespaces<> may hold both a default namespace and several named namespaces
  * TODO
@@ -24,37 +20,28 @@
 template <typename CHAR = char,
           template<typename,typename> typename MAP = std::map,
           PrintTransformer PT = DefaultPrintTransformer<CHAR>,
+          typename STRING=std::basic_string<CHAR>,
           typename LEVEL = Level<signed int>
         >
-class Namespaces : public CascadeMap<std::basic_string<CHAR>,std::basic_string<CHAR>,MAP>,
-                   public XMLnode<CHAR,PT,LEVEL>
-{
+class Namespaces : public CascadeMap<STRING,STRING,MAP>, public XMLnode<CHAR,PT,LEVEL> {
 public:
-  typedef std::basic_string<CHAR> string_t;
-  typedef CascadeMap<string_t,string_t,MAP> CascadeMap_t;
-  typedef Namespaces<CHAR,MAP,PT,LEVEL> Namespaces_t;
-  typedef qname<CHAR> qname_t;
+  typedef CascadeMap<STRING,STRING,MAP> CascadeMap_t;
+  typedef STRING string_t;
+  typedef Namespaces<CHAR,MAP,PT,STRING,LEVEL> Namespaces_t;
   //using CascadeMap_t::ptr_to_above;
   using typename CascadeMap_t::value_type;
-  using typename CascadeMap_t::map_t;
   using CascadeMap_t::contains;
-  using CascadeMap_t::at, CascadeMap_t::operator[];
-  using CascadeMap_t::insert, CascadeMap_t::erase;
+  using CascadeMap_t::at, CascadeMap_t::operator[], CascadeMap_t::insert;
   using CascadeMap_t::has, CascadeMap_t::get;
   using CascadeMap_t::ptr_to_above;
-  using CascadeMap_t::has_parent;
-  using CascadeMap_t::set_parent, CascadeMap_t::get_parent, CascadeMap_t::unset_parent;
-  //using CascadeMap_t::CascadeMap;
+  using typename CascadeMap_t::map_t;
+  using CascadeMap_t::CascadeMap;
   //
   string_t default_namespace;
   //
-  void            set_default_namespace(const string_t& ns);
-  void          clear_default_namespace() {default_namespace.clear();};
-  // has_default_namespace() and get_default_namespace()
-  // query *this and its parent, if there is one:
-  bool            has_default_namespace() const;
-  const string_t& get_default_namespace() const;
-  void erase_if_same_as_default();
+  bool has_default_namespace() const;
+  void set_default_namespace(const string_t& ns);
+  const string_t& get_default_namespace() const {return default_namespace;};
   //
   bool            has_namespace(const string_t& ns) const;
   const string_t& get_namespace(const string_t&) const;
@@ -83,77 +70,45 @@ public:
 template <typename CHAR,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
+          typename STRING,
           typename LEVEL>
-bool Namespaces<CHAR,MAP,PT,LEVEL>::has_default_namespace() const {
-  if ( default_namespace.length() > 0 )
-    return true;
-  else {
-    if( ! has_parent())
-      return false;
-    else
-      return dynamic_cast<const Namespaces_t*>(get_parent())->has_default_namespace();
-  }
+bool Namespaces<CHAR,MAP,PT,STRING,LEVEL>::has_default_namespace() const {
+  return default_namespace.length();
 };
 
 template <typename CHAR,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
+          typename STRING,
           typename LEVEL>
-void Namespaces<CHAR,MAP,PT,LEVEL>::set_default_namespace(const string_t& ns) {
+void Namespaces<CHAR,MAP,PT,STRING,LEVEL>::set_default_namespace(const string_t& ns) {
   default_namespace = ns;
 };
 
-
 template <typename CHAR,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
+          typename STRING,
           typename LEVEL>
-const std::basic_string<CHAR>& Namespaces<CHAR,MAP,PT,LEVEL>::get_default_namespace() const {
-  if( (default_namespace.length() > 0) || ! has_parent() )
-    return default_namespace;
-  else
-    return dynamic_cast<const Namespaces_t*>(get_parent())->get_default_namespace();
-};
-
-template <typename CHAR,
-          template<typename,typename> typename MAP,
-          PrintTransformer PT,
-          typename LEVEL>
-void Namespaces<CHAR,MAP,PT,LEVEL>::erase_if_same_as_default() {
-  string_t key = "";
-  //for(auto & p : map_t)
-  for(typename map_t::iterator p = map_t::begin(); p != map_t::end(); ++p)
-  {
-    if ( p->second == default_namespace)
-      key = p->first;
-  }
-  if ( key.length() > 0)
-    CascadeMap_t::map_t::erase(key);
-};
-
-
-
-template <typename CHAR,
-          template<typename,typename> typename MAP,
-          PrintTransformer PT,
-          typename LEVEL>
-bool Namespaces<CHAR,MAP,PT,LEVEL>::has_namespace(const string_t& ns) const {
+bool Namespaces<CHAR,MAP,PT,STRING,LEVEL>::has_namespace(const string_t& ns) const {
   return at(ns);
 };
 
 template <typename CHAR,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
+          typename STRING,
           typename LEVEL>
-const Namespaces<CHAR,MAP,PT,LEVEL>::string_t& Namespaces<CHAR,MAP,PT,LEVEL>::get_namespace(const string_t& key) const {
+const Namespaces<CHAR,MAP,PT,STRING,LEVEL>::string_t& Namespaces<CHAR,MAP,PT,STRING,LEVEL>::get_namespace(const string_t& key) const {
   return at(key);
 };
 
 template <typename CHAR,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
+          typename STRING,
           typename LEVEL>
-void Namespaces<CHAR,MAP,PT,LEVEL>::print_namespace(std::ostream& o,
+void Namespaces<CHAR,MAP,PT,STRING,LEVEL>::print_namespace(std::ostream& o,
                                                         const string_t& key,
                                                         const string_t& value) const {
   o << " xmlns:" << key << "=\"" << value << '\"';
@@ -162,8 +117,9 @@ void Namespaces<CHAR,MAP,PT,LEVEL>::print_namespace(std::ostream& o,
 template <typename CHAR,
           template<typename,typename> typename MAP,
           PrintTransformer PT,
+          typename STRING,
           typename LEVEL>
-void Namespaces<CHAR,MAP,PT,LEVEL>::print(std::ostream& o, LEVEL l) const {
+void Namespaces<CHAR,MAP,PT,STRING,LEVEL>::print(std::ostream& o, LEVEL l) const {
   if(has_default_namespace())
     o << " xmlns=\"" << default_namespace;
   for (auto  be = map_t::cbegin(); be != map_t::end(); ++be) {
