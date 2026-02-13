@@ -47,7 +47,6 @@
    [x] Handle levels towards providing proper indentation
        (perhaps by including "Level.h")
    [ ] Do not include "Entities.h"
- * TODO
    [x] Should children be held by value or by reference?
        By reference a mean a pointer, not a C++ reference,
        Perhaps only small nodes should be held by value

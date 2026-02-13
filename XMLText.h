@@ -4,8 +4,11 @@
 /* This unit contains a hierarchy of some tiny (XMLText, XMLComment, XMLCDATA etc.)
  * none of which either holds objects of other classes
                      or inherits    from other classes
- * TODOs
+ * TODO s
    [ ] XMLText::print(OSTREAM&,LEVEL) should process both default and defined entities
+   [ ] XMLprocessing_instruction should have its name shortened
+   [ ] XMLprocessing_instruction should be made a child of XMLText
+
    [ ] write XMLCommentBlock
    [ ] write XMLCDATABlock
    [ ] write XMLprocessing_instructionBlock

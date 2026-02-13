@@ -6,7 +6,7 @@
 
 template<typename LEVEL, typename SINT = signed int>
 concept Leveler = requires(LEVEL levelObj1,
-                           LEVEL levelObj2,
+                           LEVEL levelObj,
                            std::ostream& o,
                            SINT n)
 {
