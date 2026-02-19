@@ -18,6 +18,7 @@ template <typename CHAR=char>
 class tokenizer {
 public:
   typedef std::size_t size_t;
+  typedef std::size_t pos_t;
   typedef std::basic_string<CHAR> string_type;
   typedef std::basic_regex<CHAR> regex_type;
   typedef std::map<string_type,string_type> string_to_regex_string_map_type;
@@ -38,17 +39,18 @@ public:
   size_t  size() const {return name_to_regex.size();};
   void   clear()       {       name_to_regex.clear();}
   void   clear_all();
-  auto&  begin()       {return name_to_regex.begin;};
-  auto&    end()       {return name_to_regex.end;};
-  auto& cbegin() const {return name_to_regex.cbegin;};
-  auto&   cend() const {return name_to_regex.cend;};
+  // The following return: "typename string_to_regex_map_type::iterator"
+  auto  begin()       {return name_to_regex.begin();};
+  auto    end()       {return name_to_regex.end();};
+  auto cbegin() const {return name_to_regex.cbegin();};
+  auto   cend() const {return name_to_regex.cend();};
   bool       matches(const string_type& txt,                  const string_type& key) const;
   bool       matches(const string_type& txt, std::size_t pos, const string_type& key) const;
   size_t starts_with(const string_type& txt,                  const string_type& re)  const;
   size_t starts_with(const string_type& txt, std::size_t pos, const string_type& re)  const;
+  const string_type& get_key_for_longest_match(const string_type& str, pos_t pos) const;
   // constructor(s) and destructor:
   tokenizer() {initialize_maps();};
 };
 
 #endif
-
