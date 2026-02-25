@@ -1,5 +1,5 @@
 #ifndef DEPENDENCY_MANAGER_H
-#include "DependencyManager.h"
+#include "DependencyManager.old.h"
 #endif
 
 #include <string>
@@ -11,20 +11,9 @@ typedef DependencyManager<token_t> DependencyManager_t;
 
 using namespace std;
 
-typename DependencyManager_t::value_type init_array[] = {
-  { "showpar", {"newline", "rm"} },
-  { "lead", {"leadk"} },
-  { "newline", {"lead", "bm", "lm", "turnpage"} },
-  { "movetostart", {"lm", "tm"} },
-  { "turnpage", {"showpage", "movetostart", "lead"} }
-};
-
 int main() {
-#ifndef TEST_INITIALIZER_LIST
-  DependencyManager_t dm0(std::begin(init_array), std::end(init_array));
-#else
+
   DependencyManager_t dm0;
-#endif
   dm0.add_dependency("showpar", "newline");
   dm0.add_dependency("showpar", "rm");
   dm0.add_dependency("lead", "leadk");
@@ -34,12 +23,11 @@ int main() {
   dm0.add_dependency("newline", "turnpage");
   dm0.add_dependency("movetostart", "lm");
   dm0.add_dependency("movetostart", "tm");
-  dm0.add_dependency("turnpage", "lead");
   dm0.add_dependency("turnpage", "showpage");
   dm0.add_dependency("turnpage", "movetostart");
 
   cout << "Call reset_and_satisfy(\"showpar\"):\n";
-  dm0.reset_and_satisfy(cout, "showpar");
+  dm0.reset_and_satisfy("showpar");
 
   return 0;
 }

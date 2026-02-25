@@ -100,6 +100,32 @@ Reversible.undo.test: Reversible.test.cpp Reversible.h
 	g++ -std=c++23 -DTEST_UNDO_CHANGE $<  -o $@
 
 
+
+
+GRAPH_SEARCH_SRC = GraphSearch.cpp GraphSearch.h
+GRAPH_BFSEARCH_SRC = $(GRAPH_SEARCH_SRC) BFGraphSearch.cpp BFGraphSearch.h
+
+BFGraphSearch.test: BFGraphSearch.test.cpp $(GRAPH_BFSEARCH_SRC)
+	g++ -std=c++23 $<  -o $@
+
+GRAPH_DFSEARCH_SRC = $(GRAPH_SEARCH_SRC) DFGraphSearch.cpp DFGraphSearch.h
+DFGraphSearch.test: DFGraphSearch.test.cpp $(GRAPH_DFSEARCH_SRC)
+	g++ -std=c++23 $<  -o $@
+
+
+DEPENDENCY_MANAGER_SRC = DependencyManager.h DependencyManager.cpp
+DependencyManager.test: DependencyManager.test.cpp $(DEPENDENCY_MANAGER_SRC)
+	g++ -std=c++23  $<  -o $@
+
+POSTSCRIPT_BASE_SRC = PostScript_base.h PostScript_base.cpp $(DEPENDENCY_MANAGER_SRC)
+PostScript_base.test: PostScript_base.test.cpp $(POSTSCRIPT_BASE_SRC)
+	g++ -std=c++23  $<  -o $@
+
+POSTSCRIPT_FILE_SRC = PostScriptFile.h PostScriptFile.cpp POSTSCRIPT_BASE_SRC
+PostScriptFile.test: PostScriptFile.test.cpp PostScriptFile.h PostScriptFile.cpp PostScript_base.h
+	g++ -std=c++23 -DTEST_UNDO_CHANGE $<  -o $@
+
+
 clean_former:
 	$(RM)  bitenum basic_tokenizer xml_tokenizer case-insensitive-string-cmp ai_set test_concepts test_XML
 clean:
@@ -116,6 +142,8 @@ SAVE_TO_DROPBOX_FILES = $(jsvarTextFiles) $(allTokenizerTextFiles) $(loadStringW
 save_to_Dropbox:
 	cp --update $(SAVE_TO_DROPBOX_FILES) $(DropBoxDir)
 	cp --update Makefile $(DropBoxDir)Makefile.cpp_code
+	cp --update README.*.md README.*.txt $(DropBoxDir)
 save_all_to_Dropbox:
 	cp --update *.h *.cpp *.txt $(DropBoxDir)
 	cp --update Makefile $(DropBoxDir)Makefile.cpp_code
+	cp --update README.*.md README.*.txt $(DropBoxDir)
