@@ -48,6 +48,14 @@ name.test: name.test.cpp name.cpp name.h
 	g++ -std=c++23         $<  -o $@
 json.test: json.cpp json.h
 	g++ -std=c++23         $<  -o $@
+
+Level.h: XML/Level.h
+	cp --update XML/Level.h ./
+JSONtokenizer.test: JSONtokenizer.test.cpp JSONtokenizer.h # Level.h
+	g++ -std=c++23         $<  -o $@
+JSONParser.test: JSONParser.test.cpp JSONParser.h Level.h
+	g++ -std=c++23         $<  -o $@
+
 jsvar.test: jsvar.test.cpp jsvar.h jsvar.cpp
 	g++ -std=c++23         $<  -o $@
 jsvar.sep-comp.test: jsvar.test.cpp jsvar.h  jsvar.o
@@ -59,9 +67,30 @@ tokenizer.sep-comp.test: tokenizer.o tokenizer.test.o
 	g++ -DSEPARATE_COMPILATION -std=c++23 tokenizer.o tokenizer.test.o -o tokenizer.sep-comp.test
 
 
+WordTokenizer.test: WordTokenizer.test.cpp WordTokenizer.h
+	g++ -std=c++23 $<  -o $@
+CharTokenizer.test: CharTokenizer.test.cpp CharTokenizer.h
+	g++ -std=c++23 $<  -o $@
+CHAR_TOKENIZER_SRC = WordTokenizer.h CharTokenizer.h
+CharListTokenizer.test: CharListTokenizer.test.cpp CharListTokenizer.h $(CHAR_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+CHARLIST_TOKENIZER_SRC = $(CHAR_TOKENIZER_SRC) CharListTokenizer.h
+CharListEscTokenizer.test: CharListEscTokenizer.test.cpp CharListEscTokenizer.h $(CHARLIST_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
 
 load_string_with_file: load_string_with_file.test.cpp load_string_with_file.h
 	g++ -std=c++23         $<  -o $@
+
+
+INET_CONNECTION_SRC = InetConnection.h Connection.h
+CouchDB.test: CouchDB.test.cpp CouchDB.cpp CouchDB.h $(INET_CONNECTION_SRC)
+	g++ -std=c++23         $<  -o $@
+CouchDB.debug.test: CouchDB.test.cpp CouchDB.cpp CouchDB.h $(INET_CONNECTION_SRC)
+	g++ -std=c++23 -DDEBUG $<  -o $@
+
+SQLITE_SRC= SQLDataBase.h SQLite.h SQLite.cpp
+SQLite.test: SQLite.test.cpp $(SQLITE_SRC)
+
 
 
 NamedType.test: NamedType.test.cpp NamedType.h

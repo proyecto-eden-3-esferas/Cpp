@@ -8,6 +8,8 @@ using namespace std;
 
 int main() {
   // build and test some jarray<>'s:
+  jarray<int,double,string>      jas0({"peligro", 2, false});
+  jarray<int,double,string_view> jasv({"peligro", 2, false});
   jarray<int,double,string_view> ja0({nullopt, 2, false}); // a string_view obj would fail
   jarray<int,double,string> ja1;
   ja1.emplace_back("pato");
