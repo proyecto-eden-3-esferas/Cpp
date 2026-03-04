@@ -18,21 +18,25 @@
      };
  */
 
+#ifndef TOKENIZER_H
+#include "Tokenizer.h"
+#endif
+
 #include <iostream>
 #include <string>
 
-class WordTokenizer {
+class WordTokenizer : public Tokenizer {
 public:
-  std::string temp;
-  std::istream & is;
+  using Tokenizer::temp;
+  using Tokenizer::is;
 
   // Member functions:
 
-  virtual void process_string(std::string & wd) {
+  void process_string(std::string & wd) override {
     std::cout << "PROCESS WORD: \"" << wd << "\"\n";
   };
 
-  virtual void tokenize() {
+  void tokenize() override {
     while(true) {
       is >> temp;
       if(is)
@@ -43,9 +47,8 @@ public:
   };
 
   // Constructor:
-
-  WordTokenizer(std::istream & i) : is(i) {};
-  ~WordTokenizer() = default;
+  WordTokenizer(std::istream & i) : Tokenizer(i) {};
+  virtual ~WordTokenizer() = default;
 
 };
 

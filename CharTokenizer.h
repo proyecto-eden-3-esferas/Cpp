@@ -3,16 +3,17 @@
 
 /*
  * Class CharTokenizer processes an in-stream character by character
- * It defines two virtual public member functions:
-   (1) tokenize(), which unlike WordTokenizer::tokenize() works char by char
-   (2) check(CHAR c), which acts on c and returns true if c is "special"
-       and shouldn't be appended to string WordTokenizer::temp
+ * It (1) overrides pure virtual Tokenizer::tokenize()
+ * which , unlike (sibling) WordTokenizer::tokenize(), works char by char
+ * and (2) defines check(CHAR c), which (a) acts on c and (b) returns true if c is "special"
+   and thus shouldn't be appended to string Tokenizer::temp
    NOTE: descendants just override check()
-   NOTE: check() is only called withing tokenize()
-         and derived classes just override check()
-   NOTE: parent WordTokenizer is only used
+   NOTE: check() is only called within tokenize()
+   NOTE: parent Tokenizer is only used
          (1) as an interface, specifically tokenize()
          (2) to inherit variables (string) temp and (istream &) is;
+   NOTE: CharTokenizer does no useful work.
+         It just provides a framework for descendant char-by-char tokenizers
  */
 
 
@@ -20,17 +21,15 @@
 #include <iostream>
 #include <string>
 
-#ifndef WORD_TOKENIZER_H
-#include "WordTokenizer.h"
+#ifndef TOKENIZER_H
+#include "Tokenizer.h"
 #endif
 
-class CharTokenizer : public WordTokenizer {
+class CharTokenizer : public Tokenizer {
 public:
 
-  using WordTokenizer::temp;
-  using WordTokenizer::is;
-
-  // Member variables:
+  using Tokenizer::temp;
+  using Tokenizer::is;
 
   // Member functions:
 
@@ -39,6 +38,9 @@ public:
     wd.clear();
   };
 
+  /* check(c) should return true (in descendant classes)
+   * if 'c' is special, and therefore not to be appended to 'temp'
+   */
   virtual bool check(char c) {
     return false;
   };
@@ -63,7 +65,7 @@ public:
   };
 
   // Constructor(s) and destructor:
-  CharTokenizer(std::istream & i) : WordTokenizer(i) {};
+  CharTokenizer(std::istream & i) : Tokenizer(i) {};
   ~CharTokenizer() = default;
 };
 
