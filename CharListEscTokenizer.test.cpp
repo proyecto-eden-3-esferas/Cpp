@@ -4,6 +4,12 @@
 #include "CharListEscTokenizer.h"
 #endif
 
+class JSONtokenizer : public CharListEscTokenizer {
+public:
+  JSONtokenizer(std::istream & i)
+  : CharListEscTokenizer(i,",.:{}[]", true,true, '\\', '\"') {};
+};
+
 #include <fstream>
 #include <sstream>
 
@@ -25,12 +31,20 @@ int main()
   CharListEscTokenizer clet1(ss1, ",.:{}[]", false,false);
   clet1.tokenize();
 
-  string s2("she uttered: \"Ada soon\\\"there\", she did.");
+  string s2("said: \"Ada soon\\\"there\", then what?");
   cout << "\nTokenize \"" << s2 << "\" with CharListEscTokenizer(STRINGSTREAM,\",.:{}[]\", true,true).\n";
   cout << "We make both \'skip_leading_space\' and \'skip_trailing_space\' false due to the nature of the string.\n";
   stringstream ss2(s2);
   CharListEscTokenizer clet2(ss2, ",.:{}[]", false,false);
   clet2.tokenize();
+
+  string s3("{\"name\" : \"Plain\" , \"claim\" : \"an\\\"pa\"}");
+  cout << "\nTokenize \"" << s3 << "\" with CharListEscTokenizer(STRINGSTREAM,\",.:{}[]\", true,true).\n";
+  cout << "We make both \'skip_leading_space\' and \'skip_trailing_space\' true.\n";
+  stringstream ss3(s3);
+  //CharListEscTokenizer clet3(ss3, ",.:{}[]", false,false);
+  JSONtokenizer clet3(ss3);
+  clet3.tokenize();
 
   return 0;
 }

@@ -22,6 +22,8 @@
          }
 
  * TODO
+   [ ] add remove_trailing_space(STRING&) and remove_leading_space(STRING&)
+       to Tokenizer as descendants might want to call it
  */
 
 
@@ -36,6 +38,14 @@ public:
   // Member functions:
   virtual void process_string(std::string & wd) = 0;
   virtual void tokenize() = 0;
+
+  static bool has_non_space_char(const std::string & str) {
+    for(char c : str) {
+      if(!isspace(c))
+        return true;
+    }
+        return false;
+  };
 
   // Constructor(s) and destructor:
   Tokenizer(std::istream & i) : is(i) {};

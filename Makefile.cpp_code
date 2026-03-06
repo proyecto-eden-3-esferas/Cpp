@@ -67,16 +67,33 @@ tokenizer.sep-comp.test: tokenizer.o tokenizer.test.o
 	g++ -DSEPARATE_COMPILATION -std=c++23 tokenizer.o tokenizer.test.o -o tokenizer.sep-comp.test
 
 
-WordTokenizer.test: WordTokenizer.test.cpp WordTokenizer.h
+WORD_TOKENIZER_SRC = WordTokenizer.h Tokenizer.h
+WordTokenizer.test: WordTokenizer.test.cpp WordTokenizer.h Tokenizer.h
 	g++ -std=c++23 $<  -o $@
-CharTokenizer.test: CharTokenizer.test.cpp CharTokenizer.h
+WordTrimTokenizer.test: WordTrimTokenizer.test.cpp WordTrimTokenizer.h $(WORD_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@
-CHAR_TOKENIZER_SRC = WordTokenizer.h CharTokenizer.h
-CharListTokenizer.test: CharListTokenizer.test.cpp CharListTokenizer.h $(CHAR_TOKENIZER_SRC)
+
+CHAR_TOKENIZER_SRC = CharTokenizer.h Tokenizer.h
+CharTokenizer.test: CharTokenizer.test.cpp $(CHAR_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@
-CHARLIST_TOKENIZER_SRC = $(CHAR_TOKENIZER_SRC) CharListTokenizer.h
-CharListEscTokenizer.test: CharListEscTokenizer.test.cpp CharListEscTokenizer.h $(CHARLIST_TOKENIZER_SRC)
+CHAR_LIST_TOKENIZER_SRC = $(CHAR_TOKENIZER_SRC) CharListTokenizer.h
+CharListTokenizer.test: CharListTokenizer.test.cpp $(CHAR_LIST_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@
+CharListEscTokenizer.test: CharListEscTokenizer.test.cpp CharListEscTokenizer.h $(CHAR_LIST_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+
+# NOTE: New version of CharList*Tokenizer is Charlist*Tokenizer (lower-case 'l', Charlist as one word)
+CHARLIST_TOKENIZER_SRC = $(CHAR_TOKENIZER_SRC) CharlistTokenizer.h CharlistTokenizer.cpp
+CharlistTokenizer.test: CharlistTokenizer.test.cpp $(CHARLIST_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+CHARLIST_EQ_TOKENIZER_SRC = $(CHARLIST_TOKENIZER_SRC) CharlistEQTokenizer.h CharlistEQTokenizer.cpp
+CharlistEQTokenizer.test:      CharlistEQTokenizer.test.cpp $(CHARLIST_EQ_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+CharlistEQTokenizer.JSON.test: CharlistEQTokenizer.test.cpp $(CHARLIST_EQ_TOKENIZER_SRC)
+	g++ -std=c++23 -DTEST_JSON $<  -o $@
+
+
+
 
 load_string_with_file: load_string_with_file.test.cpp load_string_with_file.h
 	g++ -std=c++23         $<  -o $@

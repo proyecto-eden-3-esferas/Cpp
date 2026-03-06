@@ -114,9 +114,9 @@ public:
     return check_against_quot(c) || check_against_charlist(c) || check_against_esc(c) ;
   };
 
-
   // Constructor(s) and destructor:
-  CharListEscTokenizer(std::istream & i, const std::string & cl, bool slws = true, bool stws = true,
+  CharListEscTokenizer(std::istream & i, const std::string & cl,
+                       bool slws = true, bool stws = true,
                        char e = '\\', char q = '\"')
   : CharListTokenizer(i,cl, slws, stws), esc(e), quot(q), in_quotes(false), skip_ws(slws || stws)
   {};
