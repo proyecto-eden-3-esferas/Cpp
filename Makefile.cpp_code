@@ -76,6 +76,10 @@ WordTrimTokenizer.test: WordTrimTokenizer.test.cpp WordTrimTokenizer.h $(WORD_TO
 CHAR_TOKENIZER_SRC = CharTokenizer.h Tokenizer.h
 CharTokenizer.test: CharTokenizer.test.cpp $(CHAR_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@
+
+CharXMLTokenizer.test: CharXMLTokenizer.test.cpp $(CHAR_TOKENIZER_SRC) CharXMLTokenizer.h CharXMLTokenizer.cpp
+	g++ -std=c++23 $<  -o $@
+
 CHAR_LIST_TOKENIZER_SRC = $(CHAR_TOKENIZER_SRC) CharListTokenizer.h
 CharListTokenizer.test: CharListTokenizer.test.cpp $(CHAR_LIST_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@
@@ -186,10 +190,17 @@ save_Makefile_to_Dropbox: Makefile
 PRED_FILES = pred.h pred.test.cpp
 SAVE_TO_DROPBOX_FILES = $(jsvarTextFiles) $(allTokenizerTextFiles) $(loadStringWithFileTextFiles) $(PRED_FILES)
 save_to_Dropbox:
-	cp --update $(SAVE_TO_DROPBOX_FILES) $(DropBoxDir)
+	cp --update *.h *.cpp *.txt $(DropBoxDir)
 	cp --update Makefile $(DropBoxDir)Makefile.cpp_code
 	cp --update README.*.md README.*.txt $(DropBoxDir)
+
+SUBDIRS = streams/ algorithm/ author_subject_work/ BTree/ concepts_and_type_traits/ examples/\
+          filesystem/ graph/ iterator/ lc++/ modules/ programmable_book/ ranges/ regex/\
+          serialization/ sockets/ string_examples/ threads/ useful/ zettelkasten/
 save_all_to_Dropbox:
 	cp --update *.h *.cpp *.txt $(DropBoxDir)
 	cp --update Makefile $(DropBoxDir)Makefile.cpp_code
+	cp --update --recursive $(SUBDIRS) $(DropBoxDir)
+	mkdir -p $(DropBoxDir)XML/
+	cp --update XML/*.h XML/*.cpp XML/*.md XML/*.xml $(DropBoxDir)XML/
 	cp --update README.*.md README.*.txt $(DropBoxDir)
