@@ -79,6 +79,8 @@ CharTokenizer.test: CharTokenizer.test.cpp $(CHAR_TOKENIZER_SRC)
 
 CharXMLTokenizer.test: CharXMLTokenizer.test.cpp $(CHAR_TOKENIZER_SRC) CharXMLTokenizer.h CharXMLTokenizer.cpp
 	g++ -std=c++23 $<  -o $@
+CharXMLTokenizer.new.test: CharXMLTokenizer.test.cpp $(CHAR_TOKENIZER_SRC) CharXMLTokenizer.h CharXMLTokenizer.cpp
+	g++ -std=c++23 $<  -o  $@ -DNEW
 
 CHAR_LIST_TOKENIZER_SRC = $(CHAR_TOKENIZER_SRC) CharListTokenizer.h
 CharListTokenizer.test: CharListTokenizer.test.cpp $(CHAR_LIST_TOKENIZER_SRC)

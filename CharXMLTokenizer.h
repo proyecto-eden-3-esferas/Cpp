@@ -5,10 +5,24 @@
 #include "CharTokenizer.h"
 #endif
 
-/* class CharXMLTokenizer
+#include <map>
+#include <stack>
+
+/* class CharXMLTokenizer is a child of CharTokenizer
+   which overrides virtual member check(CHAR),
+   which in turn calls some new member functions:
+   - virtual bool check_gt_alnum(char c);
+   - virtual bool check_gt_slash(char c);
+   - virtual bool check_gt_question(char c);
+   - virtual bool check_gt_bang(char c);
  *
  * TODO:
- [ ] prevent printing "empty" text nodes
+ [x] prevent printing "empty" text nodes
+ [ ] write:
+            virtual void dispatch_***
+                                       member functions
+     for all output to std::cout
+     and invoke them
  [ ] process_opening_tag(),
      which is good for both opening and stand-alone tags,
      should:
@@ -28,18 +42,27 @@
 
 class CharXMLTokenizer : public CharTokenizer {
 public:
-  using CharTokenizer::temp;
+  using Tokenizer::has_non_space_char;
+  using CharTokenizer::temp; // for text nodes, element names...
   using CharTokenizer::is;
 
   // Member variables:
-  std::string tag_string;
+  std::string attribute_name, attribute_value;
+  std::map<std::string,std::string> attribute_map;
+  std::stack<std::string> name_stack;
 
   // Member Functions:
   void process_string(std::string & wd) override;
 
+  virtual void dispatch_opening_name();
+  virtual void process_opening_name(); // name read in opening tag
+  virtual bool is_XML_name_char(char c) const;
+  virtual void read_name(std::string & nm);
+  virtual void dispatch_attribute_pair();
   virtual void process_opening_tag();
   virtual bool check_gt_alnum(char c);
 
+  virtual void dispatch_closing_tag();
   virtual void process_closing_tag();
   virtual bool check_gt_slash(char c);
 

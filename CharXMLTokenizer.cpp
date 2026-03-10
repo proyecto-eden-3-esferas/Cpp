@@ -6,19 +6,78 @@
 #endif
 
 #include <cctype>
+#include <cstring>
 
 // CharXMLTokenizer::process_string(STRING) should also handle entities (&quot; and such)
 void CharXMLTokenizer::process_string(std::string & wd) {
-  std::cout << "TEXT NODE: \"" << wd << "\"\n";
+  if(has_non_space_char(wd))
+    std::cout << "TEXT NODE: \"" << wd << "\"\n";
   wd.clear();
 };
 
+void CharXMLTokenizer::dispatch_opening_name() {
+  std::cout << "NAME IN OPENING TAG: " << temp << '\n';
+};
+void CharXMLTokenizer::process_opening_name() {
+  dispatch_opening_name();
+  name_stack.push(temp);
+  temp.clear();
+};
+bool CharXMLTokenizer::is_XML_name_char(char c) const {
+  return isalnum(c) || (strchr(":-_.", c) != NULL) ;
+}
+void CharXMLTokenizer::read_name(std::string & nm) {
+  nm.clear();
+  while (  is_XML_name_char(is.peek())) {
+    nm += is.get();
+  }
+};
+void CharXMLTokenizer::dispatch_attribute_pair() {
+  std::cout << "attribute_map[\"" << attribute_name << "\"] = \"" << attribute_value << "\"\n";
+};
 void CharXMLTokenizer::process_opening_tag() {
+#ifdef NEW
+  char c;
+  //std::cout << "ABOUT TO READ NAME STARTING WITH CHAR IS: \'" << (char) is.peek() << "\'\n";
+  temp.clear();
+  read_name(temp);
+  process_opening_name();
+  is >> std::ws;
+  while( isalnum(is.peek()) )
+  {
+    attribute_name.clear();
+    read_name(attribute_name);
+    is >> std::ws;
+    c = is.get(); // read '='
+    if(c != '=')
+      std::cout << "EXPECTED \'=\' BUT GOT: \'" << c << "\'\n";
+    is >> std::ws;
+    // read into value
+    is >> c;
+    if( (c != '\"') && (c != '\'') )
+      std::cout << "NON-DELIMITER CHAR: \'" << c << "\'\n";
+    std::getline(is, attribute_value, c);
+    attribute_map[attribute_name] = attribute_value;
+    dispatch_attribute_pair();
+    attribute_name.clear();
+    attribute_value.clear();
+    is >> std::ws;
+  } // while
+#else
   std::getline(is, temp, '>');
   if(temp.back() == '/')
     std::cout << "STAND-ALONE TAG: \"" << temp << "\"\n";
   else
     std::cout << "OPENING TAG: \"" << temp << "\"\n";
+#endif
+  c = is.get();
+  if(c == '/') {
+    std::cout << "STAND-ALONE TAG\n";
+    name_stack.pop();
+    is.ignore();
+  }
+  else
+    std::cout << "CLOSING OPENING TAG\n";
   temp.clear();
 };
 
@@ -35,10 +94,15 @@ bool CharXMLTokenizer::check_gt_alnum(char c) {
   else
     return false;
 };
-
+void CharXMLTokenizer::dispatch_closing_tag() {std::cout << "CLOSING TAG: \"" << temp << "\"\n";};
 void CharXMLTokenizer::process_closing_tag() {
   std::getline(is, temp, '>');
-  std::cout << "CLOSING TAG: \"" << temp << "\"\n";
+  if( temp.compare(name_stack.top()) )
+    std::cout << "MISMATCH: " << temp << " != " << name_stack.top() << '\n';
+  else {
+    dispatch_closing_tag();
+    name_stack.pop();
+  }
   temp.clear();
 };
 bool CharXMLTokenizer::check_gt_slash(char c) {
