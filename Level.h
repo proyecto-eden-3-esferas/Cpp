@@ -67,6 +67,7 @@ public:
   inline static size_t static_width = 2;
   virtual std::ostream& print(std::ostream& o) const;
   // virtual std::ostream& operator() (std::ostream& o) const { return print(o); };
+
   //
   Level& operator=(const Level&  l) {level = l.level; return *this;};
   Level& operator=(      sint_t  l) {level = l;       return *this;};

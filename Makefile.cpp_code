@@ -51,6 +51,8 @@ json.test: json.cpp json.h
 
 Level.h: XML/Level.h
 	cp --update XML/Level.h ./
+
+JSON.test: JSON.test.cpp JSON.h JSON.printer.h JSON.printer.cpp Level.h
 JSONtokenizer.test: JSONtokenizer.test.cpp JSONtokenizer.h # Level.h
 	g++ -std=c++23         $<  -o $@
 JSONParser.test: JSONParser.test.cpp JSONParser.h Level.h
