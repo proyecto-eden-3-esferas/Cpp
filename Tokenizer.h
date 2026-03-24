@@ -10,6 +10,14 @@
    - tokenize()
  * The constructor initializes 'is'
  * The default constructor is explicitely deleted
+ * No constructor taking a filename even though you are meant to tokenize a text file,
+   which would get neatly closed in the destructor.
+ * A template version could be defined like:
+     template <CHAR=char>
+     class WordTokenizer {
+       typedef std::basic_string<CHAR> string_t;
+       ...
+     };
  * Its descendants implement different approaches to tokenizing:
    (1) word by word: relies on simple statement: "is >> temp;"
        (class WordTokenizer)
@@ -26,7 +34,8 @@
        to Tokenizer as descendants might want to call it
  */
 
-
+#include <algorithm>
+#include <cctype>
 #include <iostream>
 #include <string>
 
@@ -45,6 +54,14 @@ public:
         return true;
     }
         return false;
+  };
+
+  static void tolower(std::string& s) {
+    std::transform(s.begin(),
+                   s.end(),
+                   s.begin(),
+                   [](unsigned char c){ return std::tolower(c); }
+                  );
   };
 
   // Constructor(s) and destructor:

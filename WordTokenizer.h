@@ -7,15 +7,7 @@
    enough to make a good tokenizer of text
    but for the fact that punctuation gets appended (as in "lemon.")
  * Member functions are declared virtual
-   in case someone wants to derive from WordTokenizer
- * No constructor taking a filename even though you are meant to tokenize a text file,
-   which would get neatly closed in the destructor.
- * A template version could be defined like:
-     template <CHAR=char>
-     class WordTokenizer {
-       typedef std::basic_string<CHAR> string_t;
-       ...
-     };
+   in case another programmer wants to derive from WordTokenizer
  */
 
 #ifndef TOKENIZER_H

@@ -36,7 +36,6 @@ void CharXMLTokenizer::dispatch_attribute_pair() {
   std::cout << "attribute_map[\"" << attribute_name << "\"] = \"" << attribute_value << "\"\n";
 };
 void CharXMLTokenizer::process_opening_tag() {
-#ifdef NEW
   char c;
   //std::cout << "ABOUT TO READ NAME STARTING WITH CHAR IS: \'" << (char) is.peek() << "\'\n";
   temp.clear();
@@ -63,13 +62,6 @@ void CharXMLTokenizer::process_opening_tag() {
     attribute_value.clear();
     is >> std::ws;
   } // while
-#else
-  std::getline(is, temp, '>');
-  if(temp.back() == '/')
-    std::cout << "STAND-ALONE TAG: \"" << temp << "\"\n";
-  else
-    std::cout << "OPENING TAG: \"" << temp << "\"\n";
-#endif
   c = is.get();
   if(c == '/') {
     std::cout << "STAND-ALONE TAG\n";
@@ -81,7 +73,7 @@ void CharXMLTokenizer::process_opening_tag() {
   temp.clear();
 };
 
-bool CharXMLTokenizer::check_gt_alnum(char c) {
+bool CharXMLTokenizer::check_lt_alnum(char c) {
   if(c== '<') {
     if( isalnum( is.peek() ) ) {
       process_string(temp);
@@ -105,7 +97,7 @@ void CharXMLTokenizer::process_closing_tag() {
   }
   temp.clear();
 };
-bool CharXMLTokenizer::check_gt_slash(char c) {
+bool CharXMLTokenizer::check_lt_slash(char c) {
   if(c== '<') {
     if( is.peek() == '/' ) {
       process_string(temp);
@@ -120,8 +112,41 @@ bool CharXMLTokenizer::check_gt_slash(char c) {
     return false;
 };
 
+void CharXMLTokenizer::xml_declaration(const std::string& attributes) const {
+  std::cout << "XML DECLARATION WITH ATTRIBUTES: " << attributes << '\n';
+};
+
+void CharXMLTokenizer::process_pi(const std::string& name, const std::string& instruction) const {
+  std::cout << "READ NAME: <?"  << attribute_name << " AND INSTRUCTION: "  << attribute_value << '\n';
+};
 
 void CharXMLTokenizer::process_question() {
+#ifndef FORMER
+  // read the name of the processing instruction into 'attribute_name':
+  attribute_name.clear();
+  is >> attribute_name;
+  std::cout << "READ NAME: <?"  << attribute_name << '\n';
+  is >> std::ws;
+  //read the remainder until "?>" is come across:
+  char c = is.get();
+  while(true) {
+    if(c == '?') {
+      if(is.peek() == '>') {
+        is.ignore(); // don't push '?' and drop '>''
+        break;
+      }
+      else
+        attribute_value += c; // push '?'
+    }
+    else
+      attribute_value += c;
+    c = is.get();
+  } // while
+  if(attribute_name.compare("xml"))
+    process_pi(attribute_name, attribute_value);
+  else
+    xml_declaration(attribute_value);
+#else
   std::getline(is, temp, '>');
   if(temp.back() == '?') {
     temp.pop_back();
@@ -130,8 +155,9 @@ void CharXMLTokenizer::process_question() {
   else
     std::cout << "QUASI-QUESTION: <?" << temp << ">\n";
   temp.clear();
+#endif
 };
-bool CharXMLTokenizer::check_gt_question(char c) {
+bool CharXMLTokenizer::check_lt_question(char c) {
   if(c== '<') {
     if( is.peek() == '?' ) {
       process_string(temp);
@@ -156,7 +182,7 @@ void CharXMLTokenizer::process_bang() {
     std::cout << "QUASI-BANG: <!" << temp << ">\n";
   temp.clear();
 };
-bool CharXMLTokenizer::check_gt_bang(char c) {
+bool CharXMLTokenizer::check_lt_bang(char c) {
   if(c== '<') {
     if( is.peek() == '!' ) {
       process_string(temp);

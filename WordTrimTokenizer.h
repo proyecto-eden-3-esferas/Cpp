@@ -28,9 +28,13 @@ public:
 
   // Member functions:
 
+  virtual bool is_to_be_trimmed(char c) const {
+    return ispunct(c);
+  };
+
   virtual void trim(std::string & wd) {
     if(drop_trailing_punctuation)
-      while(ispunct(wd.back()))
+      while(is_to_be_trimmed(wd.back()))
         wd.pop_back();
   };
 

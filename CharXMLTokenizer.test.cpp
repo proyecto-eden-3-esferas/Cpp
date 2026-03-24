@@ -14,6 +14,8 @@ int main() {
   CharXMLTokenizer cxt0(ifs);
   cxt0.tokenize();
 
+  ifs.close();
+
   return 0;
 
 }
