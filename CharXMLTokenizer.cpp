@@ -122,11 +122,13 @@ void CharXMLTokenizer::process_pi(const std::string& name, const std::string& in
 
 void CharXMLTokenizer::process_question() {
 #ifndef FORMER
+
   // read the name of the processing instruction into 'attribute_name':
   attribute_name.clear();
   is >> attribute_name;
   std::cout << "READ NAME: <?"  << attribute_name << '\n';
   is >> std::ws;
+
   //read the remainder until "?>" is come across:
   char c = is.get();
   while(true) {
@@ -142,6 +144,8 @@ void CharXMLTokenizer::process_question() {
       attribute_value += c;
     c = is.get();
   } // while
+
+  // Dispatch name and instruction:
   if(attribute_name.compare("xml"))
     process_pi(attribute_name, attribute_value);
   else

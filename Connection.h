@@ -2,6 +2,13 @@
 #define CONNECTION_H
 
 /* Class Connection<CHAR> for connecting (to a server, etc.)
+ * Connection<> does two jobs:
+   - authorization (user:password)
+   - keeping track of resources (such as databases, documents, tables, files)
+     in a server
+ * TODO
+   [ ] consider renaming Connection<> to AuthConnection<>
+       and deriving AuthConnection from Connection
  */
 
 
@@ -16,11 +23,25 @@ public:
   typedef std::basic_string<     CHAR> string_t;
   typedef std::basic_string_view<CHAR> string_view_t;
 
-  // Member variables
-  string_t user     = "admin";
-  string_t password = "skyblue";
+  //
+  template <typename... Args>
+  static std::string dynamic_print(std::string_view rt_fmt_str, Args&&... args)
+  {
+    return std::vformat(rt_fmt_str, std::make_format_args(args...));
+  };
+  virtual void run(string_view_t cmd) const;
 
-  // The resource (databases, actually) interface:
+  // Interface for redirecting cout to a std::basic_stringstream<CHAR> (stringstream):
+  typedef std::basic_streambuf<   CHAR>    streambuf_t;
+  typedef std::basic_stringstream<CHAR> stringstream_t;
+  stringstream_t resultss;
+  bool output_redirected;
+  string_t get_result_string() const;
+  streambuf_t *cout_buf; //
+  streambuf_t *  ss_buf;
+  void redirect_output_to_string();
+
+  // The resource (usually databases, files, ...) interface:
   typedef string_t resource_t;
   typedef std::set<resource_t> resources_t;
   resources_t resources;
@@ -29,9 +50,13 @@ public:
   bool        has_resource(string_view_t res) const {return resources.contains(res.data());};
 
   // Constructors and destructor
-  Connection(string_view_t usr = "admin", string_view_t pw = "skyblue") : user(usr), password(pw) {};
-
+  Connection() : output_redirected(false), cout_buf(std::cout.rdbuf()), ss_buf(resultss.rdbuf()) {};
+  virtual ~Connection();
 };
 
+
+#ifndef SEPARATE_COMPILATION
+#include "Connection.cpp"
+#endif
 
 #endif

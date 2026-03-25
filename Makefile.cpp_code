@@ -109,7 +109,10 @@ load_string_with_file: load_string_with_file.test.cpp load_string_with_file.h
 	g++ -std=c++23         $<  -o $@
 
 
-INET_CONNECTION_SRC = InetConnection.h Connection.h
+CONNECTION_SRC = Connection.h Connection.cpp
+jq.test: jq.test.cpp jq.h jq.cpp $(CONNECTION_SRC)
+	g++ -std=c++23         $<  -o $@
+INET_CONNECTION_SRC = $(CONNECTION_SRC) AuthConnection.h InetConnection.h
 CouchDB.test: CouchDB.test.cpp CouchDB.cpp CouchDB.h $(INET_CONNECTION_SRC)
 	g++ -std=c++23         $<  -o $@
 CouchDB.debug.test: CouchDB.test.cpp CouchDB.cpp CouchDB.h $(INET_CONNECTION_SRC)
