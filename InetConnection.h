@@ -67,7 +67,6 @@ public:
 };
 
 
-
 // Implementations:
 
 template <typename CHAR>
