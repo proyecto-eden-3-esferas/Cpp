@@ -2,7 +2,6 @@
 #define JQ_PATH_H
 
 #include <variant>
-#include <vector>
 
 template <                    typename CHAR,
           template <typename> typename SEQ>
@@ -15,20 +14,8 @@ struct jq<CHAR,SEQ>::path {
 
   sequence_t pith;
 
-  path& add(string_view_t name) {
-    pith.push_back(name.data());
-    return *this;
-  };
-  /*
-  path& add(const char* name) {
-    pith.push_back(name);
-    return *this;
-  };
-  */
-  path& add(index_t idx)  {
-    pith.push_back(idx);
-    return *this;
-  };
+  path& add(string_view_t name);
+  path& add(index_t idx);
 
   // The iterator interface:
   std::size_t size() const {return pith.size();};
@@ -39,31 +26,30 @@ struct jq<CHAR,SEQ>::path {
   const_iterator cbegin() const {return pith.cbegin();};
   const_iterator   cend() const {return pith.cend();};
 
-  /* Instances of jq<>::path::printer
+  /* Instances of jq<>::path::ostream_printer
    * are meant to be the first argument of std::visit, as in
    * std::visit(PRINTER_OBJ, VARIANT)
    */
-  struct printer {
+  struct ostream_printer {
     std::ostream& os;
     void operator() (const string_t& s) const {os << '\"' << s << '\"';};
     void operator() (       index_t  i) const {os <<         i;};
-    printer(std::ostream& o) : os(o) {};
+    ostream_printer(std::ostream& o) : os(o) {};
   };
 
-  std::ostream& print(std::ostream& o) const {
-    printer pr(o);
-    bool tail{false};
-    o << '[';
-    for(const auto & el : pith ) {
-      if(tail)
-        o << ", ";
-      else
-        tail=true;
-      std::visit(pr, el);
-    }
-    o << ']';
-    return o;
-  }
+  struct string_printer {
+    string_t& str;
+    void operator() (const string_t& s) const {str += '\"' += s += '\"';};
+    void operator() (       index_t  i) const {str += std::to_string(i);};
+    string_printer(string_t& s) : str(s) {};
+  };
+
+  std::basic_ostream<CHAR>& print(std::basic_ostream<CHAR>& o) const;
+  std::basic_string<CHAR> & print(std::basic_string< CHAR>& s) const;
 };
+
+#ifndef SEPARATE_COMPILATION
+#include "jq.path.cpp"
+#endif
 
 #endif

@@ -1,84 +1,222 @@
-CLANG = clang++ -std=c++2b
-Gplusplus   = c++    -std=c++23
-RAPIDXML = rapidxml*.zip
-CPP_CODE_DIR = ../
-LEVEL = Level.h Leveler.h
+CLANG  = clang++ -std=c++2b
+Gplusplus  = c++ -std=c++23
+
+DropBoxDir = /home/francisco/Dropbox/cpp_code/
+
+loadStringWithFileTextFiles = load_string_with_file.test.cpp load_string_with_file.h
+
+tokenizerTextFiles       = tokenizer.h tokenizer.cpp tokenizer.test.cpp
+basic_tokenizerTextFiles = basic_tokenizer.h basic_tokenizer.cpp basic_tokenizer.test.cpp
+token_eaterTextFiles     = token_eater.h token_eater.cpp
+allTokenizerTextFiles    = $(tokenizerTextFiles) $(basic_tokenizerTextFiles) $(token_eaterTextFiles)
+
+jsvarTextFiles = jsvar.h jsvar.cpp jsvar.test.cpp
+jsvarExecFiles = jsvar.sep-comp.test jsvar.test
+
 
 %: %.cpp
 	c++    -std=c++23 $<  -o $@
 
-Level.test:  Level.test.cpp           $(LEVEL)
-	g++ -std=c++23 $<  -o $@
+information: information.cpp information.h
+	c++ -std=c++23 $<  -o $@
+temp: temp.cpp
+	c++ -std=c++23 $<  -o $@
+ai_set : ai_set.cpp
+	c++ -std=c++23 $<  -o $@
+paragraph: paragraph.h paragraph.main.cpp
+	g++ -std=c++2a            paragraph.main.cpp -o $@
+escaper: escaper.cpp escaper.h
+	c++ -std=c++23 $<  -o $@
 
-Indent.test: Indent.test.cpp Indent.h $(LEVEL)
-	g++ -std=c++23 $<  -o $@
+
+lazy_strings: lazy_strings.cpp lazy_strings.h
+	echo "19 dzogchen and tantra" > zettelkasten.ini
+	c++ -std=c++23 $<  -o $@
 
 
-CascadeMap.test: CascadeMap.test.cpp CascadeMap.h
-	g++ -std=c++23 $<  -o $@
-
-
-XMLnode.former.test: XMLnode.former.test.cpp XMLnode.former.h $(LEVEL)
-	g++ -std=c++23 $<  -o $@
-Namespaces.former.test: Namespaces.former.test.cpp Namespaces.former.h XMLnode.former.h
-	g++ -std=c++23 $<  -o $@
-Entities.former.test: Entities.former.test.cpp Entities.former.h
-	g++ -std=c++23 $<  -o $@
-Entities.wordy.test: Entities.wordy.test.cpp Entities.wordy.h
-	g++ -std=c++23 $<  -o $@
-XML.former.test: XML.former.test.cpp  XML.former.h XMLprintable.h
-	g++ -std=c++23 $<  -o $@
-
-XML.old.test: XML.old.test.cpp  XML.old.h XMLprintable.h
-	g++ -std=c++23 $<  -o $@
-
-# Files without a "former" infix take a CHAR template parameter:
-XMLnode.test: XMLnode.test.cpp XMLnode.h $(LEVEL)
-	g++ -std=c++23 $<  -o $@
-Attributes.test: Attributes.test.cpp Attributes.h XMLnode.h $(LEVEL)
-	g++ -std=c++23 $<  -o $@
-Namespaces.no-qname.test: Namespaces.no-qname.test.cpp Namespaces.no-qname.h XMLnode.h qname.h
-	g++ -std=c++23 $<  -o $@
-qname.h: $(CPP_CODE_DIR)qname.h
-	cp --update $(CPP_CODE_DIR)qname.h ./
-Namespaces.test: Namespaces.test.cpp Namespaces.h XMLnode.h qname.h $(LEVEL)
-	g++ -std=c++23 $<  -o $@
-Entities.test: Entities.test.cpp Entities.h
-	g++ -std=c++23 $<  -o $@
-
-XMLTEXT_HEADERS    = XMLText.h $(LEVEL) XMLnode.h CascadeMap.h Entities.h
-XMLELEMENT_HEADERS = $(XMLTEXT_HEADERS) XMLelement.h Namespaces.h
-XMLText.test:    XMLText.test.cpp    $(XMLTEXT_HEADERS)
-	g++ -std=c++23 $<  -o $@
-XMLelement.test: XMLelement.test.cpp $(XMLELEMENT_HEADERS)
-	g++ -std=c++23 $<  -o $@
-
-XML_DOCDECL_HEADERS = $(XMLELEMENT_HEADERS) XMLdocdecl.h
-XMLdocdecl.test: XMLdocdecl.test.cpp $(XML_DOCDECL_HEADERS)
-	g++ -std=c++23 $<  -o $@
-XMLroot.test: XMLroot.test.cpp XMLroot.h $(XMLELEMENT_HEADERS)
-	g++ -std=c++23 $<  -o $@
-
-XMLdoc.test:  XMLdoc.test.cpp  XMLdoc.h  $(XMLELEMENT_HEADERS)
+basic_tokenizer.test: basic_tokenizer.test.cpp basic_tokenizer.h basic_tokenizer.cpp
 	g++ -std=c++23 $<  -o $@
 
 
+istream_variant_queue_tokenizer.debug: istream_variant_queue_tokenizer.test.cpp istream_variant_queue_tokenizer.h variant_queue_tokenizer.h
+	g++ -std=c++23 -DDEBUG $<  -o $@
+istream_variant_queue_tokenizer.test:  istream_variant_queue_tokenizer.test.cpp istream_variant_queue_tokenizer.h variant_queue_tokenizer.h
+	g++ -std=c++23         $<  -o $@
+string_view_variant_tokenizer.test: string_view_variant_tokenizer.test.cpp string_view_variant_tokenizer.h string_view_variant_tokenizer.cpp sense.h
+	g++ -std=c++23         $<  -o $@
+name.test: name.test.cpp name.cpp name.h
+	g++ -std=c++23         $<  -o $@
+json.test: json.cpp json.h
+	g++ -std=c++23         $<  -o $@
 
-# XMLelement.old.h defines macro: XML_COMPONENTS_H
-XMLelement.old.test: XMLelement.old.test.cpp XMLelement.old.h XML.globals.h
+Level.h: XML/Level.h
+	cp --update XML/Level.h ./
+
+JSON.test: JSON.test.cpp JSON.h JSON.printer.h JSON.printer.cpp Level.h
+JSONtokenizer.test: JSONtokenizer.test.cpp JSONtokenizer.h # Level.h
+	g++ -std=c++23         $<  -o $@
+JSONParser.test: JSONParser.test.cpp JSONParser.h Level.h
+	g++ -std=c++23         $<  -o $@
+
+jsvar.test: jsvar.test.cpp jsvar.h jsvar.cpp
+	g++ -std=c++23         $<  -o $@
+jsvar.sep-comp.test: jsvar.test.cpp jsvar.h  jsvar.o
+	g++ -DSEPARATE_COMPILATION -std=c++23  jsvar.o $<  -o $@
+
+tokenizer.test: tokenizer.test.cpp tokenizer.h tokenizer.cpp
+	g++ -std=c++23 $<  -o $@
+tokenizer.sep-comp.test: tokenizer.o tokenizer.test.o
+	g++ -DSEPARATE_COMPILATION -std=c++23 tokenizer.o tokenizer.test.o -o tokenizer.sep-comp.test
+
+
+WORD_TOKENIZER_SRC = WordTokenizer.h Tokenizer.h
+WordTokenizer.test: WordTokenizer.test.cpp WordTokenizer.h Tokenizer.h
+	g++ -std=c++23 $<  -o $@
+WordTrimTokenizer.test: WordTrimTokenizer.test.cpp WordTrimTokenizer.h $(WORD_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@
 
+CHAR_TOKENIZER_SRC = CharTokenizer.h Tokenizer.h
+CharTokenizer.test: CharTokenizer.test.cpp $(CHAR_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
 
+CHAR_XML_TOKENIZER_SRC = $(CHAR_TOKENIZER_SRC) CharXMLTokenizer.h CharXMLTokenizer.cpp
+CharXMLTokenizer.test: CharXMLTokenizer.test.cpp     $(CHAR_XML_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+CHAR_ENT_XML_TOKENIZER_SRC = $(CHAR_XML_TOKENIZER_SRC) CharEntXMLTokenizer.h CharEntXMLTokenizer.cpp
+CharEntXMLTokenizer.new.test: CharEntXMLTokenizer.test.cpp $(CHAR_ENT_XML_TOKENIZER_SRC) rich.xml
+	g++ -std=c++23 $<  -o  $@ -DNEW
+
+CHAR_LIST_TOKENIZER_SRC = $(CHAR_TOKENIZER_SRC) CharListTokenizer.h
+CharListTokenizer.test: CharListTokenizer.test.cpp $(CHAR_LIST_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+CharListEscTokenizer.test: CharListEscTokenizer.test.cpp CharListEscTokenizer.h $(CHAR_LIST_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+
+# NOTE: New version of CharList*Tokenizer is Charlist*Tokenizer (lower-case 'l', Charlist as one word)
+CHARLIST_TOKENIZER_SRC = $(CHAR_TOKENIZER_SRC) CharlistTokenizer.h CharlistTokenizer.cpp
+CharlistTokenizer.test: CharlistTokenizer.test.cpp $(CHARLIST_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+CHARLIST_EQ_TOKENIZER_SRC = $(CHARLIST_TOKENIZER_SRC) CharlistEQTokenizer.h CharlistEQTokenizer.cpp
+CharlistEQTokenizer.test:      CharlistEQTokenizer.test.cpp $(CHARLIST_EQ_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+CharlistEQTokenizer.JSON.test: CharlistEQTokenizer.test.cpp $(CHARLIST_EQ_TOKENIZER_SRC)
+	g++ -std=c++23 -DTEST_JSON $<  -o $@
+
+
+
+
+load_string_with_file: load_string_with_file.test.cpp load_string_with_file.h
+	g++ -std=c++23         $<  -o $@
+
+
+CONNECTION_SRC = Connection.h Connection.cpp
+Connection.test: Connection.test.cpp $(CONNECTION_SRC)
+	g++ -std=c++23         $<  -o $@
+JQ_SRC = $(CONNECTION_SRC) jq.h jq.cpp jq.path.h jq.path.cpp
+jq.test: jq.test.cpp $(JQ_SRC)
+	g++ -std=c++23         $<  -o $@
+INET_CONNECTION_SRC = $(CONNECTION_SRC) AuthConnection.h InetConnection.h
+CouchDB.test: CouchDB.test.cpp CouchDB.cpp CouchDB.h $(INET_CONNECTION_SRC)
+	g++ -std=c++23         $<  -o $@
+CouchDB.debug.test: CouchDB.test.cpp CouchDB.cpp CouchDB.h $(INET_CONNECTION_SRC)
+	g++ -std=c++23 -DDEBUG $<  -o $@
+
+SQLITE_SRC= SQLDataBase.h SQLite.h SQLite.cpp
+SQLite.test: SQLite.test.cpp $(SQLITE_SRC)
+
+
+
+NamedType.test: NamedType.test.cpp NamedType.h
+	g++ -std=c++23         $<  -o $@
+NamedType.byRef.test: NamedType.byRef.test.cpp NamedType.byRef.h
+	g++ -std=c++23         $<  -o $@
 
 %.test: %.test.cpp %.h
 	g++ -std=c++23 $<  -o $@
-%.o: %.cpp
-	g++ -std=c++23 -c -std=c++17 $<
+
+%.o: %.cpp %.h
+	g++ -DSEPARATE_COMPILATION -std=c++23 --compile $<
+#	g++  -std=c++23 -c -std=c++17 $<
+%.test.o: %.test.cpp %.h
+	g++ -DSEPARATE_COMPILATION -std=c++23 --compile $<
+
+REVERSIBLE_MAP_SRC = ReversibleMap.h ReversibleMap.cpp NamedType.h
+ReversibleMap.map.test:            ReversibleMap.test.cpp $(REVERSIBLE_MAP_SRC)
+	g++ -std=c++23 -DUSE_MAP              $<  -o $@
+ReversibleMap.map.DEBUG.test:      ReversibleMap.test.cpp $(REVERSIBLE_MAP_SRC)
+	g++ -std=c++23 -DUSE_MAP      -DDEBUG $<  -o $@
+ReversibleMap.multimap.test:       ReversibleMap.test.cpp $(REVERSIBLE_MAP_SRC)
+	g++ -std=c++23 -DUSE_MULTIMAP         $<  -o $@
+ReversibleMap.multimap.DEBUG.test: ReversibleMap.test.cpp $(REVERSIBLE_MAP_SRC)
+	g++ -std=c++23 -DUSE_MULTIMAP -DDEBUG $<  -o $@
 
 
+Bijection.test: Bijection.test.cpp Bijection.h ReversibleMap.cpp NamedType.h
+	g++ -std=c++23  $<  -o $@
+
+Reversible.test: Reversible.test.cpp Reversible.h
+	g++ -std=c++23         $<  -o $@
+Reversible.redo.test: Reversible.test.cpp Reversible.h
+	g++ -std=c++23 -DTEST_REDO_CHANGE $<  -o $@
+Reversible.undo.test: Reversible.test.cpp Reversible.h
+	g++ -std=c++23 -DTEST_UNDO_CHANGE $<  -o $@
+
+
+
+
+GRAPH_SEARCH_SRC = GraphSearch.cpp GraphSearch.h
+GRAPH_BFSEARCH_SRC = $(GRAPH_SEARCH_SRC) BFGraphSearch.cpp BFGraphSearch.h
+
+BFGraphSearch.test: BFGraphSearch.test.cpp $(GRAPH_BFSEARCH_SRC)
+	g++ -std=c++23 $<  -o $@
+
+GRAPH_DFSEARCH_SRC = $(GRAPH_SEARCH_SRC) DFGraphSearch.cpp DFGraphSearch.h
+DFGraphSearch.test: DFGraphSearch.test.cpp $(GRAPH_DFSEARCH_SRC)
+	g++ -std=c++23 $<  -o $@
+
+
+DEPENDENCY_MANAGER_SRC = DependencyManager.h DependencyManager.cpp
+DependencyManager.test: DependencyManager.test.cpp $(DEPENDENCY_MANAGER_SRC)
+	g++ -std=c++23  $<  -o $@
+
+POSTSCRIPT_BASE_SRC = PostScript_base.h PostScript_base.cpp $(DEPENDENCY_MANAGER_SRC)
+PostScript_base.test: PostScript_base.test.cpp $(POSTSCRIPT_BASE_SRC)
+	g++ -std=c++23  $<  -o $@
+
+POSTSCRIPT_FILE_SRC = PostScriptFile.h PostScriptFile.cpp POSTSCRIPT_BASE_SRC
+PostScriptFile.test: PostScriptFile.test.cpp PostScriptFile.h PostScriptFile.cpp PostScript_base.h
+	g++ -std=c++23 -DTEST_UNDO_CHANGE $<  -o $@
+
+
+boosted.*.test: boosted.*.test.cpp boosted.*.h boosted.*.cpp
+	g++ -std=c++23 $<  -o $@
+
+
+clean_former:
+	$(RM)  bitenum basic_tokenizer xml_tokenizer case-insensitive-string-cmp ai_set test_concepts test_XML
 clean:
-	$(RM)  a.out *.test *.o
+	$(RM)  a.out *.test temp  paragraph information escaper zettelkasten lazy_strings temp.txt
+clean_all:
+	make clean_former
+	make clean
+	rm *.o
 
-
+save_Makefile_to_Dropbox: Makefile
+	cp --update Makefile $(DropBoxDir)Makefile.cpp_code
+PRED_FILES = pred.h pred.test.cpp
+SAVE_TO_DROPBOX_FILES = $(jsvarTextFiles) $(allTokenizerTextFiles) $(loadStringWithFileTextFiles) $(PRED_FILES)
 save_to_Dropbox:
-	cp --update README-*.md Makefile *.h *.cpp *.md *.txt *.bak $(RAPIDXML) ~/Dropbox/cpp_code/XML/
+	cp --update *.h *.cpp *.txt $(DropBoxDir)
+	cp --update Makefile $(DropBoxDir)Makefile.cpp_code
+	cp --update README.*.md README.*.txt $(DropBoxDir)
+
+SUBDIRS = streams/ algorithm/ author_subject_work/ BTree/ concepts_and_type_traits/ examples/\
+          filesystem/ graph/ iterator/ lc++/ modules/ programmable_book/ ranges/ regex/\
+          serialization/ sockets/ string_examples/ threads/ useful/ zettelkasten/
+save_all_to_Dropbox:
+	cp --update *.h *.cpp *.txt *.xml $(DropBoxDir)
+	cp --update Makefile $(DropBoxDir)Makefile.cpp_code
+	cp --update --recursive $(SUBDIRS) $(DropBoxDir)
+	mkdir -p $(DropBoxDir)XML/
+	cp --update XML/*.h XML/*.cpp XML/*.md XML/*.xml $(DropBoxDir)XML/
+	cp --update README.*.md README.*.txt $(DropBoxDir)
