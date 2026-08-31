@@ -1,21 +1,23 @@
-#ifndef BOOSTED_BLOCK_H
-#define BOOSTED_BLOCK_H
+#ifndef BOOSTLIKE_BLOCK_H
+#define BOOSTLIKE_BLOCK_H
 
-#ifndef BOOSTED_BLOCK_DIAGRAM_H
-#include "boosted.block_diagram.h"
+#ifndef BOOSTLIKE_BLOCK_DIAGRAM_H
+#include "boost-like.block-diagram.h"
 #endif
 
-#include <boost/geometry/geometries/box.hpp>
+#ifndef BOOSTLIKE_BOX_H
+#include "boost-like.box.h"
+#endif
 
 #include <vector>
 
 /* Class block<> implements interface indexable<>
  */
 template < typename     F = double,
-           typename POINT = bg::model::point<F, 2, bg::cs::cartesian>,
+           typename POINT = point<F, 2, boost::geometry::cs::cartesian>,
            typename   INT = unsigned int,
            typename ANGLE = Degree<F> >
-class block : public bg::model::box<POINT>, // a box made of two describing points
+class block : public box<F, 2, boost::geometry::cs::cartesian, POINT>, // a box made of two describing points
               public indexable<F,POINT,INT,ANGLE>
 {
 public:
@@ -25,7 +27,7 @@ public:
   typedef ANGLE angle_type;
   typedef Degree<F> degree_type;
 
-  typedef bg::model::box<POINT> box_type;
+  typedef box<F, 2, boost::geometry::cs::cartesian, POINT> box_type;
   typedef indexable<F,POINT,INT,ANGLE> indexable_type;
   using box_type::min_corner, box_type::max_corner;
   using indexable_type::operator[], indexable_type::get_angle;
@@ -57,8 +59,8 @@ public:
 };
 
 #ifndef SEPARATE_COMPILATION
-  #ifndef BOOSTED_BLOCK_CPP
-    #include "boosted.block.cpp"
+  #ifndef BOOSTLIKE_BLOCK_CPP
+    #include "boost-like.block.cpp"
   #endif
 #endif
 

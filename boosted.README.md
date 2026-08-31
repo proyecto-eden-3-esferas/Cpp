@@ -1,3 +1,5 @@
+# Boosted Libraries
+
 Boosted libraries or code are code that relies on boost libraries, their concepts, interfaces and implementations, whenever possible.
 
 To date, some boost libraries to be relied on are:
@@ -6,7 +8,11 @@ To date, some boost libraries to be relied on are:
 
 - boost::graph
 
+# Boosted Geometry versus Boost-like Geometry
+Currently each compilation unit takes about twelve seconds to compile into object. With no separate compilation, each build takes a little longer than twelve seconds, no matter how basic the code may be. Therefore I have decided to write my own library yet follow the Boost.Geometry interfaces or concepts as closely as I can manage.
 
+
+# Boosted Geometry
 
 ## `model::point`
 In this section we shall discuss:

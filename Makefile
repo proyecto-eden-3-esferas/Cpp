@@ -207,6 +207,20 @@ boosted.block.sep-comp.test: boosted.block.test.cpp $(BOOSTED_BLOCK_SRC) boosted
 
 
 
+BOOSTLIKE_SRC       = NamedType.h boost-like.point.h boost-like.block-diagram.h
+BOOSTLIKE_BOX_SRC   = $(BOOSTLIKE_SRC)     boost-like.box.h
+BOOSTLIKE_BLOCK_SRC = $(BOOSTLIKE_BOX_SRC) boost-like.block.h boosted.block.cpp
+boost-like.block.test: boost-like.block.test.cpp $(BOOSTLIKE_BLOCK_SRC)
+	g++ -std=c++23  $<  -o $@
+
+BOOSTLIKE_LABELED_BLOCK_SRC = $(BOOSTLIKE_BLOCK_SRC) boost-like.labeled_block.h boost-like.labeled_block.cpp
+boost-like.labeled_block.test: boost-like.labeled_block.test.cpp $(BOOSTLIKE_LABELED_BLOCK_SRC)
+	g++ -std=c++23  $<  -o $@
+
+
+
+
+
 clean_former:
 	$(RM)  bitenum basic_tokenizer xml_tokenizer case-insensitive-string-cmp ai_set test_concepts test_XML
 clean:
