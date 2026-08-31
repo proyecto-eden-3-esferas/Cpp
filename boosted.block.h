@@ -31,16 +31,15 @@ public:
   /* The port interface
      holds variables: top, left, bottom, right
      which mean how many ports are found on each side
-   * Helper function top_total() tells the maximum index on side 'top' + 1
+   * Helper function top_number_of_ports() tells the maximum index on side 'top' + 1
    */
-
   std::vector<point_type> ports;
   index_type top, left, bottom, right;
   enum class side {topside, leftside, bottomside, rightside};
   virtual void initialize_ports();
 
 public:
-  index_type total() const {return top + left + bottom + right;};
+  index_type number_of_ports() const {return top + left + bottom + right;};
   side which_side(index_type idx) const;
 
   // (Non-virtual) Getters and setters:
@@ -48,16 +47,16 @@ public:
   angle_type          get_angle(index_type idx) const override;
 
   // Constructors:
-  block() {};
-  block(const point_type & min, const point_type & max) : box_type(min,max) {};
+  block();
+  block(const point_type & min, const point_type & max);
   block(const point_type & min, const point_type & max,
-        index_type t, index_type l, index_type b, index_type r) :
-    box_type(min,max), top(t), left(l), bottom(b), right(r), ports(total())
-    {initialize_ports();};
+        index_type t, index_type l, index_type b, index_type r);
 };
 
-#ifndef BOOSTED_BLOCK_CPP
-#include "boosted.block.cpp"
+#ifndef SEPARATE_COMPILATION
+  #ifndef BOOSTED_BLOCK_CPP
+    #include "boosted.block.cpp"
+  #endif
 #endif
 
 #endif
