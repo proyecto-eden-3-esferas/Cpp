@@ -34,9 +34,12 @@ public:
 
 //protected:
   /* The port interface
-     holds variables: top, left, bottom, right
-     which mean how many ports are found on each side
+   * holds variables:
+     (1) top, left, bottom, right
+         which mean how many ports are found on each side
+     (2) enum class 'side'
    * Helper function top_number_of_ports() tells the maximum index on side 'top' + 1
+   *
    */
   std::vector<point_type> ports;
   index_type top, left, bottom, right;
@@ -45,6 +48,7 @@ public:
 
 public:
   index_type number_of_ports() const {return top + left + bottom + right;};
+  index_type            size() const {return number_of_ports();};
   side which_side(index_type idx) const;
 
   // (Non-virtual) Getters and setters:

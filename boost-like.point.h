@@ -6,6 +6,7 @@
 
 /* TODO
  [ ] rename point to boostlike_point
+ [ ] member print(std::ostream& o = std::cout, char sep = ',') const;
  */
 
 template<typename F = double,
