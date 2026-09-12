@@ -2,9 +2,18 @@
 #define BOOSTLIKE_POINT_H
 
 #include <array>
+#include <iostream>
+#include <string>
+
 #include <boost/geometry/core/cs.hpp>
 
-/* TODO
+/* Class point, with an interface like Boost.Geometry model::point
+ * Boost names its point's template parameters like so:
+ * template<typename CoordinateType,
+            std::size_t DimensionCount,
+            typename CoordinateSystem>
+   class model::point {...}
+ * TODO
  [ ] rename point to boostlike_point
  [ ] member print(std::ostream& o = std::cout, char sep = ',') const;
  */
@@ -17,6 +26,8 @@ class point
 {
 public:
   typedef point<F,DIM,CoordinateSystem> point_type;
+  typedef std::string string_type;
+  typedef std::ostream ostream_type;
 
   // The Boost.Geometry Point Interface:
   std::array<F, DIM> coordinates;
@@ -24,6 +35,15 @@ public:
   F    get()      const {return coordinates[IDX];};
   template <std::size_t IDX>
   void set(F val)       {       coordinates[IDX] = val;};
+
+  /* The print interface */
+  void print(ostream_type & out = std::cout,
+             const string_type & inter = " ", // usu. either space or comma (and space)
+             const string_type &   pre = " ",
+             const string_type &  post = "") const
+  {
+    out << pre << coordinates[0] << inter << coordinates[1] << post;
+  };
 
   /* The Shifting Interface
    * is useful for reshaping multilines connecting ports on blocks

@@ -12,6 +12,7 @@ template < typename     F,
            template <typename,typename> typename MAP
          >
 void print_as_SVG<F,POINT,INT,ANGLE,MAP>::operator() (const box_type& b) {
+  indent();
   out << "<rect";
   out << " x=\"" << b.min_corner(). template get<0>() << "\"";
   out << " y=\"" << b.min_corner(). template get<1>() << "\"";
@@ -30,6 +31,61 @@ template < typename     F,
 void print_as_SVG<F,POINT,INT,ANGLE,MAP>::operator() (const labeled_block_type& lb) {
   this->operator() (lb);
 };
+
+/* Members for printing a sequence of points
+   rely on print_points_in(CONTAINER_OF_POINTS)
+   and print the sequence either as a polyline or a polygon
+ */
+
+template < typename     F,
+           typename POINT,
+           typename   INT,
+           typename ANGLE,
+           template <typename,typename> typename MAP
+         >
+template <typename CONTAINER_OF_POINTS>
+void print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_points_in(const CONTAINER_OF_POINTS & container_of_points) {
+    bool first = true;
+    for(const auto & pt : container_of_points) {
+      if(first)
+        first = false;
+      else
+        out << ' ';
+      pt.print(out, ",");
+    }
+  };
+
+template < typename     F,
+           typename POINT,
+           typename   INT,
+           typename ANGLE,
+           template <typename,typename> typename MAP
+         >
+template <typename CONTAINER_OF_POINTS>
+void print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_as_polyline(const CONTAINER_OF_POINTS & container_of_points,
+                         const string_type& strk,
+                         const string_type& fll) {
+    indent();
+    out << "<polyline points=\"";
+    print_points_in(container_of_points);
+    out << "\" stroke=\"" << strk << "\" fill=\"" << fll << "\"/>\n";
+  };
+
+template < typename     F,
+           typename POINT,
+           typename   INT,
+           typename ANGLE,
+           template <typename,typename> typename MAP
+         >
+template <typename CONTAINER_OF_POINTS>
+void print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_as_polygon(const CONTAINER_OF_POINTS & container_of_points,
+                         const string_type& strk,
+                         const string_type& fll) {
+    indent();
+    out << "<polygon points=\"";
+    print_points_in(container_of_points);
+    out << "\" stroke=\"" << strk << "\" fill=\"" << fll << "\"/>\n";
+  };
 
 
 /* Constructors

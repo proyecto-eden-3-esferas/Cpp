@@ -6,6 +6,14 @@
 
 #include "XMLprint.h"
 
+/*
+ * TODO
+ * [ ] print_as_SVG::void operator() (const labeled_block_type& lb);
+ *     should print labels
+ * [v] make void print_as_SVG<>::print_points_in(CONTAINER_OF_POINTS) protected
+ * [?] move templatized member functions into implementation file
+ */
+
 template < typename     F = double,
            typename POINT = point<F, 2, boost::geometry::cs::cartesian>,
            typename   INT = unsigned int,
@@ -24,12 +32,21 @@ public:
   using                 XMLprint_type::out;
   using                 XMLprint_type::stack_of_names;
   using        typename XMLprint_type::ostream_type;
+  using        typename XMLprint_type::string_type;
   using        typename XMLprint_type::string_map_type;
   using                 XMLprint_type::open_opening_tag;
   using                 XMLprint_type::close_opening_tag;
   using                 XMLprint_type::close_standalone_tag;
   using                 XMLprint_type::close_element;
   using                 XMLprint_type::add_style;
+
+public:
+  /* The Level<SINT> interface
+     is good for indenting code */
+  Level<unsigned int> level;
+  void go_in()  {++level;};
+  void go_out() {--level;};
+  void indent() {level.print(out);};
 
   F width, height;
   string_map_type style{
@@ -44,6 +61,23 @@ public:
   void operator() (const box_type& b);
   void operator() (const block_type& b) {operator() (static_cast<const box_type &>(b));};
   void operator() (const labeled_block_type& lb);
+
+  /* Members for printing a sequence of points
+     rely on print_points_in(CONTAINER_OF_POINTS)
+     and print the sequence either as a polyline or a polygon
+   */
+protected:
+  template <typename CONTAINER_OF_POINTS>
+  void print_points_in(const CONTAINER_OF_POINTS & container_of_points);
+public:
+  template <typename CONTAINER_OF_POINTS>
+  void print_as_polyline(const CONTAINER_OF_POINTS & container_of_points,
+                         const string_type& strk="black",
+                         const string_type& fll="none");
+  template <typename CONTAINER_OF_POINTS>
+  void print_as_polygon( const CONTAINER_OF_POINTS & container_of_points,
+                         const string_type& strk="black",
+                         const string_type& fll="none");
 
   // Constructors:
   print_as_SVG(ostream_type & o,                              F w=100.0, F h=100.0);
