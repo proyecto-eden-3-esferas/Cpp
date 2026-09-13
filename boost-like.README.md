@@ -4,16 +4,22 @@ This README refers to Boost-like (Geometry) libraries, whereas Boosted (Geometry
 Currently each Boost.Geometry-compliant compilation unit takes about twelve seconds to compile into object. With no separate compilation, each build takes a little longer than twelve seconds, no matter how basic the code may be. Therefore I have decided to write my own library yet follow the Boost.Geometry interfaces or concepts as closely as I can manage.
 
 # TODOs
-[ ] write *boost-like.multiline.h* to hold a sequence of points as defined in *boost-like.point.h*
-[ ] write SVG printing code,
-    say        *boost-like.CLASSNAME.svg.h" and possibly
-    a matching *boost-like.CLASSNAME.svg.cpp" file
+[ ] Review ANGLE as a template parameter.
+    It seems that your main target languages, SVG and PostScript, use sexagesimal degrees.
 [ ] SVG shapes might then be made clickable to send the user to another page or place
+    This is to be done like this:
+    ```
+    <a href "DESTINATION">
+      <SHAPE>
+      </SHAPE>
+    </a>
+    ```
 [ ] write *boost-like.arrowhead.h* to define an arrowhead
     and its styles: stick, solid, hollow... (an enum type)
 
 ## PostScript
-[ ] write PostScript printing code in *PSprint.h*, very much analogously to SVG printing code
+[ ] write PostScript printing code in *boost-like.print_as_PS.h* and *boost-like.print_as_PS.cpp*,
+    very much analogously to *boost-like.print_as_SVG.h* and *boost-like.print_as_SVG.cpp*
 [ ] PostScript shapes might then be made clickable to send the user to another page or place
 
 

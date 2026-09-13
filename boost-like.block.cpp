@@ -6,8 +6,8 @@
 #endif
 
 
-template < typename F, typename POINT, typename INT, typename ANGLE>
-void block<F,POINT,INT,ANGLE>::initialize_ports() {
+template < typename F, typename POINT, typename ANGLE>
+void block<F,POINT,ANGLE>::initialize_ports() {
   ports.resize(number_of_ports());
   /* initialize each point in block<>::ports
      starting at the top right corner, anticlockwise
@@ -61,9 +61,9 @@ void block<F,POINT,INT,ANGLE>::initialize_ports() {
   }
 };
 
-template < typename F, typename POINT, typename INT, typename ANGLE>
-typename block<F,POINT,INT,ANGLE>::side
-block<F,POINT,INT,ANGLE>::which_side(index_type idx) const {
+template < typename F, typename POINT, typename ANGLE>
+typename block<F,POINT,ANGLE>::side
+block<F,POINT,ANGLE>::which_side(index_type idx) const {
   if(idx < top)
     return side::topside;
   else {
@@ -78,14 +78,14 @@ block<F,POINT,INT,ANGLE>::which_side(index_type idx) const {
   }
 };
 
-template < typename F, typename POINT, typename INT, typename ANGLE>
-const POINT & block<F,POINT,INT,ANGLE>::operator[](index_type idx) const {
+template < typename F, typename POINT, typename ANGLE>
+const POINT & block<F,POINT,ANGLE>::operator[](index_type idx) const {
   side sd = which_side(idx);
   return ports[idx];
 };
-template < typename F, typename POINT, typename INT, typename ANGLE>
-typename block<F,POINT,INT,ANGLE>::angle_type
-block<F,POINT,INT,ANGLE>::get_angle(index_type idx) const {
+template < typename F, typename POINT, typename ANGLE>
+typename block<F,POINT,ANGLE>::angle_type
+block<F,POINT,ANGLE>::get_angle(index_type idx) const {
   side sd = which_side(idx);
   switch (sd) {
     case side::topside:
@@ -108,16 +108,16 @@ block<F,POINT,INT,ANGLE>::get_angle(index_type idx) const {
 
 // Constructors:
 
-template < typename F, typename POINT, typename INT, typename ANGLE>
-block<F,POINT,INT,ANGLE>::block()
+template < typename F, typename POINT, typename ANGLE>
+block<F,POINT,ANGLE>::block()
 {};
 
-template < typename F, typename POINT, typename INT, typename ANGLE>
-block<F,POINT,INT,ANGLE>::block(const point_type & min, const point_type & max) : box_type(min,max)
+template < typename F, typename POINT, typename ANGLE>
+block<F,POINT,ANGLE>::block(const point_type & min, const point_type & max) : box_type(min,max)
 {};
 
-template < typename F, typename POINT, typename INT, typename ANGLE>
-block<F,POINT,INT,ANGLE>::block(const point_type & min, const point_type & max,
+template < typename F, typename POINT, typename ANGLE>
+block<F,POINT,ANGLE>::block(const point_type & min, const point_type & max,
                                 index_type t, index_type l, index_type b, index_type r) :
   box_type(min,max), top(t), left(l), bottom(b), right(r), ports(number_of_ports())
 {initialize_ports();};

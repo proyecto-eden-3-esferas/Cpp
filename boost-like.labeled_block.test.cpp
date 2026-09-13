@@ -6,9 +6,9 @@
 typedef unsigned int index_type;
 typedef double float_type;
 typedef point< float_type, 2, boost::geometry::cs::cartesian> point_type;
-typedef           Degree<float_type> angle_type;
-typedef block< float_type, point_type, index_type, angle_type> block_type;
-typedef labeled_block< float_type, point_type, index_type, angle_type> labeled_block_type;
+typedef        Degree<float_type>                         angle_type;
+typedef         block<float_type, point_type, angle_type> block_type;
+typedef labeled_block<float_type, point_type, angle_type> labeled_block_type;
 
 point_type min(0.0, 0.0), max(40.0, 30.0);
 

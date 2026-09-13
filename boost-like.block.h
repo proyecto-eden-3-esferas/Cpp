@@ -15,20 +15,19 @@
  */
 template < typename     F = double,
            typename POINT = point<F, 2, boost::geometry::cs::cartesian>,
-           typename   INT = unsigned int,
            typename ANGLE = Degree<F> >
 class block : public box<F, 2, boost::geometry::cs::cartesian, POINT>, // a box made of two describing points
-              public indexable<F,POINT,INT,ANGLE>
+              public indexable<F,POINT,unsigned int,ANGLE>
 {
 public:
-  typedef   INT index_type;
+  typedef unsigned int index_type;
   typedef     F float_type;
   typedef POINT point_type;
   typedef ANGLE angle_type;
   typedef Degree<F> degree_type;
 
   typedef box<F, 2, boost::geometry::cs::cartesian, POINT> box_type;
-  typedef indexable<F,POINT,INT,ANGLE> indexable_type;
+  typedef indexable<F,POINT,index_type,ANGLE> indexable_type;
   using box_type::min_corner, box_type::max_corner;
   using indexable_type::operator[], indexable_type::get_angle;
 
@@ -42,7 +41,7 @@ public:
    *
    */
   std::vector<point_type> ports;
-  index_type top, left, bottom, right;
+  index_type top, left, bottom, right; // how many ports on each of four sides
   enum class side {topside, leftside, bottomside, rightside};
   virtual void initialize_ports();
 

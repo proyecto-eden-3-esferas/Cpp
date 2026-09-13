@@ -7,11 +7,11 @@
 
 template < typename     F,
            typename POINT,
-           typename   INT,
+//         typename   INT,
            typename ANGLE,
            template <typename,typename> typename MAP
          >
-void print_as_SVG<F,POINT,INT,ANGLE,MAP>::operator() (const box_type& b) {
+void print_as_SVG<F,POINT,ANGLE,MAP>::operator() (const box_type& b) {
   indent();
   out << "<rect";
   out << " x=\"" << b.min_corner(). template get<0>() << "\"";
@@ -24,11 +24,95 @@ void print_as_SVG<F,POINT,INT,ANGLE,MAP>::operator() (const box_type& b) {
 
 template < typename     F,
            typename POINT,
-           typename   INT,
+//         typename   INT,
            typename ANGLE,
            template <typename,typename> typename MAP
          >
-void print_as_SVG<F,POINT,INT,ANGLE,MAP>::operator() (const labeled_block_type& lb) {
+void print_as_SVG<F,POINT,ANGLE,MAP>::print_label(
+  const point_type & pt,
+  const string_type & label,
+  F dx, F dy, // X and Y displacements
+  text_anchor anchor,
+  degree_type deg
+) {
+  indent();
+  out << "<text text-anchor=\"";
+  switch (anchor) {
+    case text_anchor::start:
+      out << "start\"";
+      break;
+    case text_anchor::middle:
+      out << "middle\"";
+      break;
+    case text_anchor::end:
+      out << "end\"";
+      break;
+    default: break;
+  }
+  out << " x=\"" << dx << "\" y=\"" << - dy << "\"\n";
+  indent();
+  indent();
+  out << "fill=\"black\" stroke=\"none\" fill-opacity=\"1.0\"\n";
+  indent();
+  indent();
+  out << "transform=\"translate("; pt.print(out,",") ;
+  out << ") rotate(" << deg.get() << " 0, 0) scale(1, -1)\">" << label << "</text>\n";
+
+};
+
+
+template < typename     F,
+           typename POINT,
+//         typename   INT,
+           typename ANGLE,
+           template <typename,typename> typename MAP
+         >
+void print_as_SVG<F,POINT,ANGLE,MAP>::print_label_on_block_at_port(
+  const string_type & label,
+  const  block_type &   blk,
+         index_type     idx,
+  F dx, F dy, // X and Y displacements
+  text_anchor anchor,
+  degree_type deg
+) {
+  print_label(blk[idx], label, dx, dy, anchor, deg);
+};
+
+
+template < typename     F,
+           typename POINT,
+//         typename   INT,
+           typename ANGLE,
+           template <typename,typename> typename MAP
+         >
+void print_as_SVG<F,POINT,ANGLE,MAP>::print_external_label_on_block_at_port(const string_type & label,
+  const  block_type &   blk,
+         index_type     idx,
+  F dx, F dy) {
+  //
+};
+template < typename     F,
+           typename POINT,
+//         typename   INT,
+           typename ANGLE,
+           template <typename,typename> typename MAP
+         >
+void print_as_SVG<F,POINT,ANGLE,MAP>::print_internal_label_on_block_at_port(const string_type & label,
+  const  block_type &   blk,
+        index_type     idx,
+  F dx, F dy) {
+    //
+};
+
+
+
+template < typename     F,
+           typename POINT,
+//         typename   INT,
+           typename ANGLE,
+           template <typename,typename> typename MAP
+         >
+void print_as_SVG<F,POINT,ANGLE,MAP>::operator() (const labeled_block_type& lb) {
   this->operator() (lb);
 };
 
@@ -39,12 +123,12 @@ void print_as_SVG<F,POINT,INT,ANGLE,MAP>::operator() (const labeled_block_type& 
 
 template < typename     F,
            typename POINT,
-           typename   INT,
+//         typename   INT,
            typename ANGLE,
            template <typename,typename> typename MAP
          >
 template <typename CONTAINER_OF_POINTS>
-void print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_points_in(const CONTAINER_OF_POINTS & container_of_points) {
+void print_as_SVG<F,POINT,ANGLE,MAP>::print_points_in(const CONTAINER_OF_POINTS & container_of_points) {
     bool first = true;
     for(const auto & pt : container_of_points) {
       if(first)
@@ -57,12 +141,12 @@ void print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_points_in(const CONTAINER_OF_POI
 
 template < typename     F,
            typename POINT,
-           typename   INT,
+//         typename   INT,
            typename ANGLE,
            template <typename,typename> typename MAP
          >
 template <typename CONTAINER_OF_POINTS>
-void print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_as_polyline(const CONTAINER_OF_POINTS & container_of_points,
+void print_as_SVG<F,POINT,ANGLE,MAP>::print_as_polyline(const CONTAINER_OF_POINTS & container_of_points,
                          const string_type& strk,
                          const string_type& fll) {
     indent();
@@ -73,12 +157,12 @@ void print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_as_polyline(const CONTAINER_OF_P
 
 template < typename     F,
            typename POINT,
-           typename   INT,
+//         typename   INT,
            typename ANGLE,
            template <typename,typename> typename MAP
          >
 template <typename CONTAINER_OF_POINTS>
-void print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_as_polygon(const CONTAINER_OF_POINTS & container_of_points,
+void print_as_SVG<F,POINT,ANGLE,MAP>::print_as_polygon(const CONTAINER_OF_POINTS & container_of_points,
                          const string_type& strk,
                          const string_type& fll) {
     indent();
@@ -93,11 +177,11 @@ void print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_as_polygon(const CONTAINER_OF_PO
 
 template < typename     F,
            typename POINT,
-           typename   INT,
+//         typename   INT,
            typename ANGLE,
            template <typename,typename> typename MAP
          >
-print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_as_SVG(ostream_type & o,
+print_as_SVG<F,POINT,ANGLE,MAP>::print_as_SVG(ostream_type & o,
                                                   F w, F h)
 : XMLprint_type(o), width(w), height(h)
 {
@@ -111,11 +195,11 @@ print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_as_SVG(ostream_type & o,
 
 template < typename     F,
            typename POINT,
-           typename   INT,
+//         typename   INT,
            typename ANGLE,
            template <typename,typename> typename MAP
          >
-print_as_SVG<F,POINT,INT,ANGLE,MAP>::print_as_SVG(ostream_type & o,
+print_as_SVG<F,POINT,ANGLE,MAP>::print_as_SVG(ostream_type & o,
                                                   const string_map_type & sty,
                                                   F w, F h)
 : XMLprint_type(o), width(w), height(h)

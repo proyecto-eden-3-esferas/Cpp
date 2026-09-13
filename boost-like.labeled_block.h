@@ -12,16 +12,15 @@
 
 template < typename     F = double,
            typename POINT = point<F, 2, boost::geometry::cs::cartesian>,
-           typename   INT = unsigned int,
            typename ANGLE = Degree<F> >
-class labeled_block : public block<F,POINT,INT,ANGLE> {
+class labeled_block : public block<F,POINT,ANGLE> {
 public:
-  typedef block<F,POINT,INT,ANGLE> block_type;
+  typedef block<F,POINT,ANGLE> block_type;
   using block_type::min_corner, block_type::max_corner;
   using block_type::number_of_ports;
   using block_type::get_angle;
 
-  typedef   INT index_type;
+  typedef unsigned int index_type;
   typedef     F float_type;
   typedef POINT point_type;
   typedef ANGLE angle_type;
