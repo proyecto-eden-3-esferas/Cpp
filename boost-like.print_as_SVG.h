@@ -6,21 +6,35 @@
 
 #include "XMLprint.h"
 
-/* Extremely ambitious class print_as_SVG<>
+/* Class print_as_SVG<> is in charge of printing [all] SVG objects
+ * It is assumed that the angle class is Degree<FLOAT>
+ * as SVG takes sexagesimal degrees as angle units.
  * TODO
-   [ ] print_external_label_on_block_at_port(LABEL,BLOCK,INDEX,DX,DY), and
-       print_internal_label_on_block_at_port(LABEL,BLOCK,INDEX,DX,DY)
-       have not yet been implemented
+ * [ ] draw up a scheme for including id attributes into graphic elements
+       such as box, block, labeled_block,
+       as well as prospective circle, diamond, polygon
+   [ ] void open_hyperlink(const string_type& page), and
+       void open_hyperlink(const string_type& page, const string_type& fragment)
+       should  include a 'target' attribute in the opening tag, my.
+   [ ] print_internal_label_on_block_at_port(LABEL,BLOCK,INDEX,DX,DY)
+       has not been implemented yet.
+       It should be easy to implement
+       by analogy with the body of already working 'print_external_label_on_block_at_port(...)'
+
+   [v] Remove double indenting
+         indent();
+         indent();
+       in member print_label(...)
    [ ] print_as_SVG::void operator() (const labeled_block_type& lb);
        should be implemented as
        (1) print(static_cast<BLOCK>(lb)), then
-       (2) calling print_internal_label_on_block_at_port() and
-           print_external_label_on_block_at_port()
+       (2) calling
+           - print_internal_label_on_block_at_port(), and
+           - print_external_label_on_block_at_port()
            on each of its (lb's) ports
    [v] make void print_as_SVG<>::print_points_in(CONTAINER_OF_POINTS) protected
-   [?] is it OK to move templatized member functions into implementation file?
-   [ ] Write entries in file Makefile
-   [ ] Implement SVG hyperlinks
+   [ ] Write fitting entries in file Makefile
+   [v] Implement SVG hyperlinks
  *
  */
 
@@ -37,7 +51,7 @@ public:
   typedef         block<F,                                    point_type,ANGLE> block_type;
   typedef labeled_block<F,    boost::geometry::cs::cartesian, point_type> labeled_block_type;
   //typedef labeled_block_type::
-  using block_type::side; // an enum class: topside, leftside, bottomside, rightside
+  typedef block_type::side side; // an enum class: topside, leftside, bottomside, rightside
 
   typedef unsigned int index_type;
   typedef Degree<F>   degree_type;
@@ -62,11 +76,22 @@ public:
   void go_out() {--level;};
   void indent() {level.print(out);};
 
-  // angle to the X axis
-  // at which a label on a vertical port is to be printed:
+  /* Angle to the X axis to print a label on a vertical port:
+   * and correction factors
+   * for printing labels on top (top_dx_k) and bottom (bot_dx_k) side of a block.
+   * They depend heavily on 'vertical_label_angle'
+   * Therefore, if 'vertical_label_angle' is changed (to 90 or very close, say)
+   * the value of 'top_dx_k' and 'bot_dx_k' should be made (near to) 1
+   * ideally through a member like 'set_vertical_label_angle_to()'
+   */
   F vertical_label_angle = 45;
+  F top_dx_k{0.0};
+  F bot_dx_k{2.0};
   // Width and height of the SVG element containing all shapes:
   F width, height;
+
+  virtual void make_vertical_label_angle_steeper();
+
   string_map_type style{
     {"fill", "white"},
     {"stroke", "black"},
@@ -75,6 +100,11 @@ public:
     {"stroke-opacity", "0.9"},
     {"transform", "scale(1,-1)"} // invert around the X axis
   };
+
+  void open_hyperlink(const string_type& page);
+  void open_hyperlink(const string_type& page, const string_type& fragment);
+  void open_locallink(const string_type& fragment);
+  void close_link();
 
   void operator() (const box_type& b);
   enum class text_anchor {start, middle, end};
@@ -137,9 +167,29 @@ public:
                          const string_type& fll="none");
 
   // Constructors:
-  print_as_SVG(ostream_type & o,                              F w=100.0, F h=100.0);
-  print_as_SVG(ostream_type & o, const string_map_type & sty, F w=100.0, F h=100.0);
+  print_as_SVG(ostream_type & o,                              F w=500.0, F h=500.0);
+  print_as_SVG(ostream_type & o, const string_map_type & sty, F w=500.0, F h=500.0);
 };
+
+// Implementation of template member functions:
+
+template < typename     F,
+           typename POINT,
+           typename ANGLE,
+           template <typename,typename> typename MAP
+         >
+template <typename CONTAINER_OF_POINTS>
+void print_as_SVG<F,POINT,ANGLE,MAP>::print_points_in(const CONTAINER_OF_POINTS & container_of_points) {
+  bool first = true;
+  for(const auto & pt : container_of_points) {
+    if(first)
+      first = false;
+    else
+      out << ' ';
+    pt.print(out, ",");
+  }
+};
+
 
 
 #ifndef SEPARATE_COMPILATION

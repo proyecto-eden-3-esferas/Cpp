@@ -217,6 +217,12 @@ BOOSTLIKE_LABELED_BLOCK_SRC = $(BOOSTLIKE_BLOCK_SRC) boost-like.labeled_block.h 
 boost-like.labeled_block.test: boost-like.labeled_block.test.cpp $(BOOSTLIKE_LABELED_BLOCK_SRC)
 	g++ -std=c++23  $<  -o $@
 
+PRINT_AS_SVG = $(BOOSTLIKE_LABELED_BLOCK_SRC) boost-like.print_as_SVG.h boost-like.print_as_SVG.cpp
+boost-like.print_as_SVG.test   : boost-like.print_as_SVG.test.cpp    $(PRINT_AS_SVG)
+	g++ -std=c++23  $<  -o $@
+boost-like.print_labeled_block_as_SVG.test: boost-like.print_labeled_block_as_SVG.test.cpp $(PRINT_AS_SVG)
+	g++ -std=c++23  $<  -o $@
+
 
 
 
@@ -224,7 +230,7 @@ boost-like.labeled_block.test: boost-like.labeled_block.test.cpp $(BOOSTLIKE_LAB
 clean_former:
 	$(RM)  bitenum basic_tokenizer xml_tokenizer case-insensitive-string-cmp ai_set test_concepts test_XML
 clean:
-	$(RM)  a.out *.test temp  paragraph information escaper zettelkasten lazy_strings temp.txt
+	$(RM)  a.out *.test temp  paragraph information escaper lazy_strings temp.txt
 clean_all:
 	make clean_former
 	make clean

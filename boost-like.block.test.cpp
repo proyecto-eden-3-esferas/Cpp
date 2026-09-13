@@ -1,3 +1,6 @@
+#include <iostream>
+#define DEBUG
+
 #ifndef BOOSTLIKE_BLOCK_H
 #include "boost-like.block.h"
 #endif
@@ -20,15 +23,12 @@ block_type b0;
 block_type b2(min, max);
 block_type b6(min, max, 4, 3, 2, 6);
 
-#include <iostream>
 using namespace std;
 
 int main() {
 
-  cout << "\'b2\' has min_corner = (" << b2.min_corner().get<0>() << ',';
-  cout <<                                b2.min_corner().get<1>() << ")\n";
-  cout << "\'b2\' has max_corner = (" << b2.max_corner().get<0>() << ',';
-  cout <<                                b2.max_corner().get<1>() << ")\n\n";
+  cout << "\'b2\' has min_corner = ("; b2.min_corner().print(std::cout); cout << ")\n";
+  cout << "\'b2\' has max_corner = ("; b2.max_corner().print(std::cout); cout << ")\n\n";
 
   index_type idx;
   cout << "Type an index smaller that " << b6.number_of_ports() << " and press ENTER: ";
@@ -38,10 +38,10 @@ int main() {
   cout << ")\n";
   cout << "Port " << idx << " has angle / faces " << b6.get_angle(idx).get() << "\n\n";
 
-  cout << "b6.top=" << b6.top << '\n';
-  cout << "b6.left=" << b6.left << '\n';
-  cout << "b6.bottom=" << b6.bottom << '\n';
-  cout << "b6.right=" << b6.right << "\n\n";
+  cout << "b6.top=" << b6.top << " (number of ports at top)\n";
+  cout << "b6.left=" << b6.left << " (number of ports at left)\n";
+  cout << "b6.bottom=" << b6.bottom << " (number of ports at bottom)\n";
+  cout << "b6.right=" << b6.right << " (number of ports at right)\n\n";
 
   cout << "Now print all the ports.\n";
   for(int i = 0; i < b6.number_of_ports(); i++) {

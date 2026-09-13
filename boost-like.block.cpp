@@ -23,7 +23,13 @@ void block<F,POINT,ANGLE>::initialize_ports() {
   x -= spacing / 2;
   for(int i = 0; i < top; ++i) {
     ports[i]. template set<0>(x);
-    ports[i]. template set<0>(y);
+    ports[i]. template set<1>(y);
+    /*
+#ifdef DEBUG
+    std::cout << "port " << i << " initialized to "; ports[i].print(std::cout);
+    std::cout << ", while x is " << x << " and spacing is " << spacing << '\n';
+#endif
+     */
     x -= spacing;
   }
 

@@ -52,7 +52,7 @@ public:
 
   // (Non-virtual) Getters and setters:
   const point_type & operator[](index_type idx) const override;
-  angle_type          get_angle(index_type idx) const override;
+  angle_type          get_angle(index_type idx) const override; // mostly useless, pointless
 
   // Constructors:
   block();

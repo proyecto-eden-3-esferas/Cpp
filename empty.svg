@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" fill="white" fill-opacity="0.3" stroke="black" stroke-opacity="0.9" stroke-width="2" transform="scale(1,-1)">
+  <rect id="bl6" x="100" y="100" width="100" height="200"/>
+  <text text-anchor="start" x="3" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 187.5,300) rotate(77 0, 0) scale(1, -1)">one</text>
+  <!-- index 0 is topside -->
+  <text text-anchor="start" x="3" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 162.5,300) rotate(77 0, 0) scale(1, -1)">two</text>
+  <!-- index 1 is topside -->
+  <text text-anchor="start" x="3" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 137.5,300) rotate(77 0, 0) scale(1, -1)">three</text>
+  <!-- index 2 is topside -->
+  <text text-anchor="start" x="3" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 112.5,300) rotate(77 0, 0) scale(1, -1)">four</text>
+  <!-- index 3 is topside -->
+  <text text-anchor="end" x="-6" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 100,266.667) rotate(0 0, 0) scale(1, -1)">five</text>
+  <!-- index 4 is leftside -->
+  <text text-anchor="end" x="-6" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 100,200) rotate(0 0, 0) scale(1, -1)">six</text>
+  <!-- index 5 is leftside -->
+  <text text-anchor="end" x="-6" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 100,133.333) rotate(0 0, 0) scale(1, -1)">seven</text>
+  <!-- index 6 is leftside -->
+  <text text-anchor="end" x="-7.5" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 125,100) rotate(77 0, 0) scale(1, -1)">eit</text>
+  <!-- index 7 is bottomside -->
+  <text text-anchor="end" x="-7.5" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 175,100) rotate(77 0, 0) scale(1, -1)">nine</text>
+  <!-- index 8 is bottomside -->
+  <text text-anchor="start" x="6" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 200,116.667) rotate(0 0, 0) scale(1, -1)">ten</text>
+  <!-- index 9 is rightside -->
+  <text text-anchor="start" x="6" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 200,150) rotate(0 0, 0) scale(1, -1)">elf</text>
+  <!-- index 10 is rightside -->
+  <text text-anchor="start" x="6" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 200,183.333) rotate(0 0, 0) scale(1, -1)">twelf</text>
+  <!-- index 11 is rightside -->
+  <text text-anchor="start" x="6" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 200,216.667) rotate(0 0, 0) scale(1, -1)">13</text>
+  <!-- index 12 is rightside -->
+  <text text-anchor="start" x="6" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 200,250) rotate(0 0, 0) scale(1, -1)">14</text>
+  <!-- index 13 is rightside -->
+  <text text-anchor="start" x="6" y="-6"
+  fill="black" stroke="none" fill-opacity="1.0"
+  transform="translate( 200,283.333) rotate(0 0, 0) scale(1, -1)">15</text>
+  <!-- index 14 is rightside -->
+  <a href="#bl6">
+    <rect x="400" y="400" width="80" height="80"/>
+  </a>
+</svg>
