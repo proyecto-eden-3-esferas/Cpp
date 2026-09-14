@@ -217,7 +217,9 @@ BOOSTLIKE_LABELED_BLOCK_SRC = $(BOOSTLIKE_BLOCK_SRC) boost-like.labeled_block.h 
 boost-like.labeled_block.test: boost-like.labeled_block.test.cpp $(BOOSTLIKE_LABELED_BLOCK_SRC)
 	g++ -std=c++23  $<  -o $@
 
-PRINT_AS_SVG = $(BOOSTLIKE_LABELED_BLOCK_SRC) boost-like.print_as_SVG.h boost-like.print_as_SVG.cpp
+LEVEL_SRC = Level.h
+XML_PRINT_SRC = XMLprint.h $(LEVEL_SRC)
+PRINT_AS_SVG = $(BOOSTLIKE_LABELED_BLOCK_SRC) boost-like.print_as_SVG.h boost-like.print_as_SVG.cpp $(XML_PRINT_SRC)
 boost-like.print_as_SVG.test   : boost-like.print_as_SVG.test.cpp    $(PRINT_AS_SVG)
 	g++ -std=c++23  $<  -o $@
 boost-like.print_labeled_block_as_SVG.test: boost-like.print_labeled_block_as_SVG.test.cpp $(PRINT_AS_SVG)

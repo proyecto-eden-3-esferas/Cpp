@@ -17,7 +17,7 @@ template < typename     F = double,
            typename POINT = point<F, 2, boost::geometry::cs::cartesian>,
            typename ANGLE = Degree<F> >
 class block : public box<F, 2, boost::geometry::cs::cartesian, POINT>, // a box made of two describing points
-              public indexable<F,POINT,unsigned int,ANGLE>
+              public indexable<F,POINT,ANGLE>
 {
 public:
   typedef unsigned int index_type;
@@ -27,7 +27,7 @@ public:
   typedef Degree<F> degree_type;
 
   typedef box<F, 2, boost::geometry::cs::cartesian, POINT> box_type;
-  typedef indexable<F,POINT,index_type,ANGLE> indexable_type;
+  typedef indexable<F,POINT,ANGLE> indexable_type;
   using box_type::min_corner, box_type::max_corner;
   using indexable_type::operator[], indexable_type::get_angle;
 

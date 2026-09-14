@@ -33,9 +33,12 @@ int main() {
   box_type box1(pmin,pmax);
 
   print_as_SVG_type p(std::cout);
-  p.go_in(); // go down one level, therefore indent once
 
   p(box1);
+  p(box1);
+  p(box1);
+  p(block6);
+  p(block6);
   p(block6);
 
   // Now print a sequence container of points as a polyline:

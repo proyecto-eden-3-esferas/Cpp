@@ -34,15 +34,28 @@ protected:
 
 public:
   std::stack<string_type> stack_of_names;
-  level_type level;
+
+  /* The Level<SINT> interface
+     is good for indenting code */
+  Level<unsigned int> level;
+  void go_in()  {++level;};
+  void go_out() {--level;};
+  void indent() {level.print(out);};
 
   virtual void printXMLheader();
   virtual void printXMLdoctype(const string_type& dt);
 
+  /* The following tag-handling members are declared virtual
+   * so that indentation may be tweaked
+   */
   virtual void  open_opening_tag(const string_type & name);
+  virtual void  open_opening_tag(const string_type & name, const string_type & id);
   virtual void close_opening_tag();
   virtual void close_standalone_tag();
   virtual void close_element();
+
+  virtual void     add_attribute(const string_type & name, const string_type & value);
+  virtual void add_indented_attribute(const string_type & name, const string_type & value);
   virtual void add_style(const string_map_type& sty);
 
   // Constructor(s) and Destructor:
@@ -59,32 +72,51 @@ template <template <typename,typename> typename  MAP>
 void XMLprint<MAP>::printXMLdoctype(const string_type& dt) {
   out << "<!DOCTYPE " << dt <<">\n";
 };
+
 template <template <typename,typename> typename  MAP>
 void XMLprint<MAP>:: open_opening_tag(const string_type & name) {
   stack_of_names.push(name);
+  indent();
   out << "<" << name;
+  go_in();
+};
+template <template <typename,typename> typename  MAP>
+void XMLprint<MAP>:: open_opening_tag(const string_type & name, const string_type & id) {
+  open_opening_tag(name);
+  out << " id=\"" << id << '\"';
+};
+template <template <typename,typename> typename  MAP>
+void XMLprint<MAP>::add_attribute(const string_type & name, const string_type & value) {
+  out << ' ' << name << "=\"" << value << '\"';
+};
+template <template <typename,typename> typename  MAP>
+void XMLprint<MAP>::add_indented_attribute(const string_type & name, const string_type & value) {
+  out << '\n';
+  indent();
+  add_attribute(name, value);
 };
 template <template <typename,typename> typename  MAP>
 void XMLprint<MAP>::close_opening_tag() {
-  out << '>';
+  out << '>' << '\n';
 };
 template <template <typename,typename> typename  MAP>
 void XMLprint<MAP>::close_standalone_tag() {
   stack_of_names.pop();
-  out << "/>";
+  out << "/>\n";
+  go_out();
 };
 template <template <typename,typename> typename  MAP>
 void XMLprint<MAP>::close_element() {
-  out << "</" << stack_of_names.top() << '>';
+  go_out();
+  //indent();
+  out << "</" << stack_of_names.top() << ">\n";
   stack_of_names.pop();
 };
 
 template <template <typename,typename> typename  MAP>
 void XMLprint<MAP>::add_style(const string_map_type& sty) {
-  for(const auto & p : sty) {
-    out << ' ' << p.first;
-    out << "=\"" << p.second << '\"';
-  }
+  for(const auto & p : sty)
+    add_attribute(p.first, p.second);
 };
 
 template <template <typename,typename> typename  MAP>

@@ -10,6 +10,9 @@
  * It is assumed that the angle class is Degree<FLOAT>
  * as SVG takes sexagesimal degrees as angle units.
  * TODO
+ * [ ] The body of member print_as_SVG<>::print_label(...)
+ *     ends in commented out line:
+ *       // out << '\n';
  * [ ] draw up a scheme for including id attributes into graphic elements
        such as box, block, labeled_block,
        as well as prospective circle, diamond, polygon
@@ -63,19 +66,22 @@ public:
   using        typename XMLprint_type::string_type;
   using        typename XMLprint_type::string_map_type;
   using                 XMLprint_type::open_opening_tag;
+  using                 XMLprint_type::add_attribute;
+  using                 XMLprint_type::add_indented_attribute;
   using                 XMLprint_type::close_opening_tag;
   using                 XMLprint_type::close_standalone_tag;
   using                 XMLprint_type::close_element;
   using                 XMLprint_type::add_style;
 
-public:
-  /* The Level<SINT> interface
-     is good for indenting code */
-  Level<unsigned int> level;
-  void go_in()  {++level;};
-  void go_out() {--level;};
-  void indent() {level.print(out);};
+  using                 XMLprint_type::indent;
+  /*
+//protected:
+  using                 XMLprint_type::go_in;
+  using                 XMLprint_type::go_out;
+  using                 XMLprint_type::level;
+  */
 
+public:
   /* Angle to the X axis to print a label on a vertical port:
    * and correction factors
    * for printing labels on top (top_dx_k) and bottom (bot_dx_k) side of a block.
@@ -106,9 +112,11 @@ public:
   void open_locallink(const string_type& fragment);
   void close_link();
 
+  // Printing box<> and block<> with/without an id attribute:
   void operator() (const box_type& b);
-  enum class text_anchor {start, middle, end};
-  void operator() (const block_type& b) {operator() (static_cast<const box_type &>(b));};
+  void operator() (const box_type& b, const string_type& id);
+  void operator() (const block_type& b);
+  void operator() (const block_type& b, const string_type& id);
 
   /* Printing elements with labels, such as labeled_block<>
      relies on helper function:
@@ -124,6 +132,7 @@ public:
      make it very straightforward to implement
      a member function printing a labeled_block<>'s shape and labels.
    */
+  enum class text_anchor {start, middle, end};
   void print_label(
     const point_type & pt,
     const string_type & label,
@@ -148,6 +157,7 @@ public:
            index_type     idx,
     F dx = 0.0, F dy = 0.0);
   void operator() (const labeled_block_type& lb);
+  void operator() (const labeled_block_type& lb, const string_type& id);
 
   /* Members for printing a sequence of points
      rely on print_points_in(CONTAINER_OF_POINTS)

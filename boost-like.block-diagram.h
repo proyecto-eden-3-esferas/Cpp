@@ -9,6 +9,11 @@
 
 /* Should a getter return a non-const reference?
  * Should a setter be provided instead?
+ * TODO
+   [ ] many graphic elements should have an id attribute
+       for reference (for being linked to)
+       Perhaps an id attribute should be bestowed by class print_as_SVG<>
+       as declared in file "boost-like.print_as_SVG.h"
  */
 
 /* Class indexable<> is an interface class
@@ -18,20 +23,20 @@
  */
 template < typename     F = double,
            typename POINT = point<F, 2, boost::geometry::cs::cartesian>,
-           typename   INT = unsigned int,
            typename ANGLE = Degree<F> >
 class indexable {
 public:
-  typedef   INT index_type;
-  typedef     F float_type;
-  typedef POINT point_type;
-  typedef ANGLE angle_type;
+  typedef unsigned int index_type;
+  typedef            F float_type;
+  typedef        POINT point_type;
+  typedef        ANGLE angle_type;
   // Getters and setters:
   virtual const point_type & operator[](index_type idx) const = 0;
   virtual angle_type          get_angle(index_type idx) const = 0;
 };
 
 /* Class angular<> is an interface class
+ * POINT angular<>::operator() (ANGLE) is easy to implement on a circle
  */
 template < typename     F = double,
            typename POINT = point<F, 2, boost::geometry::cs::cartesian>,

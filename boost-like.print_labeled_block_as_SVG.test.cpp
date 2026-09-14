@@ -42,8 +42,9 @@ std::vector<std::string> vecOfStrings{"one", "two", "three", "four", "five", "si
 int main() {
 
   print_as_SVG_type p(std::cout);
-  p.go_in(); // go down one level, therefore indent once
-  p(bl6);
+
+  // Print a labeled_block<> (bl6) with id attribute = "bl6":
+  p(bl6, "bl6");
 
   // Test public member function 'print_as_SVG_type::make_vertical_label_angle_steeper()'
 #ifdef TEST_MAKE_VERTICAL_LABEL_STEEPER
