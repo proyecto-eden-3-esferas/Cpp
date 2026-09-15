@@ -226,7 +226,8 @@ boost-like.print_labeled_block_as_SVG.test: boost-like.print_labeled_block_as_SV
 	g++ -std=c++23  $<  -o $@
 
 
-
+paragraph_in_lines.test: paragraph_in_lines.test.cpp paragraph_in_lines.h
+	g++ -std=c++23  $<  -o $@
 
 
 clean_former:
