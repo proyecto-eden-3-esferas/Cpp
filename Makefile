@@ -70,9 +70,12 @@ tokenizer.sep-comp.test: tokenizer.o tokenizer.test.o
 
 
 WORD_TOKENIZER_SRC = WordTokenizer.h Tokenizer.h
-WordTokenizer.test: WordTokenizer.test.cpp WordTokenizer.h Tokenizer.h
+WordTokenizer.test: WordTokenizer.test.cpp $(WORD_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@
 WordTrimTokenizer.test: WordTrimTokenizer.test.cpp WordTrimTokenizer.h $(WORD_TOKENIZER_SRC)
+	g++ -std=c++23 $<  -o $@
+
+TextAndWidthTokenizer.test: TextAndWidthTokenizer.test.cpp TextAndWidthTokenizer.h $(WORD_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@
 
 CHAR_TOKENIZER_SRC = CharTokenizer.h Tokenizer.h

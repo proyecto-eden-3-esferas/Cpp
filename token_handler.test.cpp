@@ -20,6 +20,8 @@ int main() {
   cout << '\"' << h.get_text() << "\" has width: " << h.get_width() << '\n';
   cout << '\"' << t.get_text() << "\" has width: " << t.get_width() << '\n';
 
+  line_t l0{h,t};
+
   token_handler_type th0;
 
   return 0;
