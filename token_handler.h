@@ -11,7 +11,10 @@
  * Thus, its main member variable is a sequence container of lines,
    where a line is a container of tokens.
  * A token is a printable atom, usually a word,
-   plus some dimensional information, such as its width
+   plus some dimensional information, such as its width,
+   possibly also its depth (below baseline) and get_height (above)
+ * The width and height of 'n' is about 1, its depth is about 0,
+   'f' has height 2 or thereabouts, whereas 'g' has height and depth = 1.
  * Printable atoms are separated by spaces, which may be stretchable or shrinkable.
  * Actually, such words might terminate in punctuation,
    because usually a typographical word is followed by punctuation
@@ -33,11 +36,17 @@
  * Tokens may be simply represented by a std::pair<STRING,WIDTH>
  * TODO
    [x] Define a 'TextAndWidth' concept
+   [ ] Tokens should have get_depth() and get_height() members,
+       besides get_text() and get_width()
+
        Rename:
    [ ] class token_handler<>, and
    [ ] files "token_handler.h", "token_handler.test.cpp"
        to something meaningful,
        such as "token_paragraph" (where token = string + dimension)
+   [ ] rename 'token'
+       to 'typostring' (typographical string), or
+       to 'dimstring' (dimensional string, a string plus its typographical dimensions)
 
    The following goals could be met
    if token_handler be made a child of and STL container:
