@@ -3,14 +3,21 @@
 
 /* Class TextAndWidthTokenizer is an oversimple tokenizer
  * As is my habit, member functions are declared virtual
-   in case another programmer wants to derive from WordTokenizer
+   in case another programmer wants to derive from it
  * TODO
  [ ] Member function tokenize(...) should load 'utf_2B_leader'
-     whenever  110x xxxx char is found,
-     and clear it when such is not found.
+     with character matching pattern 110x xxxx
+     whenever it is found, and clear it when it is not found.
+ [ ] Member 'follows_up_utf_2B_leader(CHAR)'
+     should check 'utf_2B_leader' is set,
+     then if CHAR is not ASCII but 'utf_2B_leader' is '\0',
+     throw an exception.
+ [ ] Member function string_width(STRING) should be non-constant
+     as it sets or clears char 'utf_2B_leader'.
+     Alternatively, make 'utf_2B_leader' mutable.
  [ ] Tokens should have get_depth() and get_height() members,
      besides get_text() and get_width(),
-     but that is the job of class token_handler<>
+     but perhaps that is the job of class token_handler<>
  [ ] a non-default constructor should initialize map 'charpair_to_char'
  [ ] Perhaps you want to add a float template parameter:
        template <typename F = double>
@@ -59,19 +66,24 @@ public:
   char map_to_ASCII(             char follower) const;
   char utf_2B_leader; // set whenever  110x xxxx char is found
   static bool leads_2B_utf8(char c);
-  static bool follows_multibyte_utf8_leader(char c);
+  static bool follows_up_utf_2B_leader(char c);
   static bool leads_3B_utf8(char c);
   static bool leads_4B_utf8(char c);
 
   virtual float_type   char_width(            char   c) const;
   virtual float_type string_width(std::string_view str) const;
 
+  /* Load a sequence container
+   * with tokens containing text and width dimensions.
+   * If an input stream is not provided, as in the second member function,
+   * std::cin is assumed
+   */
   template <typename TOKEN, template<typename> typename SEQ>
   void tokenize(SEQ<TOKEN>& st, std::istream& in);
   template <typename TOKEN, template<typename> typename SEQ>
-  void tokenize(SEQ<TOKEN>& st);
+  void tokenize(SEQ<TOKEN>& st); // Deprecated or unconvincing...
 
-  // Copy Assignment and Constructors:
+  // Constructors and Destructor:
   TextAndWidthTokenizer()          = default;
   virtual ~TextAndWidthTokenizer() = default;
 
@@ -103,7 +115,7 @@ bool TextAndWidthTokenizer::leads_2B_utf8(char c) {
   else
     return false;
 };
-bool TextAndWidthTokenizer::follows_multibyte_utf8_leader(char c) {
+bool TextAndWidthTokenizer::follows_up_utf_2B_leader(char c) {
   const char mask_l2B(128 + 64);
   if((c & 128) && !(c & 64))
     return true;

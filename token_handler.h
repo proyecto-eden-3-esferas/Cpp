@@ -59,9 +59,11 @@
 template <typename TKN>
 concept TextAndWidth = requires(TKN tkn)
 {
-  {tkn.get_text()} -> std::convertible_to<std::string_view>;
-  {tkn.get_width()} -> std::convertible_to<double>;
+  {tkn.get_text() }  -> std::convertible_to<std::string_view>;
+  {tkn.get_width() } -> std::convertible_to<double>;
   /*
+  {tkn.get_depth() } -> std::convertible_to<double>;
+  {tkn.get_height()} -> std::convertible_to<double>;
   tkn.get_text();
   tkn.get_width();
    */
@@ -102,6 +104,10 @@ public:
     std::size_t    size() const {return tokens.size();}; // spaces = size() - 1
     F width_less_spaces() const {return current_width;}; // return the sum of all widths
     F width(F spacewidth) const {return width_less_spaces() + spacewidth * (size() - 1);};
+    bool fits_token(const token_t& tk, F mw)
+    {
+      return width() + spacewidth + tk.width() < mw;
+    };
     //
     line()                                            : current_width(0.0) {};
     line(std::initializer_list<TOKEN> il, F cw = 0.0) : current_width(cw)  {

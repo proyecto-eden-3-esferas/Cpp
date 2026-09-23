@@ -41,9 +41,9 @@ int main() {
   cout << "Is " << ny << ny.length() << " lead by a 110x xxxx character? ";
   cout << TextAndWidthTokenizer::leads_2B_utf8(ny[0]) << '\n';
   cout << "Is ny[0] a follow-up character? ";
-  cout << TextAndWidthTokenizer::follows_multibyte_utf8_leader(ny[0]) << '\n';
+  cout << TextAndWidthTokenizer::follows_up_utf_2B_leader(ny[0]) << '\n';
   cout << "Is ny[1] a follow-up character? ";
-  cout << TextAndWidthTokenizer::follows_multibyte_utf8_leader(ny[1]) << '\n';
+  cout << TextAndWidthTokenizer::follows_up_utf_2B_leader(ny[1]) << '\n';
 
   cout << "Is " << aa << aa.length() << " lead by a 110x xxxx character? ";
   cout << TextAndWidthTokenizer::leads_2B_utf8(aa[0]) << '\n';
