@@ -75,7 +75,8 @@ WordTokenizer.test: WordTokenizer.test.cpp $(WORD_TOKENIZER_SRC)
 WordTrimTokenizer.test: WordTrimTokenizer.test.cpp WordTrimTokenizer.h $(WORD_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@
 
-TextAndWidthTokenizer.test: TextAndWidthTokenizer.test.cpp TextAndWidthTokenizer.h $(WORD_TOKENIZER_SRC)
+TEXT_AND_WIDTH_TOKENIZER = TextAndWidthTokenizer.test.cpp TextAndWidthTokenizer.h
+TextAndWidthTokenizer.test: $(TEXT_AND_WIDTH_TOKENIZER)
 	g++ -std=c++23 $<  -o $@
 
 CHAR_TOKENIZER_SRC = CharTokenizer.h Tokenizer.h
