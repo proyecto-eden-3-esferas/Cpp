@@ -11,8 +11,19 @@
  * As is my habit, member functions are declared virtual
    in case another programmer wants to derive from it
  * TODO
- [ ] A monospace version...
-     Should it be an ancestor of a variable-width font one?
+ [ ] A class hierarchy like:
+       class dimtoken;
+
+       class TrivialTokenizer; // based on looping through ISTREAM > STRING
+       class ASCII_dimtokenizer : public TrivialTokenizer
+         // for non-monospace fonts
+       class monospace_dimtokenizer : public TrivialTokenizer;
+       class dimtokenizer : public ASCII_dimtokenizer {};
+         // adds UTF-8 awareness
+         // reuses ASCII_dimtokenizer::charwidth(CHAR)
+       class entity_dimtokenizer : public dimtokenizer {};
+         // adds a FSM for retrieving entities from streams
+ [ ] This Compilation Unit might be renamed utf8_dimtokenizer
  [v] Member function string_width(...) should load 'utf_2B_leader'
      with character matching pattern 110x xxxx
      whenever it is found, and clear it when it is not found.

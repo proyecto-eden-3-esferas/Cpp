@@ -8,17 +8,20 @@
 #include <utility>
 #include <vector>
 
+
+
 /* An XML-tag_remover function
- * will remove tags in XML text.
+   will remove tags in XML text.
  * Thus, string
- *   A <strong>weak</strong> supporter
- * will become
- *   A weak supporter
+     A <strong>weak</strong> supporter
+   will become
+     A weak supporter
  * This is good for calculating an XML string's width on a page.
  * This tactic works well on inline elements
- * (such as HTML::strong elements)
- *
- *
+   (such as HTML::strong elements)
+   but poorly on:
+   - mathematical formulas
+   - subscripts and superscripts
  */
 void remove_XML_tag(std::string_view in, std::string & out) {
   bool in_tag = false;
@@ -34,12 +37,10 @@ void remove_XML_tag(std::string_view in, std::string & out) {
     } // outer else
   } // for loop
 };
-
 /* This sequence may then be passed
  * into member function TextAndWidthTokenizer::tokenize(SEQUENCE) */
-/* TASKS:
-   [ ] Reassigning an istream fails, as an std::iostream has no copy assignment (deleted)
- */
+
+
 
 /* A trivial text-and-its-width data type is declared.
    Then a sequence container of such pairs is declared. */
@@ -79,6 +80,7 @@ using namespace std;
 
 int main() {
   /* remove_XML_tag(IN,OUT) */
+  cout << "By means of global function remove_XML_tag(IN_STRING, OUT_STRING)\n";
   std::string str_with_tags = "A <strong>weak</strong> supporter";
   std::string temp;
   remove_XML_tag(str_with_tags, temp);
