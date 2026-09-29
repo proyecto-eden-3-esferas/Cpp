@@ -40,7 +40,6 @@
    *
    *
    */
- */
 
 
 /*
@@ -62,7 +61,6 @@ template <typename F = double,
                                     // in case the original string disappears
                                     // as when you are reading tokens from an std::istream
                                     // like so: ISTREAM >> WORD; // WORD is an std::string
-
          >
 class dimtoken {
 public:
@@ -72,9 +70,9 @@ protected:
   text_t text;
   F      width, depth, height;
 public:
-  string_view_t get_text()  const {return text;};
-  F             get_width() const {return width;};
-  F             get_depth() const {return depth;};
+  string_view_t get_text()   const {return text;};
+  F             get_width()  const {return width;};
+  F             get_depth()  const {return depth;};
   F             get_height() const {return height;};
   // Constructors:
   dimtoken(string_view_t sv, F w, F d = 1.0) : text(sv), width(w), depth(d), height(2*d) {};

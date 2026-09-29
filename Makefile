@@ -79,6 +79,10 @@ TEXT_AND_WIDTH_TOKENIZER = TextAndWidthTokenizer.test.cpp TextAndWidthTokenizer.
 TextAndWidthTokenizer.test: $(TEXT_AND_WIDTH_TOKENIZER)
 	g++ -std=c++23 $<  -o $@
 
+UTF8_TOKENIZER = utf8_tokenizer.test.cpp utf8_tokenizer.h
+utf8_tokenizer.test: $(UTF8_TOKENIZER)
+	g++ -std=c++23 $<  -o $@
+
 CHAR_TOKENIZER_SRC = CharTokenizer.h Tokenizer.h
 CharTokenizer.test: CharTokenizer.test.cpp $(CHAR_TOKENIZER_SRC)
 	g++ -std=c++23 $<  -o $@

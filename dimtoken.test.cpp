@@ -5,6 +5,14 @@
 #include <iostream>
 #include <vector>
 
+typedef float float_type;
+typedef dimtoken<float_type, std::string> dimtoken_t;
+typedef dimline<float_type, std::string> dimline_t;
+
+typedef std::vector<dimtoken_t> dimtokens_t;
+typedef std::vector<dimline_t>  dimlines_t;
+const float_type max_width = 33.0;
+
 /* The following functions takes a reference to a container of DIMTOKEN's,
  * that is, a container of objects satisfying the DIMTOKEN concept
  * as defined in the dimtoken compilation unit,
@@ -12,9 +20,10 @@
  */
 template <template <DIMTOKEN T> typename TOKENS, // a container of DIMTOKEN's
                                 typename LINES,  // a sequence container of dimlines<>
-          typename F = double
+          typename F = double,
+          DIMTOKEN T = dimtoken<F>
          >
-void add_dimtokens_to_dimlines_with_max_width(const TOKENS& tkns, LINES& dls, F mw) {
+void add_dimtokens_to_dimlines_with_max_width(const TOKENS<T>& tkns, LINES& dls, F mw) {
   dls.clear();
   dls.push_back(dimline_t(mw));
   int idx = 0;
@@ -35,14 +44,6 @@ void print(const TKN & tkn, std::ostream& o = std::cout) {
   o << ", and height: " << tkn.get_height() << '\n';
 };
 
-
-typedef float float_type;
-typedef dimtoken<float_type, std::string> dimtoken_t;
-typedef dimline<float_type, std::string> dimline_t;
-
-typedef std::vector<dimtoken_t> dimtokens_t;
-typedef std::vector<dimline_t>  dimlines_t;
-const float_type max_width = 33.0;
 
 int main() {
 
