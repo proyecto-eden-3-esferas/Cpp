@@ -17,8 +17,16 @@ jsvarExecFiles = jsvar.sep-comp.test jsvar.test
 %: %.cpp
 	c++    -std=c++23 $<  -o $@
 
-information: information.cpp information.h
+information: information.cpp information.h json.h
 	c++ -std=c++23 $<  -o $@
+
+infostruct-map.test.o: infostruct-map.test.cpp infostruct-map.h
+	c++ -std=c++23 $< -c -o $@
+infostruct-map.o:      infostruct-map.cpp      infostruct-map.h
+	c++ -std=c++23 $< -c -o $@
+infostruct-map: infostruct-map.test.o infostruct-map.o
+	c++ -std=c++23 infostruct-map.test.o infostruct-map.o -o $@
+
 temp: temp.cpp
 	c++ -std=c++23 $<  -o $@
 ai_set : ai_set.cpp
