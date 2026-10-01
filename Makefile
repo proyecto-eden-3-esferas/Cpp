@@ -27,6 +27,9 @@ infostruct-map.o:      infostruct-map.cpp      infostruct-map.h
 infostruct-map: infostruct-map.test.o infostruct-map.o
 	c++ -std=c++23 infostruct-map.test.o infostruct-map.o -o $@
 
+extract-UDC-facets: extract-UDC-facets.test.cpp extract-UDC-facets.h extract-UDC-facets.cpp
+	c++ -std=c++23 $<  -o $@
+
 temp: temp.cpp
 	c++ -std=c++23 $<  -o $@
 ai_set : ai_set.cpp

@@ -14,16 +14,19 @@
    and meant to be defined in a separate-compilable file
  * TODO
  [ ] develop some class/struct metadata and
- [ ] include code from file "extract-UDC-facets.cpp"
- [ ] then test an instance of std::multimap<metadata,text>
- [ ] try reordering your multimap by some field of metadata's
- [ ] the same, but use std::unordered_multimap<> instead
+ [ ] include UDC field in your metadata type,
+     possibly incorporating code from file "extract-UDC-facets.cpp"
+ [ ] Then test an instance of std::multimap<metadata,text>
+ [ ] Try reordering your multimap by some field of metadata's
+ [ ] The same, but use std::unordered_multimap<> instead
  */
 
 struct metadata {
   std::string author,
-  int         date,
-  std::string description
+  std::string title,// optional?
+  int         date, // optional
+  std::string description,
+  std::string UDC   // or an array of UDC's
 }
 
 struct infostruct {

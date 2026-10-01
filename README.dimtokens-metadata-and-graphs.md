@@ -2,6 +2,14 @@
 
 These are major themes with me.
 
+## TODOs:
+[ ] Currently I very much favour metadata based on UDC
+[ ] `extern` declare and define
+    a std::(multi)map<STRING,STRING> or std::unordered_(multi)map<STRING,STRING>
+    from UDC subject codes to matiching descriptions
+    through inclusion of "decimal_to_description.h"
+[ ] ...
+
 ## `dimtoken`'s
 
 A `dimtoken` is a class or object thereof that holds some text, typically a paragraph-length string, and some dimensional information, mainly its width given a font, and also its depth and height. A typical dimtoken will be a word, that is a run of characters between conscutive spaces, so that "Hello!" is a dimtoken.
