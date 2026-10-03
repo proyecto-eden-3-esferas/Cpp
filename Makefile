@@ -27,6 +27,8 @@ infostruct-map.o:      infostruct-map.cpp      infostruct-map.h
 infostruct-map: infostruct-map.test.o infostruct-map.o
 	c++ -std=c++23 infostruct-map.test.o infostruct-map.o -o $@
 
+UDC.old: UDC.test.cpp UDC.h
+	c++ -std=c++23 $<  -o $@
 extract-UDC-facets: extract-UDC-facets.test.cpp extract-UDC-facets.h extract-UDC-facets.cpp
 	c++ -std=c++23 $<  -o $@
 
@@ -246,6 +248,10 @@ boost-like.print_labeled_block_as_SVG.test: boost-like.print_labeled_block_as_SV
 
 
 paragraph_in_lines.test: paragraph_in_lines.test.cpp paragraph_in_lines.h
+	g++ -std=c++23  $<  -o $@
+
+SPECIFIC_OSTREAM_SRC = specific_ostream.h specific_ostream.cpp Level.h
+specific_ostream: specific_ostream.test.cpp $(SPECIFIC_OSTREAM_SRC)
 	g++ -std=c++23  $<  -o $@
 
 

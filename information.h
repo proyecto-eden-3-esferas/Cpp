@@ -2,15 +2,19 @@
 #include <string>
 #include "json.h"
 
-/*    TODOs:
- (1)) remove uses of std::optional: use empty values and null pointers (nullptr) instead,
-      or hide the implementation so that, say bool has_item() const is public and varoabñe item is not
+/* Class information<DATE,CH,STR>
+   stores the source, date and description
+   of the piece of information that it refers to
+ * Classes dataitem and text are then derived from class information
+ * TODOs:
+   [ ] remove uses of std::optional: use empty values and null pointers (nullptr) instead,
+       or hide the implementation so that, say bool has_item() const is public and varoabñe item is not
+   [ ] perhaps enum class fileformat shouldn't be defined in global space
  */
 
 // This enumeration is likely to be useful to other source files and/or compilation units:
 enum class  fileformat           { none=0, other, plaintext,  html,  other_xml,  pdf,  djvu,  ePUB,  ePUB3,  MOBI};
 const char* fileformat_array[] = {"none","other","plaintext","html","other_xml","pdf","djvu","ePUB","ePUB3","MOBI"};
-
 /**
  * Use:
         enum class std::filesystem::file_type {none, not_found,
@@ -25,8 +29,9 @@ class information {
 public:
   typedef  STR string_t;
   typedef DATE date_t;
-  string_t source; // either the author or the origin of a piece of information
-  date_t     date; // date of creation or modification
+  string_t source;     // either the author or the originator
+  date_t     date;     // date of creation or modification
+                       // also included in UDC code
   /** Now, variable 'desc' (for "description")
    *  may be used as a description (a sort of name or title of the piece of information concerned),
       whereas using it to hold actual information might overlap

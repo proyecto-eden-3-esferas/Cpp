@@ -14,8 +14,8 @@
 #include <string_view>
 #include <utility>
 
-/*
- * A class hierarchy:
+/* A hierarchy of tokenizers that also estimate the width of a token
+ * A class hierarchy comprising:
    - trivial_tokenizer
    - ascii_tokenizer
    - utf8_tokenizer
