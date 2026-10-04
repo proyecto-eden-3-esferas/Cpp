@@ -1,5 +1,8 @@
-/* File "registered_key_map.test.cpp"
-   tests classes:
+#ifndef REGISTERED_KEY_MAP_H
+#define REGISTERED_KEY_MAP_H
+
+/* Files "registered_key_map.h" and "registered_key_map.cpp"
+   define classes:
  (1) registered_key<KEY>,
      which manages a set of allowed keys
      and a set of compulsory keys
@@ -12,11 +15,9 @@
  */
 
 #include <initializer_list>
-#include <iostream>
 #include <map>
 #include <set>
 #include <string>
-#include <string_view>
 
 /*
  * Keys must be unregistered or an exception gets thrown upon access
@@ -26,9 +27,6 @@
    [ ] add member function unregistered_key(std::string_view newkey)
  *
  */
-
-#ifndef REGISTERED_KEY_H
-#define REGISTERED_KEY_H
 template <typename KEY = std::string>
 class registered_key {
 public:
@@ -91,6 +89,10 @@ public:
   // Copy constructor and constructors:
   registered_key_map_t& operator=(const registered_key_map_t& rkm);
   registered_key_map(const registered_key_t & rk) : registered_key_ref(rk) {};
+  registered_key_map(const registered_key_t & rk,
+                     std::initializer_list<typename map_t::value_type> il)
+                   : registered_key_ref(rk), map_t(il)
+                   {check_compulsory_keys();};
 };
 // Implementations:
 
@@ -122,43 +124,11 @@ const auto & registered_key_map<KEY,VAL,MAP>::at(const key_t& k) const {
   }
   return map_t::at(k);
 };
+
+#ifndef SEPARATE_COMPILATION
+  #ifndef REGISTERED_KEY_MAP_CPP
+  #include "registered_key_map.cpp"
+  #endif
 #endif
 
-using namespace std;
-
-typedef std::string key_type;
-typedef std::string mapped_type;
-typedef registered_key<    key_type>                        registered_key_t;
-typedef registered_key_map<key_type, mapped_type, std::map> registered_key_map_t;
-
-// Define some initializer_list<string>'s for maps from string:
-std::initializer_list<std::string> allowil = {"author", "date", "description"};
-std::initializer_list<std::string> compuil = {                  "description"};
-
-registered_key_t reg0{allowil, compuil};
-
-registered_key_map_t info0{reg0}, info1(reg0);
-
-int main (int argc, const char** argv) {
-
-  info1["author"] = "Coltrane";
-  cout << "info1.author=" << info1[ "author"] << '\n';
-
-  // cout << "info1.date="   << info1.at("date") << '\n'; // no such key
-
-
-  // Use an unregistered key to elicit an out_of_range exception:
-  // info1["genre"]  = "composition";                     // "genre" not allowed
-
-  info1["date"] = "1966";
-
-  cout << "\nNow copy \'info1\' to so far empty \'info0\' and query for \"author\":\n";
-  info0 = info1;
-  cout << "info0.author=" << info0[ "author"] << '\n';
-
-  cout << '\n';
-
-
-  return 0;
-
-}
+#endif

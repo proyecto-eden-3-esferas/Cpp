@@ -6,6 +6,9 @@
    stores the source, date and description
    of the piece of information that it refers to
  * Classes dataitem and text are then derived from class information
+ * Work-alike class registered_key<> is being developed in temp.cpp (registered_key.test.cpp)
+ * while compilation unit infostruct-map develops struct's metadata and infostruct (metadata + text)
+   with a view to testing compilation of large variables into an object file (infostruct-map.o)
  * TODOs:
    [ ] remove uses of std::optional: use empty values and null pointers (nullptr) instead,
        or hide the implementation so that, say bool has_item() const is public and varoabñe item is not

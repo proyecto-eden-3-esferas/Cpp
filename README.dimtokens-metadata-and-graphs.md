@@ -1,9 +1,12 @@
 # `dimtoken`'s Metadata and Graphs
 
-These are major themes with me.
+These are major themes with me:
+- A class (`dimtoken`) for estimating the width of a token (a no-spaces run of characters, a mathematical formula...). This would make it quite straightforward to break a long string (paragraph) into typographical lines, which would be especially usefull for printing paragraph-long strings inside SVG shapes.
+- Metadata classes
+- Graphs, mainly the tried and tested Boost Graph Library
 
 ## TODOs:
-[ ] Currently I very much favour metadata based on UDC
+[ ] Currently I very much favour metadata based on UDC (see ~/latest_books/books/unclassified/classification/UDC/)
 [ ] `extern` declare and define
     a std::(multi)map<STRING,STRING> or std::unordered_(multi)map<STRING,STRING>
     from UDC subject codes to matiching descriptions
@@ -12,15 +15,15 @@ These are major themes with me.
 
 ## `dimtoken`'s
 
-A `dimtoken` is a class or object thereof that holds some text, typically a paragraph-length string, and some dimensional information, mainly its width given a font, and also its depth and height. A typical dimtoken will be a word, that is a run of characters between conscutive spaces, so that "Hello!" is a dimtoken.
+A `dimtoken` is a class or object thereof that holds strings of non-space characters (typically within some text, typically a paragraph-length string), and some dimensional information, mainly its width given a font, and also its depth and height. A typical dimtoken will be a word, that is a run of characters between conscutive spaces, so that "Hello!" is a dimtoken.
 
-In typography a dimtoken is a box- Typographical boxes are placed along horizontal baselines. Their depth means how far below the baseline the bottom of the box is. Its height means how high above the baseline its top is.
+In typography a dimtoken is a box. Typographical boxes are placed along horizontal baselines. Their depth means how far below the baseline the bottom of the box is. Its height means how high above the baseline its top is.
 
 A dimtokenizer will:
-1. break a long string into dimtoken's
-2. will append dimensional information to each token
+1. break a long string into dimtoken's (a fairly easy task)
+2. append dimensional information to each token
 
-Typically, the product of dimtokenization will be store in a sequence container, such as a std::vector. This sequence can be easily converted into typographical lines that do not exceed a given width (maximum line width). And these break-downs can be printed inside rectangles in SVG or PostScript.
+The product of dimtokenization is expected to be stored in a sequence container, such as a std::vector. This sequence can be easily converted into typographical lines that do not exceed a given width (maximum line width). And these break-downs can be printed inside rectangles in SVG or PostScript.
 
 A `dimtoken` may be a mathematical formula in MathML.
 
@@ -64,3 +67,13 @@ In another we define:
 ```
 int i = 3;
 ```
+# A Survey of Current Projects
+
+- class registered_key is being developed in file "temp.cpp" / "registered_key.test.cpp".
+  It explores the possibilities of the STL associative containers: std::map and std::multimap,
+  as well as their hash versions (std::unordered_(multi)map).
+  An exception is thrown if an unregistered key is used.
+- Compilation unit "information" develops classes information<> and its child class dataitem<>
+- Compilation unit UDC... defines mapping variable 'basic_UDC<>::decimal_to_description'
+- Compilation unit "extract-UDC-facets" defines global functions
+  for extracting UDC facets

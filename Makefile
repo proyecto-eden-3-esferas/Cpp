@@ -17,14 +17,14 @@ jsvarExecFiles = jsvar.sep-comp.test jsvar.test
 %: %.cpp
 	c++    -std=c++23 $<  -o $@
 
-information: information.cpp information.h json.h
+information.test: information.cpp information.h json.h
 	c++ -std=c++23 $<  -o $@
 
 infostruct-map.test.o: infostruct-map.test.cpp infostruct-map.h
 	c++ -std=c++23 $< -c -o $@
 infostruct-map.o:      infostruct-map.cpp      infostruct-map.h
 	c++ -std=c++23 $< -c -o $@
-infostruct-map: infostruct-map.test.o infostruct-map.o
+infostruct-map.test: infostruct-map.test.o infostruct-map.o
 	c++ -std=c++23 infostruct-map.test.o infostruct-map.o -o $@
 
 UDC.old: UDC.test.cpp UDC.h
@@ -42,7 +42,7 @@ escaper: escaper.cpp escaper.h
 	c++ -std=c++23 $<  -o $@
 
 
-lazy_strings: lazy_strings.cpp lazy_strings.h
+lazy_strings.test: lazy_strings.cpp lazy_strings.h
 	echo "19 dzogchen and tantra" > zettelkasten.ini
 	c++ -std=c++23 $<  -o $@
 
@@ -51,7 +51,7 @@ basic_tokenizer.test: basic_tokenizer.test.cpp basic_tokenizer.h basic_tokenizer
 	g++ -std=c++23 $<  -o $@
 
 
-istream_variant_queue_tokenizer.debug: istream_variant_queue_tokenizer.test.cpp istream_variant_queue_tokenizer.h variant_queue_tokenizer.h
+istream_variant_queue_tokenizer.debug.test: istream_variant_queue_tokenizer.test.cpp istream_variant_queue_tokenizer.h variant_queue_tokenizer.h
 	g++ -std=c++23 -DDEBUG $<  -o $@
 istream_variant_queue_tokenizer.test:  istream_variant_queue_tokenizer.test.cpp istream_variant_queue_tokenizer.h variant_queue_tokenizer.h
 	g++ -std=c++23         $<  -o $@
@@ -126,7 +126,7 @@ CharlistEQTokenizer.JSON.test: CharlistEQTokenizer.test.cpp $(CHARLIST_EQ_TOKENI
 
 
 
-load_string_with_file: load_string_with_file.test.cpp load_string_with_file.h
+load_string_with_file.test: load_string_with_file.test.cpp load_string_with_file.h
 	g++ -std=c++23         $<  -o $@
 
 
@@ -251,7 +251,14 @@ paragraph_in_lines.test: paragraph_in_lines.test.cpp paragraph_in_lines.h
 	g++ -std=c++23  $<  -o $@
 
 SPECIFIC_OSTREAM_SRC = specific_ostream.h specific_ostream.cpp Level.h
-specific_ostream: specific_ostream.test.cpp $(SPECIFIC_OSTREAM_SRC)
+specific_ostream.test: specific_ostream.test.cpp $(SPECIFIC_OSTREAM_SRC)
+	g++ -std=c++23  $<  -o $@
+
+REGISTERED_KEY_MAP = registered_key_map.h registered_key_map.cpp
+registered_key_map.test: registered_key_map.test.cpp $(REGISTERED_KEY_MAP)
+	g++ -std=c++23  $<  -o $@
+REGISTERED_KEY_MAP_HEALTH = $(REGISTERED_KEY_MAP) registered_key_map.health.h registered_key_map.health.cpp
+registered_key_map.health.test: registered_key_map.health.test.cpp $(REGISTERED_KEY_MAP_HEALTH)
 	g++ -std=c++23  $<  -o $@
 
 
