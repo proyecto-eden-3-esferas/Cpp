@@ -5,7 +5,8 @@
    - extern-declared in file "registered_key_map.health.h", and
    - defined in file "registered_key_map.health.cpp"
    (in a separate compilation scheme)
- *
+ * TODO
+   [ ] implement separate compilation (currently I am getting linking errors)
  */
 
 #include <iostream>
@@ -18,18 +19,6 @@
 #include "registered_key_map.health.h"
 #endif
 
-typedef std::string key_type;
-typedef std::string mapped_type;
-typedef registered_key<    key_type>                        registered_key_t;
-typedef registered_key_map<key_type, mapped_type, std::map> registered_key_map_t;
-
-// Define some initializer_list<string>'s for maps from string:
-std::initializer_list<std::string> allowil = {"author", "date", "description", "UDC", "contents"};
-std::initializer_list<std::string> compDesc = {                 "description",        "contents"};
-std::initializer_list<std::string> compUDC  = {                                "UDC", "contents"};
-
-registered_key_t regDesc{allowil, compDesc};
-registered_key_t regUDC{ allowil, compUDC };
 
 using namespace std;
 
@@ -39,6 +28,7 @@ int main (int argc, const char** argv) {
   cout << "Test a container of dataitems as objects of type registered_key_map<STRING,STRING,MAP>\n";
   cout << "(A scheme for separate compilation of large container objects is hinted.)\n";
 
+  cout << "healthVector has " << healthVector.size() << " element(s)\n";
 
   return 0;
 

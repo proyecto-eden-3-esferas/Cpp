@@ -261,6 +261,16 @@ REGISTERED_KEY_MAP_HEALTH = $(REGISTERED_KEY_MAP) registered_key_map.health.h re
 registered_key_map.health.test: registered_key_map.health.test.cpp $(REGISTERED_KEY_MAP_HEALTH)
 	g++ -std=c++23  $<  -o $@
 
+registered_key_map.health.test.o: registered_key_map.health.test.cpp $(REGISTERED_KEY_MAP_HEALTH)
+	date
+	g++ -DSEPARATE_COMPILATION -std=c++23 -c $<
+	date
+registered_key_map.health.o:      registered_key_map.health.cpp      $(REGISTERED_KEY_MAP_HEALTH)
+	date
+	g++ -DSEPARATE_COMPILATION -std=c++23 -c $<
+	date
+registered_key_map.health.sep-comp.test: registered_key_map.health.test.o registered_key_map.health.o $(REGISTERED_KEY_MAP_HEALTH)
+	g++ registered_key_map.health.test.o registered_key_map.health.o -o $@
 
 clean_former:
 	$(RM)  bitenum basic_tokenizer xml_tokenizer case-insensitive-string-cmp ai_set test_concepts test_XML
