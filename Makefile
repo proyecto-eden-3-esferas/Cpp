@@ -272,6 +272,12 @@ registered_key_map.health.o:      registered_key_map.health.cpp      $(REGISTERE
 registered_key_map.health.sep-comp.test: registered_key_map.health.test.o registered_key_map.health.o $(REGISTERED_KEY_MAP_HEALTH)
 	g++ registered_key_map.health.test.o registered_key_map.health.o -o $@
 
+
+FILESTRING_SRC = filestring.cpp filestring.h
+filestring.test: filestring.test.cpp $(FILESTRING_SRC)
+	g++ -std=c++23  $<  -o $@
+
+
 clean_former:
 	$(RM)  bitenum basic_tokenizer xml_tokenizer case-insensitive-string-cmp ai_set test_concepts test_XML
 clean:

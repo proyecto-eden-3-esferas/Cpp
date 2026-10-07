@@ -5,6 +5,17 @@
    - extern-declared in file "registered_key_map.health.h", and
    - defined in file "registered_key_map.health.cpp"
    (in a separate compilation scheme)
+ * UDC noteworthy classes:
+   50 Generalities about the Pure Sciences
+   51 Mathematics
+   52 Astronomy. Astrophysics. Space Research Geodesy
+   53 Physics
+   54 Chemistry. Mineralogical Sciences
+   55 Earth Science. Geology Mineralogy, etc.
+   56 Palaeontology
+   57 Biological Sciences in General
+   58 Botany
+   59 Zoology
  * TODO
    [ ] implement separate compilation (currently I am getting linking errors)
  */

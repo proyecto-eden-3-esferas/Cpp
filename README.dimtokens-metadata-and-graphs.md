@@ -1,4 +1,4 @@
-# `dimtoken`'s Metadata and Graphs
+# `dimtoken`'s, Metadata and Graphs
 
 These are major themes with me:
 - A class (`dimtoken`) for estimating the width of a token (a no-spaces run of characters, a mathematical formula...). This would make it quite straightforward to break a long string (paragraph) into typographical lines, which would be especially usefull for printing paragraph-long strings inside SVG shapes.
@@ -34,6 +34,15 @@ A block-display mathematical formula belongs in a paragraph-like element holding
 We are dealing with paragraphs. We might:
 - Either build one large sequence with all of our paragraphs. We would expect the client to read our sequence from start to finish.
 - Or attach some information to each unit (paragraphs, sections and so on). Such information about text is called metadata. A section that we attach metadata to may be made up of a sequence of paragraphs. So we would end up with a collection or set of units. This can be regarded as an implicit ordering. From this implicit ordering we may go on to structure our information as a sequence of units, as a tree or hierarchy (like a technical book) or as a set of linked units, or graph.
+
+### Universal Decimal Coding (UDC)
+
+UDC codes a lot of metadata into a single string.
+
+Two compilation units handle UDC:
+
+- *UDC* (*UDC.h*, tested by *UDC.test.cpp*)
+- *extract-UDC-facets* (*extract-UDC-facets.h* and *extract-UDC-facets.cpp*, tested by *extract-UDC-facets.test.cpp*)
 
 
 ## Graphs

@@ -11,7 +11,11 @@
      additionally with a const reference to a registered_key object.
      Its 3rd template param. allows choosing an (STL) associative container:
      std::map and std::multimap, or their hash versions (std::unordered_(multi)map)
- *
+ * TODO
+   [ ] develop or just bring already-written code to handle UCD fields (of type std::string, say)
+   [ ] scheme for separate compilation of specializations of these classes
+   [ ] typedef registered_key_map<std::string, std::string, std::map>      registered_dictionary_t;
+   [ ] typedef registered_key_map<std::string, std::string, std::multimap> registered_multidictionary_t;
  */
 
 #include <initializer_list>
@@ -74,7 +78,7 @@ public:
   typedef VAL mapped_type;
   typedef      MAP<KEY,VAL> map_t;
   typedef std::set<KEY>     set_t;
-  typedef registered_key<KEY>                      registered_key_t;
+  typedef registered_key<    KEY>         registered_key_t;
   typedef registered_key_map<KEY,VAL,MAP> registered_key_map_t;
   using map_t::map;
   using map_t::begin, map_t::end;
