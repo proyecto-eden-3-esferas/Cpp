@@ -34,6 +34,11 @@ void filestring_container<CONT>::filestring::check(fstream_t& f) {
 };
 
 template <template <typename STR> typename CONT>
+void filestring_container<CONT>::emplace_back(std::string_view sv) {
+  filestrings.emplace_back(sv, offset_step*next_index());
+};
+
+template <template <typename STR> typename CONT>
 filestring_container<CONT>::~filestring_container()  {
   for(auto & fs : filestrings) {
     if( fs.has_changed())
