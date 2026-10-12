@@ -277,6 +277,9 @@ FILESTRING_SRC = filestring.cpp filestring.h
 filestring.test: filestring.test.cpp $(FILESTRING_SRC)
 	g++ -std=c++23  $<  -o $@
 
+zero_filestring_handler.test: zero_filestring_handler.test.cpp zero_filestring_handler.h zero_filestring_handler.cpp
+	g++ -std=c++23  $<  -o $@
+
 
 clean_former:
 	$(RM)  bitenum basic_tokenizer xml_tokenizer case-insensitive-string-cmp ai_set test_concepts test_XML
