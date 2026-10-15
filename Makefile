@@ -27,9 +27,12 @@ infostruct-map.o:      infostruct-map.cpp      infostruct-map.h
 infostruct-map.test: infostruct-map.test.o infostruct-map.o
 	c++ -std=c++23 infostruct-map.test.o infostruct-map.o -o $@
 
-UDC.old: UDC.test.cpp UDC.h
+UDC.test: UDC.test.cpp UDC.h
 	c++ -std=c++23 $<  -o $@
-extract-UDC-facets: extract-UDC-facets.test.cpp extract-UDC-facets.h extract-UDC-facets.cpp
+extract-UDC-facets.test: extract-UDC-facets.test.cpp extract-UDC-facets.h extract-UDC-facets.cpp
+	c++ -std=c++23 $<  -o $@
+
+regex_map.test: regex_map.test.cpp regex_map.h regex_map.cpp
 	c++ -std=c++23 $<  -o $@
 
 temp: temp.cpp
