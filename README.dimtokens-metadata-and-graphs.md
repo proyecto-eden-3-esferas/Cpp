@@ -35,6 +35,16 @@ We are dealing with paragraphs. We might:
 - Either build one large sequence with all of our paragraphs. We would expect the client to read our sequence from start to finish.
 - Or attach some information to each unit (paragraphs, sections and so on). Such information about text is called metadata. A section that we attach metadata to may be made up of a sequence of paragraphs. So we would end up with a collection or set of units. This can be regarded as an implicit ordering. From this implicit ordering we may go on to structure our information as a sequence of units, as a tree or hierarchy (like a technical book) or as a set of linked units, or graph.
 
+### A Metadata Base Class
+We want a non-template parent class (`metadata_base`) to
+- hold some enumerations, and
+- declare some pure virtual functions
+We might implement
+- either the boost::property_map interface (get(KEY), put(KEY,VALUE), operator[](KEY)),
+- or the STL interface for maps (at, operator[] etc.)
+Class `metadata_base` is implemented in file *metadata_base.h*.
+
+
 ### Universal Decimal Coding (UDC)
 
 UDC codes a lot of metadata into a single string.

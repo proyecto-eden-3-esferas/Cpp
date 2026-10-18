@@ -1,7 +1,8 @@
 #ifndef REGISTERED_KEY_MAP_H
 #define REGISTERED_KEY_MAP_H
 
-/* Files "registered_key_map.h" and "registered_key_map.cpp"
+/* Files "registered_key_map.h"
+   (with some member implementations in "registered_key_map.cpp")
    define classes:
  (1) registered_key<KEY>,
      which manages a set of allowed keys
@@ -45,7 +46,7 @@ public:
   registered_key() = default;
   registered_key(std::initializer_list<key_t> allo);
   registered_key(std::initializer_list<key_t> allo, std::initializer_list<key_t> comp);
-};
+}; // class register_key<KEY>
 // Implementations of registered_key<KEY> member functions:
 template <typename KEY>
 bool registered_key<KEY>::allowed(const key_t & k) const {
