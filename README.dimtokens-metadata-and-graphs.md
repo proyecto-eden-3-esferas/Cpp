@@ -12,6 +12,12 @@ These are major themes with me:
     from UDC subject codes to matiching descriptions
     through inclusion of "decimal_to_description.h"
 [ ] ...
+### Sring Maps TODOs:
+Concerning maps from strings to strings, develop a class or write code
+that implements such a map or just its interface that
+[ ] serializes to and deserializes from a file
+[ ] writes SQL-conformant INSERT code
+[ ] checks for keys, as done in compilation unit registered_key
 
 ## `dimtoken`'s
 
