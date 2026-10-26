@@ -27,7 +27,8 @@ public:
   typedef std::string_view string_view_t;
 
   enum class fileformat {plaintext, html, xhtml, docbook, otherXML, PDF, markdown};
-             fileformat get_fileformat() const {return its_fileformat;};
+  fileformat get_fileformat() const {return its_fileformat;};
+
 protected:
   string_t contents;
   fileformat its_fileformat;

@@ -12,10 +12,10 @@ These are major themes with me:
     from UDC subject codes to matiching descriptions
     through inclusion of "decimal_to_description.h"
 [ ] ...
-### Sring Maps TODOs:
+### STring Maps TODOs:
 Concerning maps from strings to strings, develop a class or write code
 that implements such a map or just its interface that
-[ ] serializes to and deserializes from a file
+[ ] serializes to and deserializes from a file (see *count-and-zero-stringmap* compilation unit)
 [ ] writes SQL-conformant INSERT code
 [ ] checks for keys, as done in compilation unit registered_key
 

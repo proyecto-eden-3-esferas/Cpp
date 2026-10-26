@@ -29,8 +29,8 @@
  * Keys must be unregistered or an exception gets thrown upon access
  * Registered keys are just allowed attributes or properties
  * TODO
-   [ ] add member function   registered_key::register_key(std::string_view newkey)
-   [ ] add member function unregistered_key(std::string_view newkey)
+   [ ] add member function registered_key::  register_key(std::string_view newkey)
+   [ ] add member function registered_key::unregister_key(std::string_view newkey)
  *
  */
 template <typename KEY = std::string>

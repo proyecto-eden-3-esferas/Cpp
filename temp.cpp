@@ -1,164 +1,137 @@
-/* File "registered_key_map.test.cpp"
-   tests classes:
- (1) registered_key<KEY>,
-     which manages a set of allowed keys
-     and a set of compulsory keys
- (2) registered_key_map<KEY,VAL,MAP>,
-     which is a map from keys to values
-     additionally with a const reference to a registered_key object.
-     Its 3rd template param. allows choosing an (STL) associative container:
-     std::map and std::multimap, or their hash versions (std::unordered_(multi)map)
- *
- */
+/* count_and_zero_stringmap.test.cpp */
 
-#include <initializer_list>
+#include <fstream>
 #include <iostream>
-#include <map>
-#include <set>
 #include <string>
-#include <string_view>
+#include <map>
+#include <utility>
+#include <vector>
 
-/*
- * Keys must be unregistered or an exception gets thrown upon access
- * Registered keys are just allowed attributes or properties
+#ifndef COUNT_AND_ZERO_STRINGMAP_H
+#include "count_and_zero_stringmap.h"
+#endif
+
+
+/* Functions:
+   count_and_zero_serialize(  OFSTREAM, const MAP& m)
+   count_and_zero_deserialize(IFSTREAM,       MAP& m)
+   store and load a map of strings to strings from
+   (1) the total number of entries, space separated from
+   (2) a key, zero terminated, followed by a mapped value, zero-terminated, too
  * TODO
-   [ ] add member function   registered_key::register_key(std::string_view newkey)
-   [ ] add member function unregistered_key(std::string_view newkey)
- *
+ [ ] test class
  */
-
-#ifndef REGISTERED_KEY_H
-#define REGISTERED_KEY_H
-template <typename KEY = std::string>
-class registered_key {
-public:
-  typedef          KEY  key_t;
-  typedef std::set<KEY> set_t;
-  // Set 'allowed_keys' must be a superset of set 'compulsory_keys'
-  std::set<key_t> allowed_keys;
-  std::set<key_t> compulsory_keys;
-  bool allowed(const key_t & k) const;
-  //
-  registered_key() = default;
-  registered_key(std::initializer_list<key_t> allo);
-  registered_key(std::initializer_list<key_t> allo, std::initializer_list<key_t> comp);
+template <StringMap MAP>
+void count_and_zero_serialize(std::ofstream& ofs, const MAP& m) {
+  ofs << m.size() << ' ';
+  for( const auto& p : m)
+    ofs << p.first << '\0' << p.second << '\0';
 };
-// Implementations of registered_key<KEY> member functions:
-template <typename KEY>
-bool registered_key<KEY>::allowed(const key_t & k) const {
-  if(allowed_keys.contains(k))
+template <StringMap MAP>
+bool count_and_zero_deserialize(std::ifstream& ifs, MAP& m) {
+  unsigned int cnt;
+  std::string key, mapped;
+  ifs >> cnt >> std::ws;
+  if(ifs.good()) {
+    m.clear();
+    for(int i=0; i < cnt; ++i) {
+      std::getline(ifs, key,    '\0');
+      std::getline(ifs, mapped, '\0');
+      m.insert(std::make_pair(key,mapped));
+    }
     return true;
-  else
+  } else
     return false;
 };
-template <typename KEY>
-registered_key<KEY>::registered_key(std::initializer_list<key_t> allo)
-: allowed_keys(allo)
-{};
-template <typename KEY>
-registered_key<KEY>::registered_key(std::initializer_list<key_t> allo,
-                                            std::initializer_list<key_t> comp)
-: allowed_keys(allo), compulsory_keys(comp)
-{};
 
+typedef std::     map<std::string, std::string>      map_t;
+typedef std::multimap<std::string, std::string> multimap_t;
 
-/* Class registered_key_map is a map<KEY,MAPPED>
- * holding a reference to a registered_key<> object
- */
-template <typename KEY = std::string,
-          typename VAL = std::string,
-          template <typename K,typename M> typename MAP = std::map
-          >
-class registered_key_map : public std::map<KEY,VAL> {
-public:
-  typedef KEY key_t;
-  typedef VAL mapped_type;
-  typedef      MAP<KEY,VAL> map_t;
-  typedef std::set<KEY>     set_t;
-  typedef registered_key<KEY>                      registered_key_t;
-  typedef registered_key_map<KEY,VAL,MAP> registered_key_map_t;
-  using map_t::map;
-  using map_t::begin, map_t::end;
-  // Member variables:
-  const registered_key_t& registered_key_ref;
-  // Member functions:
-  bool allowed(const key_t& k) const {return registered_key_ref.allowed(k);};
-  void check_compulsory_keys() const;
-  /* Accessors throw std::out_of_range exception
-   * if a key not contained in 'allowed_keys' is requested */
-        auto & operator[] (const key_t& k);
-  const auto & at(         const key_t& k) const;
-  // Copy constructor and constructors:
-  registered_key_map_t& operator=(const registered_key_map_t& rkm);
-  registered_key_map(const registered_key_t & rk) : registered_key_ref(rk) {};
+map_t en2es{
+  {"black", "negro"},
+  {"white", "blanco"},
+  {"red",   "rojo"},
+  {"green", "verde"}
 };
-// Implementations:
 
-template <typename KEY, typename VAL, template <typename K,typename M> typename MAP>
-void registered_key_map<KEY,VAL,MAP>::check_compulsory_keys() const {
-  for(const auto & e : registered_key_ref.compulsory_keys) {
-    if(! map_t::contains(e))
-      throw std::exception();
-  } // for
-};
-template <typename KEY, typename VAL, template <typename K,typename M> typename MAP>
-auto & registered_key_map<KEY,VAL,MAP>::operator[] (const key_t& k) {
-  if(! allowed(k)) {
-    throw std::out_of_range("key not present in \'allowed_keys\'");
+typedef std::vector<     map_t>      map_vector_t;
+typedef std::vector<multimap_t> multimap_vector_t;
+map_vector_t healthVector{
+  {
+    {"topic", "varicose veins treatment"},
+    {"remedy", "wear graduated compression stockings to squeeze the legs and improve blood circulation"},
+    {"remedy", "prop your legs up above heart level multiple times a day to use gravity to push blood back toward your heart"},
+    {"remedy", "exercise regularly, maintain a healthy weight, and avoid standing or sitting still for long periods"},
+    {"remedy", "Eat a high-fiber and low-salt diet: Fiber prevents constipation (which adds lower-body pressure), and low salt reduces water retention and swelling"},
+    {"remedy", "Stay hydrated: Drinking plenty of water keeps your blood flowing smoothly"},
+    {"minimally invasive", "Endothermal Ablation (Laser or Radiofrequency): Uses heat from a laser or radiofrequency fiber inserted via a catheter to seal shut damaged saphenous or underlying veins"},
+    {"minimally invasive", "Sclerotherapy and Foam Sclerotherapy: Injects a chemical solution or microfoam directly into the vein, causing it to scar, close, and fade away over time"},
+    {"minimally invasive", "Ambulatory Phlebectomy: Removes surface varicose veins through tiny skin punctures or micro-incisions using specialized tools"},
+    {"minimally invasive", "VenaSeal / Vein Glue: Seals closed the affected vein using a medical adhesive delivered via a catheter"},
+    {"vitamin", "Vitamin B3 (Niacin): Widens (dilates) blood vessels, improves blood flow, and helps lower cholesterol"},
+    {"vitamin", "Vitamin C: Builds and maintains collagen, which keeps vein walls strong, elastic, and supported"}
+  },
+  {
+    {"term", "flavonoid"},
+    {"definition", "a diverse group of plant-derived polyphenolic secondary metabolites with a shared 15-carbon skeleton structure (C6-C3-C6)"},
+    {"effect", "act as natural antioxidants, anti-inflammatories, and cellular protectors in both plants and humans"},
+    {"subclass", "flavonols"},
+    {"subclass", "flavan-3-ols (catechins)"},
+    {"subclass", "anthocyanins"},
+    {"subclass", "flavanones"},
+    {"subclass", "flavones"},
+    {"subclass", "isoflavones"}
+    /*
+• Flavonols: Found in onions, kale, broccoli, and apples.
+• Flavan-3-ols (Catechins): Found in green/black tea, dark chocolate/cocoa, grapes, and berries.
+• Anthocyanins: Give rich red, purple, and blue colors to berries, cherries, plums, and red wine.
+• Flavanones: Found abundantly in citrus fruits like oranges, lemons, and grapefruits.
+• Flavones: Found in herbs like parsley, celery, and chamomile.
+• Isoflavones: Found in soybeans and legumes.
+     */
+  },
+  {
+    {"term", "phitochemical"},
+    {"definition", ""},
+    {"effect", ""}
+  },
+  {
+    {"term", "osteopathy"},
+    {"type", "alternative medicine"},
+    {"definition", ""}
+  }/*,
+  {
+    {"", ""},
+    {"", ""},
+    {"", ""}
+  }.
+  {
+    {"", ""},
+    {"", ""},
+    {"", ""}
   }
-  return map_t::operator[](k);
+  */
 };
-template <typename KEY, typename VAL, template <typename K,typename M> typename MAP>
-registered_key_map<KEY,VAL,MAP>& registered_key_map<KEY,VAL,MAP>::operator=(const registered_key_map_t& rkm) {
-  const_cast<registered_key_t &>(registered_key_ref) = rkm.registered_key_ref;
-  map_t::clear();
-  map_t::insert(rkm.begin(), rkm.end());
-  return *this;
-};
-template <typename KEY, typename VAL, template <typename K,typename M> typename MAP>
-const auto & registered_key_map<KEY,VAL,MAP>::at(const key_t& k) const {
-  if(! allowed(k)) {
-    throw std::out_of_range("key not present in \'allowed_keys\'");
-  }
-  return map_t::at(k);
-};
-#endif
+
+#include <iostream>
 
 using namespace std;
 
-typedef std::string key_type;
-typedef std::string mapped_type;
-typedef registered_key<    key_type>                        registered_key_t;
-typedef registered_key_map<key_type, mapped_type, std::map> registered_key_map_t;
+int main() {
 
-// Define some initializer_list<string>'s for maps from string:
-std::initializer_list<std::string> allowil = {"author", "date", "description"};
-std::initializer_list<std::string> compuil = {                  "description"};
+  std::ofstream testout("test.text", std::fstream::out | std::fstream::trunc);
+  count_and_zero_serialize(testout, en2es);
+  testout.close();
 
-registered_key_t reg0{allowil, compuil};
+  en2es.clear();
 
-registered_key_map_t info0{reg0}, info1(reg0);
+  cout << "Now \'en2es\' has " << en2es.size() << " element(s).\n";
 
-int main (int argc, const char** argv) {
+  std::ifstream testin("test.text", std::fstream::in);
+  count_and_zero_deserialize(testin, en2es);
+  testin.close();
 
-  info1["author"] = "Coltrane";
-  cout << "info1.author=" << info1[ "author"] << '\n';
-
-  // cout << "info1.date="   << info1.at("date") << '\n'; // no such key
-
-
-  // Use an unregistered key to elicit an out_of_range exception:
-  // info1["genre"]  = "composition";                     // "genre" not allowed
-
-  info1["date"] = "1966";
-
-  cout << "\nNow copy \'info1\' to so far empty \'info0\' and query for \"author\":\n";
-  info0 = info1;
-  cout << "info0.author=" << info0[ "author"] << '\n';
-
-  cout << '\n';
-
+  cout << "After deserializing, \'en2es\' has " << en2es.size() << " element(s).\n";
 
   return 0;
-
 }
