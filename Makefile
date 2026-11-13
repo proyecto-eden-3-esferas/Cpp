@@ -17,6 +17,10 @@ jsvarExecFiles = jsvar.sep-comp.test jsvar.test
 %: %.cpp
 	c++    -std=c++23 $<  -o $@
 
+ID_SRC = id.h
+id.test: id.test.cpp $(ID_SRC)
+	c++ -std=c++23 $<  -o $@
+
 information.test: information.cpp information.h json.h
 	c++ -std=c++23 $<  -o $@
 
@@ -37,6 +41,8 @@ regex_map.test: regex_map.test.cpp regex_map.h regex_map.cpp
 
 temp: temp.cpp
 	c++ -std=c++23 $<  -o $@
+
+
 ai_set : ai_set.cpp
 	c++ -std=c++23 $<  -o $@
 paragraph: paragraph.h paragraph.main.cpp
@@ -282,6 +288,7 @@ filestring.test: filestring.test.cpp $(FILESTRING_SRC)
 
 zero_filestring_handler.test: zero_filestring_handler.test.cpp zero_filestring_handler.h zero_filestring_handler.cpp
 	g++ -std=c++23  $<  -o $@
+
 
 
 clean_former:
