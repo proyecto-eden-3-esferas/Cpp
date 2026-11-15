@@ -289,6 +289,10 @@ filestring.test: filestring.test.cpp $(FILESTRING_SRC)
 zero_filestring_handler.test: zero_filestring_handler.test.cpp zero_filestring_handler.h zero_filestring_handler.cpp
 	g++ -std=c++23  $<  -o $@
 
+RECORD_DESCRIPTION_SRC = record_description.h record_description.cpp
+record_description.test: record_description.test.cpp $(RECORD_DESCRIPTION_SRC)
+	g++ -std=c++23  $<  -o $@
+
 
 
 clean_former:
