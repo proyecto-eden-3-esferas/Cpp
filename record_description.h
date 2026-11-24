@@ -6,8 +6,33 @@
 #include <string>
 #include <string_view>
 #include <map>
+#include <optional>
 #include <utility>
+#include <variant>
 #include <vector>
+
+/* These hierarchy of classes stores relational database records/tuples/rows
+ * so as:
+ * - the better to validate them
+ * - to output them as an INSERT statement
+ * - generally to convert them to other formats
+ */
+
+/* class simple_record_description<INT,FLOAT>
+ * TODO:
+ * [ ] write inserter based on std::visit
+ * [ ] to that end, you should rely on "C-string-to-SQL-str" compilation unit
+ */
+template <typename   INT = signed int,
+          typename FLOAT = float
+         >
+class simple_record_description {
+public:
+  typedef std::string string_t;
+  typedef std::variant<std::nullptr_t, string_t, INT, FLOAT, bool> variant_t;
+  typedef std::optional<variant_t> record_t;
+
+};
 
 /* Class record_description<MAP>
    is good for describing a relational database table/relation.
@@ -20,22 +45,29 @@
    [ ] implement a means of enforcing uniqueness (through std::set or std::unordered_set)
  */
 
-template <template <typename K,typename M> typename MAP=std::map>
-class record_description {
+template <typename I = signed int,
+          typename F = float,
+          template <typename K,typename M> typename MAP = std::map>
+class record_description : public simple_record_description<I,F> {
 protected:
   mutable std::size_t sz;
 public:
+  typedef simple_record_description<I,F> parent_t;
+  using parent_t::variant_t;
+  using parent_t:: record_t;
   typedef std::string string_t;
   enum class type       {NIL, BOOL, INT, FLOAT, TEXT};
-  enum class constraint {NONE, NOT_NULL, BOOL, INT, FLOAT, TEXT};
+  enum class constraint {UNIQUE, NOT_NULL};
   typedef std::pair<type, std::size_t> type_t;
   // public member variables:
   MAP<string_t, type_t> structure;
   // constructors and destructor:
 };
 
-template <template <typename K,typename M> typename MAP=std::map>
-class record_layout : public record_description<MAP> {
+template <typename I = signed int,
+          typename F = float,
+          template <typename K,typename M> typename MAP = std::map>
+class record_layout : public record_description<I,F,MAP> {
 public:
   typedef std::string string_t;
   typedef std::size_t index_t;

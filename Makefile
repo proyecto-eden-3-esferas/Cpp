@@ -17,11 +17,59 @@ jsvarExecFiles = jsvar.sep-comp.test jsvar.test
 %: %.cpp
 	c++    -std=c++23 $<  -o $@
 
+%.test: %.test.cpp %.h
+	g++ -std=c++23 $<  -o $@
+
+%.o: %.cpp %.h
+	g++ -DSEPARATE_COMPILATION -std=c++23 --compile $<
+#	g++  -std=c++23 -c -std=c++17 $<
+%.test.o: %.test.cpp %.h
+	g++ -DSEPARATE_COMPILATION -std=c++23 --compile $<
+
+temp: temp.cpp
+	c++ -std=c++23 $<  -o $@
+
+
+
+NamedType.test: NamedType.test.cpp NamedType.h
+	g++ -std=c++23         $<  -o $@
+NamedType.byRef.test: NamedType.byRef.test.cpp NamedType.byRef.h
+	g++ -std=c++23         $<  -o $@
+
+
+ESCAPER_SRC = escaper.h
+escaper.test: escaper.test.cpp $(ESCAPER_SRC)
+	c++ -std=c++23 $<  -o $@
+
+# Compilation Units 'Level' and 'indent' jointly handle indenation:
+Level.h: XML/Level.h
+	cp --update XML/Level.h ./
+LEVEL_SRC = Level.h
+indent.test: indent.test.cpp indent.h $(LEVEL_SRC)
+	c++ -std=c++23 $<  -o $@
+
 ID_SRC = id.h
 id.test: id.test.cpp $(ID_SRC)
 	c++ -std=c++23 $<  -o $@
 
-information.test: information.cpp information.h json.h
+# define name_validator<>, whose objects validate a name/identifier
+name_validator.test: name_validator.test.cpp name_validator.cpp name_validator.h
+	g++ -std=c++23         $<  -o $@
+
+load_string_with_file.test: load_string_with_file.test.cpp load_string_with_file.h
+	g++ -std=c++23         $<  -o $@
+
+
+
+# The 'json' Compilation Unit (not 'JSON') is DEPRECATED!!!
+json.test: json.cpp json.h
+	g++ -std=c++23         $<  -o $@
+# Class information<> stores the source, date and description of an information item
+# Classes dataitem and text are then derived from class information
+# See C.U. 'registered_key_map'
+# C.U. 'infostruct-map' develops struct's metadata and infostruct (metadata + text)
+# with a view to testing compilation of large variables into an object file (infostruct-map.o)
+information.test: information.cpp information.h json.h json.cpp
 	c++ -std=c++23 $<  -o $@
 
 infostruct-map.test.o: infostruct-map.test.cpp infostruct-map.h
@@ -31,34 +79,42 @@ infostruct-map.o:      infostruct-map.cpp      infostruct-map.h
 infostruct-map.test: infostruct-map.test.o infostruct-map.o
 	c++ -std=c++23 infostruct-map.test.o infostruct-map.o -o $@
 
+
+
 UDC.test: UDC.test.cpp UDC.h
 	c++ -std=c++23 $<  -o $@
 extract-UDC-facets.test: extract-UDC-facets.test.cpp extract-UDC-facets.h extract-UDC-facets.cpp
 	c++ -std=c++23 $<  -o $@
 
-regex_map.test: regex_map.test.cpp regex_map.h regex_map.cpp
-	c++ -std=c++23 $<  -o $@
 
-temp: temp.cpp
+regex_map.test: regex_map.test.cpp regex_map.h regex_map.cpp
 	c++ -std=c++23 $<  -o $@
 
 
 ai_set : ai_set.cpp
 	c++ -std=c++23 $<  -o $@
+
+# Take a paragraph in as STRING and return a collection of lines,
+# each of which reaching as far as possible to the right margin of a page
 paragraph: paragraph.h paragraph.main.cpp
 	g++ -std=c++2a            paragraph.main.cpp -o $@
-escaper: escaper.cpp escaper.h
-	c++ -std=c++23 $<  -o $@
+# C.U. 'paragraph_in_lines'
+paragraph_in_lines.test: paragraph_in_lines.test.cpp paragraph_in_lines.h
+	g++ -std=c++23  $<  -o $@
 
 
+# Lazy Strings are stored in files
+# and only recall them if and when needed.
+# (This would enable holding large texts in memory.)
 lazy_strings.test: lazy_strings.cpp lazy_strings.h
 	echo "19 dzogchen and tantra" > zettelkasten.ini
 	c++ -std=c++23 $<  -o $@
 
 
+# EARLY TOKENIZERS:
+
 basic_tokenizer.test: basic_tokenizer.test.cpp basic_tokenizer.h basic_tokenizer.cpp
 	g++ -std=c++23 $<  -o $@
-
 
 istream_variant_queue_tokenizer.debug.test: istream_variant_queue_tokenizer.test.cpp istream_variant_queue_tokenizer.h variant_queue_tokenizer.h
 	g++ -std=c++23 -DDEBUG $<  -o $@
@@ -66,13 +122,10 @@ istream_variant_queue_tokenizer.test:  istream_variant_queue_tokenizer.test.cpp 
 	g++ -std=c++23         $<  -o $@
 string_view_variant_tokenizer.test: string_view_variant_tokenizer.test.cpp string_view_variant_tokenizer.h string_view_variant_tokenizer.cpp sense.h
 	g++ -std=c++23         $<  -o $@
-name.test: name.test.cpp name.cpp name.h
-	g++ -std=c++23         $<  -o $@
-json.test: json.cpp json.h
-	g++ -std=c++23         $<  -o $@
 
-Level.h: XML/Level.h
-	cp --update XML/Level.h ./
+
+
+# JSON Compilation Units:
 
 JSON.test: JSON.test.cpp JSON.h JSON.printer.h JSON.printer.cpp Level.h
 JSONtokenizer.test: JSONtokenizer.test.cpp JSONtokenizer.h # Level.h
@@ -85,11 +138,13 @@ jsvar.test: jsvar.test.cpp jsvar.h jsvar.cpp
 jsvar.sep-comp.test: jsvar.test.cpp jsvar.h  jsvar.o
 	g++ -DSEPARATE_COMPILATION -std=c++23  jsvar.o $<  -o $@
 
+
+# SOME MORE TOKENIZER COMPILATION UNITS:
+
 tokenizer.test: tokenizer.test.cpp tokenizer.h tokenizer.cpp
 	g++ -std=c++23 $<  -o $@
 tokenizer.sep-comp.test: tokenizer.o tokenizer.test.o
 	g++ -DSEPARATE_COMPILATION -std=c++23 tokenizer.o tokenizer.test.o -o tokenizer.sep-comp.test
-
 
 WORD_TOKENIZER_SRC = WordTokenizer.h Tokenizer.h
 WordTokenizer.test: WordTokenizer.test.cpp $(WORD_TOKENIZER_SRC)
@@ -133,11 +188,7 @@ CharlistEQTokenizer.JSON.test: CharlistEQTokenizer.test.cpp $(CHARLIST_EQ_TOKENI
 	g++ -std=c++23 -DTEST_JSON $<  -o $@
 
 
-
-
-load_string_with_file.test: load_string_with_file.test.cpp load_string_with_file.h
-	g++ -std=c++23         $<  -o $@
-
+# CONNECTIONS:
 
 CONNECTION_SRC = Connection.h Connection.cpp
 Connection.test: Connection.test.cpp $(CONNECTION_SRC)
@@ -156,19 +207,6 @@ SQLite.test: SQLite.test.cpp $(SQLITE_SRC)
 
 
 
-NamedType.test: NamedType.test.cpp NamedType.h
-	g++ -std=c++23         $<  -o $@
-NamedType.byRef.test: NamedType.byRef.test.cpp NamedType.byRef.h
-	g++ -std=c++23         $<  -o $@
-
-%.test: %.test.cpp %.h
-	g++ -std=c++23 $<  -o $@
-
-%.o: %.cpp %.h
-	g++ -DSEPARATE_COMPILATION -std=c++23 --compile $<
-#	g++  -std=c++23 -c -std=c++17 $<
-%.test.o: %.test.cpp %.h
-	g++ -DSEPARATE_COMPILATION -std=c++23 --compile $<
 
 REVERSIBLE_MAP_SRC = ReversibleMap.h ReversibleMap.cpp NamedType.h
 ReversibleMap.map.test:            ReversibleMap.test.cpp $(REVERSIBLE_MAP_SRC)
@@ -179,8 +217,7 @@ ReversibleMap.multimap.test:       ReversibleMap.test.cpp $(REVERSIBLE_MAP_SRC)
 	g++ -std=c++23 -DUSE_MULTIMAP         $<  -o $@
 ReversibleMap.multimap.DEBUG.test: ReversibleMap.test.cpp $(REVERSIBLE_MAP_SRC)
 	g++ -std=c++23 -DUSE_MULTIMAP -DDEBUG $<  -o $@
-
-
+# C.U. 'Bijection' relies on 'ReversibleMap'
 Bijection.test: Bijection.test.cpp Bijection.h ReversibleMap.cpp NamedType.h
 	g++ -std=c++23  $<  -o $@
 
@@ -209,6 +246,8 @@ DEPENDENCY_MANAGER_SRC = DependencyManager.h DependencyManager.cpp
 DependencyManager.test: DependencyManager.test.cpp $(DEPENDENCY_MANAGER_SRC)
 	g++ -std=c++23  $<  -o $@
 
+
+
 POSTSCRIPT_BASE_SRC = PostScript_base.h PostScript_base.cpp $(DEPENDENCY_MANAGER_SRC)
 PostScript_base.test: PostScript_base.test.cpp $(POSTSCRIPT_BASE_SRC)
 	g++ -std=c++23  $<  -o $@
@@ -216,6 +255,7 @@ PostScript_base.test: PostScript_base.test.cpp $(POSTSCRIPT_BASE_SRC)
 POSTSCRIPT_FILE_SRC = PostScriptFile.h PostScriptFile.cpp POSTSCRIPT_BASE_SRC
 PostScriptFile.test: PostScriptFile.test.cpp PostScriptFile.h PostScriptFile.cpp PostScript_base.h
 	g++ -std=c++23 -DTEST_UNDO_CHANGE $<  -o $@
+
 
 
 
@@ -247,7 +287,7 @@ BOOSTLIKE_LABELED_BLOCK_SRC = $(BOOSTLIKE_BLOCK_SRC) boost-like.labeled_block.h 
 boost-like.labeled_block.test: boost-like.labeled_block.test.cpp $(BOOSTLIKE_LABELED_BLOCK_SRC)
 	g++ -std=c++23  $<  -o $@
 
-LEVEL_SRC = Level.h
+
 XML_PRINT_SRC = XMLprint.h $(LEVEL_SRC)
 PRINT_AS_SVG = $(BOOSTLIKE_LABELED_BLOCK_SRC) boost-like.print_as_SVG.h boost-like.print_as_SVG.cpp $(XML_PRINT_SRC)
 boost-like.print_as_SVG.test   : boost-like.print_as_SVG.test.cpp    $(PRINT_AS_SVG)
@@ -256,8 +296,6 @@ boost-like.print_labeled_block_as_SVG.test: boost-like.print_labeled_block_as_SV
 	g++ -std=c++23  $<  -o $@
 
 
-paragraph_in_lines.test: paragraph_in_lines.test.cpp paragraph_in_lines.h
-	g++ -std=c++23  $<  -o $@
 
 SPECIFIC_OSTREAM_SRC = specific_ostream.h specific_ostream.cpp Level.h
 specific_ostream.test: specific_ostream.test.cpp $(SPECIFIC_OSTREAM_SRC)
