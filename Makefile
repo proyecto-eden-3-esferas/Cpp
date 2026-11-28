@@ -37,7 +37,7 @@ NamedType.byRef.test: NamedType.byRef.test.cpp NamedType.byRef.h
 	g++ -std=c++23         $<  -o $@
 
 
-ESCAPER_SRC = escaper.h
+ESCAPER_SRC = escaper.h escaper.cpp
 escaper.test: escaper.test.cpp $(ESCAPER_SRC)
 	c++ -std=c++23 $<  -o $@
 

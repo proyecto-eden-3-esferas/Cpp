@@ -20,8 +20,11 @@
 
 /* class simple_record_description<INT,FLOAT>
  * TODO:
- * [ ] write inserter based on std::visit
- * [ ] to that end, you should rely on "C-string-to-SQL-str" compilation unit
+   [ ] write inserter based on std::visit.
+   [ ] To that end, you should rely on "C-string-to-SQL-str" compilation unit.
+   [ ] Actually, you might make simple_record_description<INT,FLOAT>::extractor_visitor fully generic
+       by
+   [ ]
  */
 template <typename   INT = signed int,
           typename FLOAT = float
@@ -31,7 +34,24 @@ public:
   typedef std::string string_t;
   typedef std::variant<std::nullptr_t, string_t, INT, FLOAT, bool> variant_t;
   typedef std::optional<variant_t> record_t;
+  //
+  char quote_char;
+  struct extractor_visitor;
+  // Constructor(s):
+  simple_record_description(char q = '\'') : quote_char(q) {};
+};
 
+template <typename   INT, typename FLOAT>
+struct simple_record_description<INT,FLOAT>::extractor_visitor {
+  std::ostream & out;
+  char quote_char;
+  void operator() (const std::nullptr_t& ptr) { out << "NULL"; };
+  void operator() (const std::string&  str) { out << quote_char << str << quote_char; };
+  void operator() (  INT i) { out << i; };
+  void operator() (FLOAT f) { out << f; };
+  void operator() ( bool b) { out << std::boolalpha << b; };
+  // Constructor(s):
+  extractor_visitor(std::ostream & o = std::cout, char q = '\'') : out(o), quote_char(q) {};
 };
 
 /* Class record_description<MAP>
